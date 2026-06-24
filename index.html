@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="SleepWell — Bilimsel temelli bebek uyku eğitimi ve akıllı uyku asistanı. iOS uygulaması.">
+<title>SleepWell — Bebek Uyku Eğitimi</title>
+<style>
+  :root {
+    --primary: #7C6FEB;
+    --bg: #F8F7FF;
+    --text: #2A2A4A;
+    --muted: #6B7280;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Nunito', 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg); color: var(--text);
+    line-height: 1.6;
+  }
+  .container { max-width: 720px; margin: 0 auto; padding: 60px 24px 80px; }
+  header { text-align: center; margin-bottom: 60px; }
+  .logo {
+    width: 88px; height: 88px;
+    background: linear-gradient(135deg, var(--primary), #9B8FFF);
+    border-radius: 24px; margin: 0 auto 24px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 44px; color: #FFD54F;
+    box-shadow: 0 12px 32px rgba(124,111,235,0.25);
+  }
+  h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.5px; }
+  .tagline { font-size: 18px; color: var(--muted); }
+  .cta {
+    display: inline-block; margin-top: 28px;
+    background: var(--primary); color: white;
+    padding: 14px 28px; border-radius: 999px;
+    text-decoration: none; font-weight: 700;
+    box-shadow: 0 8px 20px rgba(124,111,235,0.3);
+    transition: transform 0.2s;
+  }
+  .cta:hover { transform: translateY(-2px); }
+  section { margin-bottom: 48px; }
+  h2 { font-size: 22px; font-weight: 700; margin-bottom: 16px; }
+  .links {
+    background: white; border-radius: 16px; padding: 4px;
+    box-shadow: 0 4px 16px rgba(42,42,74,0.06);
+  }
+  .links a {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 20px;
+    color: var(--text); text-decoration: none;
+    border-bottom: 1px solid #F0EEFF;
+    transition: background 0.2s;
+  }
+  .links a:last-child { border-bottom: none; }
+  .links a:hover { background: #F5F3FF; }
+  .links .label { font-weight: 600; }
+  .links .arrow { color: var(--primary); }
+  .features {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px; margin-top: 20px;
+  }
+  .feature {
+    background: white; padding: 24px; border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(42,42,74,0.06);
+  }
+  .feature h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .feature p { font-size: 14px; color: var(--muted); }
+  footer {
+    text-align: center; padding-top: 40px; border-top: 1px solid #E5E7EB;
+    color: var(--muted); font-size: 14px;
+  }
+  footer a { color: var(--primary); text-decoration: none; margin: 0 8px; }
+  @media (max-width: 600px) {
+    h1 { font-size: 28px; }
+    .container { padding: 40px 20px 60px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="logo">🌙</div>
+    <h1>SleepWell</h1>
+    <p class="tagline">Bebeğinizin ilk yılına bilimle ve sevgiyle eşlik eder.</p>
+    <!-- TODO: App Store URL'i güncelle: https://apps.apple.com/app/idXXXXXXXXX -->
+    <a class="cta" href="#" id="appstore-link">App Store'dan İndir</a>
+  </header>
+
+  <section>
+    <h2>Yasal Belgeler</h2>
+    <div class="links">
+      <a href="privacy.html">
+        <span class="label">🔒 Gizlilik Politikası / Privacy Policy</span>
+        <span class="arrow">→</span>
+      </a>
+      <a href="kvkk.html">
+        <span class="label">⚖️ KVKK Aydınlatma Metni</span>
+        <span class="arrow">→</span>
+      </a>
+      <a href="terms.html">
+        <span class="label">📋 Kullanım Şartları / Terms of Service</span>
+        <span class="arrow">→</span>
+      </a>
+      <a href="mailto:sleepwellapp.support@gmail.com">
+        <span class="label">✉️ Destek: sleepwellapp.support@gmail.com</span>
+        <span class="arrow">→</span>
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <h2>Neler Sunuyoruz?</h2>
+    <div class="features">
+      <div class="feature">
+        <h3>🌙 Klinik Yöntemler</h3>
+        <p>Ferber, Tresillian, Camping Out, Bedtime Fading ve daha fazlası — bilimsel temelli.</p>
+      </div>
+      <div class="feature">
+        <h3>🤖 Akıllı Uyku Asistanı</h3>
+        <p>7/24 sorularınıza yanıt veren AI rehber. Tıbbi tavsiye yerine geçmez.</p>
+      </div>
+      <div class="feature">
+        <h3>🎵 Profesyonel Ses Mikseri</h3>
+        <p>4 kanal beyaz/pembe/kahverengi gürültü + ninniler. Sıfır internet.</p>
+      </div>
+      <div class="feature">
+        <h3>📊 Haftalık Rapor</h3>
+        <p>Bebeğinizin uyku düzenini PDF olarak indirip pediatristinizle paylaşın.</p>
+      </div>
+      <div class="feature">
+        <h3>🌍 6 Dilde</h3>
+        <p>TR / EN / DE / FR / ES / AR — tam yerel deneyim.</p>
+      </div>
+      <div class="feature">
+        <h3>🔐 Verileriniz Sizde</h3>
+        <p>Bebek profili ve uyku kayıtları sadece cihazınızda durur. Bulut yok.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 SleepWell — Cem Eren Tosun</p>
+    <p style="margin-top:8px">
+      <a href="privacy.html">Gizlilik</a> ·
+      <a href="kvkk.html">KVKK</a> ·
+      <a href="terms.html">Şartlar</a> ·
+      <a href="mailto:sleepwellapp.support@gmail.com">İletişim</a>
+    </p>
+  </footer>
+</div>
+</body>
+</html>
