@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Araç sesini kaydedin; olası arızayı, yerini ve olasılığını marka/model bilgisiyle birlikte tahmin edelim.">
+<title>Araç Ses Teşhisi</title>
+<style>
+  :root {
+    --bg: #F4F5F7; --card: #FFFFFF; --text: #1C2230; --muted: #626B7A; --border: #DDE1E7;
+    --accent: #E4572E; --accent-soft: #FCE7E0; --ok: #2E9E6B; --warn: #D99A00; --bad: #C8323C;
+    --car: #E9ECF1; --car-line: #9AA3B2; --bar-bg: #ECEFF3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12151B; --card: #1B1F27; --text: #E8EBF0; --muted: #9AA3B2; --border: #2C323D;
+      --accent: #FF7A50; --accent-soft: #3A2620; --ok: #4CC38A; --warn: #F0B429; --bad: #F2616B;
+      --car: #232934; --car-line: #5A6475; --bar-bg: #262C37;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #12151B; --card: #1B1F27; --text: #E8EBF0; --muted: #9AA3B2; --border: #2C323D;
+    --accent: #FF7A50; --accent-soft: #3A2620; --ok: #4CC38A; --warn: #F0B429; --bad: #F2616B;
+    --car: #232934; --car-line: #5A6475; --bar-bg: #262C37;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+         background: var(--bg); color: var(--text); line-height: 1.55; font-size: 16px; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 28px 16px 64px; }
+  header h1 { font-size: 1.7rem; letter-spacing: -0.02em; }
+  header p { color: var(--muted); margin-top: 4px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+          padding: 20px; margin-top: 18px; }
+  .card h2 { font-size: 1.05rem; margin-bottom: 12px; display: flex; gap: 10px; align-items: center; }
+  .step { background: var(--accent); color: #fff; width: 24px; height: 24px; border-radius: 50%;
+          font-size: .8rem; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  label.f { display: flex; flex-direction: column; gap: 4px; font-size: .85rem; color: var(--muted); }
+  select, input[type=number] { font: inherit; color: var(--text); background: var(--bg);
+          border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px; width: 100%; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { border: 1px solid var(--border); background: var(--bg); color: var(--text); border-radius: 999px;
+          padding: 7px 13px; font: inherit; font-size: .9rem; cursor: pointer; }
+  .chip[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .btn { font: inherit; font-weight: 600; border-radius: 10px; padding: 11px 16px; cursor: pointer;
+         border: 1px solid var(--border); background: var(--bg); color: var(--text);
+         display: inline-flex; align-items: center; gap: 8px; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn.small { padding: 6px 11px; font-size: .85rem; border-radius: 8px; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .rec { width: 64px; height: 64px; border-radius: 50%; border: 4px solid var(--accent); background: var(--card);
+         cursor: pointer; position: relative; flex: none; }
+  .rec::after { content: ""; position: absolute; inset: 12px; border-radius: 50%; background: var(--accent); transition: all .2s; }
+  .rec.on::after { inset: 18px; border-radius: 5px; }
+  .rec.on { animation: pulse 1.2s infinite; }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(228,87,46,.45)} 100%{box-shadow:0 0 0 16px rgba(228,87,46,0)} }
+  canvas#viz { width: 100%; height: 90px; background: var(--bg); border-radius: 10px; border: 1px solid var(--border); display: block; margin-top: 14px; }
+  .hint { color: var(--muted); font-size: .85rem; }
+  audio { width: 100%; margin-top: 10px; }
+  .status { font-size: .9rem; margin-top: 8px; color: var(--muted); }
+  .status.err { color: var(--bad); }
+  .results { display: grid; grid-template-columns: 220px 1fr; gap: 20px; align-items: start; }
+  @media (max-width: 640px) { .results { grid-template-columns: 1fr; } .carbox { max-width: 220px; margin: 0 auto; } }
+  .carbox svg { width: 100%; height: auto; display: block; }
+  .carbox .loc-label { text-align: center; font-weight: 600; margin-top: 6px; font-size: .9rem; }
+  .res { border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; cursor: pointer; }
+  .res.sel { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+  .res-top { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+  .res-name { font-weight: 650; }
+  .pct { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--accent); white-space: nowrap; }
+  .bar { height: 7px; background: var(--bar-bg); border-radius: 4px; margin: 8px 0; overflow: hidden; }
+  .bar > i { display: block; height: 100%; background: var(--accent); border-radius: 4px; }
+  .meta { font-size: .85rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+  .urg { font-size: .75rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; color: #fff; }
+  .u1 { background: var(--ok); } .u2 { background: var(--warn); } .u3 { background: var(--bad); } .u4 { background: #8B1E2B; }
+  .detail { font-size: .9rem; margin-top: 8px; display: none; }
+  .res.sel .detail { display: block; }
+  .detail p { margin-top: 6px; }
+  .note { background: var(--accent-soft); border-radius: 8px; padding: 8px 10px; margin-top: 8px; font-size: .85rem; }
+  .conf { display: inline-block; font-size: .8rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--border); }
+  .tech { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-top: 10px; }
+  .tech div { background: var(--bg); border-radius: 8px; padding: 8px 10px; font-size: .82rem; color: var(--muted); }
+  .tech b { display: block; color: var(--text); font-size: .95rem; }
+  details summary { cursor: pointer; color: var(--muted); font-size: .9rem; margin-top: 12px; }
+  .disclaimer { font-size: .8rem; color: var(--muted); margin-top: 18px; }
+  .hidden { display: none !important; }
+  .mk { fill: var(--accent); opacity: 0; }
+  .mk.on { opacity: 1; }
+  .mk-ring { fill: none; stroke: var(--accent); stroke-width: 2; opacity: 0; transform-box: fill-box; transform-origin: center; }
+  .mk-ring.on { opacity: 1; animation: ring 1.4s infinite ease-out; }
+  @keyframes ring { 0% { transform: scale(.6); opacity: 1 } 100% { transform: scale(2.2); opacity: 0 } }
+  #exh.on { stroke: var(--accent); stroke-width: 4; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🔧 Araç Ses Teşhisi</h1>
+    <p>Aracınızın sesini kaydedin. Olası arızayı, aracın neresinden geldiğini ve olasılığını tahmin edelim.</p>
+  </header>
+
+  <section class="card">
+    <h2><span class="step">1</span>Araç bilgileri</h2>
+    <div class="grid">
+      <label class="f">Marka <select id="brand"></select></label>
+      <label class="f">Model <select id="model"></select></label>
+      <label class="f">Model yılı <input id="year" type="number" min="1980" max="2027" placeholder="ör. 2016"></label>
+      <label class="f">Yakıt
+        <select id="fuel">
+          <option value="benzin">Benzin</option><option value="dizel">Dizel</option>
+          <option value="lpg">Benzin + LPG</option><option value="hibrit">Hibrit</option>
+          <option value="elektrik">Elektrik</option>
+        </select>
+      </label>
+      <label class="f">Kilometre <input id="km" type="number" min="0" step="1000" placeholder="ör. 145000"></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="step">2</span>Ses ne zaman çıkıyor?</h2>
+    <div class="chips" id="conds"></div>
+    <p class="hint" style="margin-top:10px">Birden fazla seçebilirsiniz. Bu bilgi, tahmini sesin kendisi kadar güçlendirir.</p>
+  </section>
+
+  <section class="card">
+    <h2><span class="step">3</span>Sesi kaydedin</h2>
+    <div class="row">
+      <button class="rec" id="recBtn" aria-label="Kaydı başlat / durdur"></button>
+      <div>
+        <div id="recText" style="font-weight:600">Kayda başlamak için dokunun</div>
+        <div class="hint">Telefonu sesin geldiği yere yakın tutun, 5–10 saniye kaydedin (en fazla 15 sn).</div>
+      </div>
+    </div>
+    <canvas id="viz" width="800" height="90"></canvas>
+    <div class="row" style="margin-top:12px">
+      <label class="btn small" style="cursor:pointer">📁 Ses/video dosyası yükle
+        <input id="file" type="file" accept="audio/*,video/*" class="hidden">
+      </label>
+      <select id="demo" style="width:auto;max-width:100%"></select>
+    </div>
+    <div id="playerBox" class="hidden">
+      <div class="hint" style="margin-top:12px" id="srcLabel"></div>
+      <audio id="player" controls></audio>
+    </div>
+    <div class="status" id="status"></div>
+    <div class="row" style="margin-top:14px">
+      <button class="btn primary" id="analyzeBtn" disabled>🔍 Sesi analiz et</button>
+    </div>
+  </section>
+
+  <section class="card hidden" id="resultCard">
+    <h2>Sonuç <span class="conf" id="conf"></span></h2>
+    <p class="hint" id="carLine"></p>
+    <div class="results" style="margin-top:14px">
+      <div class="carbox">
+        <svg viewBox="0 0 200 400" role="img" aria-label="Aracın üstten görünümü; arızanın olası yeri işaretli">
+          <text x="100" y="12" text-anchor="middle" font-size="11" fill="var(--muted)" font-weight="700">ÖN</text>
+          <rect x="22" y="62" width="22" height="58" rx="6" fill="var(--car-line)"/>
+          <rect x="156" y="62" width="22" height="58" rx="6" fill="var(--car-line)"/>
+          <rect x="22" y="276" width="22" height="58" rx="6" fill="var(--car-line)"/>
+          <rect x="156" y="276" width="22" height="58" rx="6" fill="var(--car-line)"/>
+          <rect x="38" y="20" width="124" height="364" rx="46" fill="var(--car)" stroke="var(--car-line)" stroke-width="2"/>
+          <rect x="58" y="32" width="84" height="104" rx="10" fill="none" stroke="var(--car-line)" stroke-dasharray="4 3"/>
+          <text x="100" y="128" text-anchor="middle" font-size="9" fill="var(--muted)">motor bölmesi</text>
+          <path d="M54 150 Q100 136 146 150 L140 178 Q100 168 60 178 Z" fill="var(--car-line)" opacity=".5"/>
+          <rect x="60" y="186" width="80" height="120" rx="12" fill="none" stroke="var(--car-line)" opacity=".6"/>
+          <path d="M60 330 Q100 340 140 330 L144 350 Q100 362 56 350 Z" fill="var(--car-line)" opacity=".5"/>
+          <path id="exh" d="M112 112 L118 140 L118 300 L124 386" fill="none" stroke="var(--car-line)" stroke-width="2" stroke-dasharray="5 4"/>
+          <g id="markers"></g>
+        </svg>
+        <div class="loc-label" id="locLabel"></div>
+      </div>
+      <div id="resList"></div>
+    </div>
+    <div class="row" style="margin-top:6px">
+      <button class="btn small" id="playMine">▶ Kaydınızı dinleyin</button>
+      <button class="btn small" id="stopAll">■ Durdur</button>
+    </div>
+    <details>
+      <summary>Teknik detay (sesin ölçülen özellikleri)</summary>
+      <div class="tech" id="tech"></div>
+    </details>
+    <p class="disclaimer">⚠️ Bu uygulama bir ön tahmin aracıdır; ses özellikleri (frekans, tonluluk, vuruntu ritmi) ile sizin verdiğiniz belirtileri ve marka/modelde sık bildirilen sorunları birleştirerek olasılık hesaplar. Kesin teşhis değildir. Fren, direksiyon, süspansiyon veya motor vuruntusu şüphesinde aracı kullanmadan önce bir servise kontrol ettirin.</p>
+  </section>
+</div>
+
+<script>
+"use strict";
+// ---------------------------------------------------------------- data
+const BRANDS = {
+  "Audi": ["A3","A4","A6","Q3","Q5"],
+  "BMW": ["1 Serisi","3 Serisi","5 Serisi","X1","X3"],
+  "Citroën": ["C3","C4","C-Elysée","C5 Aircross","Berlingo"],
+  "Dacia": ["Sandero","Logan","Duster","Jogger"],
+  "Fiat": ["Egea","Linea","Doblo","Fiorino","Punto","Palio"],
+  "Ford": ["Focus","Fiesta","Kuga","Puma","Courier","Connect"],
+  "Honda": ["Civic","City","Jazz","CR-V","HR-V"],
+  "Hyundai": ["i10","i20","i30","Accent Blue","Elantra","Bayon","Tucson"],
+  "Kia": ["Picanto","Rio","Ceed","Stonic","Sportage"],
+  "Mercedes-Benz": ["A Serisi","C Serisi","E Serisi","CLA","GLA"],
+  "Nissan": ["Micra","Juke","Qashqai"],
+  "Opel": ["Corsa","Astra","Insignia","Mokka","Crossland"],
+  "Peugeot": ["208","2008","301","308","3008","508"],
+  "Renault": ["Clio","Symbol","Taliant","Megane","Fluence","Captur","Kadjar"],
+  "Seat": ["Ibiza","Leon","Arona","Ateca"],
+  "Skoda": ["Fabia","Scala","Octavia","Superb","Kamiq","Karoq"],
+  "Tesla": ["Model 3","Model Y"],
+  "Togg": ["T10X"],
+  "Toyota": ["Yaris","Corolla","Auris","C-HR","RAV4"],
+  "Volkswagen": ["Polo","Golf","Jetta","Passat","Tiguan","T-Roc","Caddy"],
+  "Diğer": ["Diğer"]
+};
+const EV_BRANDS = ["Tesla","Togg"];
+
+const CONDITIONS = [
+  ["rolanti","Rölantide (araç dururken)"], ["soguk","Soğuk çalıştırmada"],
+  ["hizlanma","Gaza basınca / hızlanırken"], ["hiz","Hız arttıkça (yolda)"],
+  ["fren","Fren yaparken"], ["direksiyon","Direksiyonu çevirince"],
+  ["tumsek","Tümsek / bozuk yolda"], ["vites","Vites değişiminde"], ["klima","Klima açıkken"]
+];
+
+// Locations: marker points on the 200x400 top-view car (front at top)
+const LOCS = {
+  motor_on:   { label: "Motorun ön tarafı (kayış / yardımcı aksamlar)", pts: [[100,42]] },
+  alternator: { label: "Motor önü – alternatör", pts: [[128,52]] },
+  pompa:      { label: "Motor önü – direksiyon pompası", pts: [[72,52]] },
+  klima:      { label: "Motor önü – klima kompresörü", pts: [[82,108]] },
+  motor_ust:  { label: "Motor üstü (supap kapağı)", pts: [[100,80]] },
+  motor_alt:  { label: "Motor bloğu / krank (alt)", pts: [[100,92]] },
+  motor_yan:  { label: "Motor yanı (zincir/triger tarafı)", pts: [[132,84]] },
+  motor:      { label: "Motor (ateşleme sistemi)", pts: [[86,74],[114,74]] },
+  turbo:      { label: "Turbo (egzoz manifoldu yanı)", pts: [[72,94]] },
+  egzoz:      { label: "Egzoz hattı (manifolddan arkaya)", pts: [[116,124],[118,230]], exh: true },
+  on_teker:   { label: "Ön tekerlekler (fren)", pts: [[33,91],[167,91]] },
+  teker:      { label: "Tekerlek göbekleri (rulman)", pts: [[33,91],[167,91],[33,305],[167,305]] },
+  aks:        { label: "Ön akslar (tekerlek iç tarafı)", pts: [[52,96],[148,96]] },
+  suspansiyon:{ label: "Ön/arka süspansiyon", pts: [[50,76],[150,76],[50,290],[150,290]] },
+  sanziman:   { label: "Şanzıman / diferansiyel", pts: [[100,140]] }
+};
+
+// Audio profiles: f = characteristic frequency range (Hz); feat = which measurement to compare
+// tonal/imp = expected tonality & impulsiveness (0..1); rhythm = expected repetition rate (Hz) or null (steady/irregular)
+// c = how strongly each driving condition points to this fault (missing => 0.8)
+const FAULTS = [
+  { id:"kayis", name:"V-kayış / gergi bilyası gıcırtısı", loc:"motor_on", urg:2,
+    desc:"Kayış kaydığında veya gergi zayıfladığında tiz, sürekli bir gıcırtı çıkar; soğukta ve yük binince (klima, direksiyon) artar.",
+    tip:"Kayış çatlak/parlama ve gergi bilyası kontrol edilmeli. Kayış koparsa şarj ve hidrolik destek kesilir.",
+    p:{ f:[1500,5000], feat:"peak", tonal:.55, imp:.15, rhythm:null },
+    c:{ soguk:1.7, rolanti:1.3, klima:1.6, direksiyon:1.4, hizlanma:1.2, fren:.45, tumsek:.5, hiz:.6 } },
+  { id:"fren_balata", name:"Fren balatası aşınması (gıcırtı)", loc:"on_teker", urg:3,
+    desc:"Balata aşınma uyarı sacı diske sürtünce çok tiz bir ötme/gıcırtı yapar; genellikle fren yapınca başlar.",
+    tip:"Balatalar ölçtürülmeli. Uzun süre ihmal edilirse disk de zarar görür.",
+    p:{ f:[3000,11000], feat:"peak", tonal:.8, imp:.1, rhythm:null },
+    c:{ fren:3.2, hiz:.8, rolanti:.3, soguk:.7, hizlanma:.5, klima:.4, direksiyon:.6 } },
+  { id:"fren_disk", name:"Fren diski – metal metale sürtünme", loc:"on_teker", urg:4,
+    desc:"Balata tamamen bitince metal disk üzerine sürtünür: kaba bir hırıltı/öğütme sesi, tekerlek dönüşüyle ritmik.",
+    tip:"Aracı kullanmayın veya çok kısa mesafede servise götürün; fren mesafesi ciddi uzar.",
+    p:{ f:[400,3000], feat:"centroid", tonal:.12, imp:.3, rhythm:[3,14] },
+    c:{ fren:3.2, hiz:1.2, rolanti:.25, soguk:.6, klima:.4, hizlanma:.6 } },
+  { id:"rulman", name:"Teker rulmanı arızası (uğultu)", loc:"teker", urg:3,
+    desc:"Hız arttıkça yükselen, “vuuuv-vuuuv” şeklinde dalgalanan alçak bir uğultu. Virajda bir tarafa yüklenince değişir.",
+    tip:"Virajda ses artıyor/azalıyorsa yük binen taraftaki rulman şüphelidir. Servis kontrolü gerekir.",
+    p:{ f:[70,450], feat:"peak", tonal:.5, imp:.1, rhythm:[0.8,4] },
+    c:{ hiz:2.8, direksiyon:1.4, rolanti:.2, soguk:.6, fren:.8, klima:.4, vites:.7 } },
+  { id:"biyel", name:"Biyel / krank yatağı vuruntusu", loc:"motor_alt", urg:4,
+    desc:"Motorun alt kısmından gelen, devirle hızlanan derin ve tok “tak-tak” vuruntu. Gaz verince belirginleşir.",
+    tip:"Ciddi motor arızası riski. Motoru zorlamayın, yağ seviyesini kontrol edip hemen servise başvurun.",
+    p:{ f:[80,900], feat:"centroid", tonal:.1, imp:.85, rhythm:[8,33] },
+    c:{ hizlanma:1.7, rolanti:1.2, soguk:.9, hiz:1.0, fren:.4, direksiyon:.5, tumsek:.5, klima:.6 } },
+  { id:"supap", name:"Supap / hidrolik itici tıkırtısı", loc:"motor_ust", urg:2,
+    desc:"Motorun üstünden gelen, dikiş makinesine benzeyen hafif ve tiz “tık-tık-tık”. Soğukta belirgin, ısınınca azalabilir.",
+    tip:"Yağ seviyesi/viskozitesi kontrol edilmeli; supap ayarı veya hidrolik iticiler değerlendirilmeli.",
+    p:{ f:[1500,7000], feat:"centroid", tonal:.2, imp:.85, rhythm:[4,16] },
+    c:{ soguk:1.9, rolanti:1.6, hizlanma:1.0, fren:.4, tumsek:.4, direksiyon:.5, hiz:.7 } },
+  { id:"zincir", name:"Eksantrik zinciri / triger gerdirici sesi", loc:"motor_yan", urg:3,
+    desc:"Özellikle ilk çalıştırmada birkaç saniye süren metalik şıkırtı/zırıltı. Zincir esnemesi veya gerdirici arızası.",
+    tip:"İhmal edilirse zincir atlayıp motor hasarına yol açabilir. Servis, zincir esnemesini ölçmeli.",
+    p:{ f:[800,4500], feat:"centroid", tonal:.2, imp:.6, rhythm:[10,33] },
+    c:{ soguk:2.6, rolanti:1.3, hizlanma:1.0, fren:.4, tumsek:.4, direksiyon:.5, hiz:.6 } },
+  { id:"egzoz", name:"Egzoz kaçağı / manifold sızıntısı", loc:"egzoz", urg:2,
+    desc:"Motor ateşlemesiyle aynı ritimde “puf-puf” ya da tıkırtılı ses; gaz verince yükselir, soğukta daha belirgindir.",
+    tip:"Egzoz gazı kabine girebilir (karbonmonoksit riski). Conta, manifold ve bağlantılar kontrol edilmeli.",
+    p:{ f:[150,1500], feat:"centroid", tonal:.1, imp:.6, rhythm:[14,33] },
+    c:{ soguk:1.6, hizlanma:1.8, rolanti:1.2, fren:.4, direksiyon:.4, tumsek:.7 } },
+  { id:"aks", name:"Aks kafası (homokinetik mafsal) tıkırtısı", loc:"aks", urg:3,
+    desc:"Direksiyon tam kırıkken hareket edince gelen ritmik “tık-tık-tık”. Körük yırtılınca mafsal aşınır.",
+    tip:"Aks körükleri ve mafsallar kontrol edilmeli. Aks koparsa araç hareket edemez.",
+    p:{ f:[700,4000], feat:"centroid", tonal:.15, imp:.85, rhythm:[1.5,5.5] },
+    c:{ direksiyon:3.2, hizlanma:1.4, hiz:.9, rolanti:.2, soguk:.6, fren:.6, klima:.4 } },
+  { id:"suspansiyon", name:"Süspansiyon takırtısı (rot, salıncak, amortisör)", loc:"suspansiyon", urg:2,
+    desc:"Tümsek ve bozuk yolda gelen düzensiz, tok “tak / gırt” sesleri.",
+    tip:"Rotil, rot başı, salıncak burçları, viraj demiri lastikleri ve amortisör takozları kontrol ettirilmeli.",
+    p:{ f:[60,700], feat:"centroid", tonal:.1, imp:.9, rhythm:null },
+    c:{ tumsek:3.4, direksiyon:1.3, fren:1.0, rolanti:.15, soguk:.6, klima:.4, hizlanma:.6 } },
+  { id:"pompa", name:"Hidrolik direksiyon pompası uğultusu", loc:"pompa", urg:2,
+    desc:"Direksiyonu çevirdikçe artan orta-tiz bir inleme/uğultu. Genellikle hidrolik yağ azlığı ya da pompa aşınması.",
+    tip:"Hidrolik yağ seviyesi ve kaçak kontrol edilmeli. (Elektrikli direksiyonlu araçlarda bu pompa yoktur.)",
+    p:{ f:[300,1300], feat:"peak", tonal:.7, imp:.1, rhythm:null },
+    c:{ direksiyon:2.8, rolanti:1.2, soguk:1.3, fren:.5, tumsek:.5, hiz:.6 } },
+  { id:"alternator", name:"Alternatör rulmanı / vınlama", loc:"alternator", urg:2,
+    desc:"Devirle birlikte inceliği artan, ince ve sürekli bir vınlama. Elektrik yükü artınca (far, klima) değişebilir.",
+    tip:"Şarj voltajı ölçtürülmeli (rölantide ~13,8–14,6 V). Rulman sesi genelde ilerler.",
+    p:{ f:[800,4500], feat:"peak", tonal:.8, imp:.1, rhythm:null },
+    c:{ hizlanma:1.5, rolanti:1.2, klima:1.3, fren:.4, tumsek:.4, direksiyon:.7 } },
+  { id:"turbo", name:"Turbo ıslığı / turbo mili boşluğu", loc:"turbo", urg:3,
+    desc:"Gaz verince yükselen “siren” gibi tiz ıslık. Turbo mil boşluğu veya hava hattı kaçağı olabilir.",
+    tip:"Turbo hortumları ve intercooler kaçağı kontrol edilmeli; turbo milinde boşluk varsa yağ yakma başlayabilir.",
+    p:{ f:[3000,11000], feat:"peak", tonal:.75, imp:.1, rhythm:null },
+    c:{ hizlanma:2.8, hiz:1.2, rolanti:.5, fren:.3, soguk:.7, direksiyon:.4, tumsek:.4 } },
+  { id:"sanziman", name:"Şanzıman / diferansiyel uğultusu", loc:"sanziman", urg:3,
+    desc:"Hızla birlikte inceliği değişen dişli uğultusu; vites değişiminde veya belirli viteslerde artar.",
+    tip:"Şanzıman yağı seviyesi/durumu kontrol edilmeli. Otomatik şanzımanlarda silkeleme de varsa yazılım/kavrama kontrolü.",
+    p:{ f:[250,1500], feat:"peak", tonal:.65, imp:.15, rhythm:null },
+    c:{ hiz:2.0, vites:2.4, hizlanma:1.4, rolanti:.4, fren:.6, tumsek:.5, soguk:.8 } },
+  { id:"tekleme", name:"Ateşleme teklemesi (buji / bobin)", loc:"motor", urg:2,
+    desc:"Motor sesi düzensiz; rölantide sarsıntı ve “pıt-pıt” şeklinde atlayan ritim. Gaz verince takılma.",
+    tip:"Bujiler, ateşleme bobinleri ve enjektörler kontrol edilmeli; arıza lambası yanıyorsa kod okutulmalı.",
+    p:{ f:[40,450], feat:"centroid", tonal:.4, imp:.5, rhythm:[3,33] },
+    c:{ rolanti:1.9, hizlanma:1.5, soguk:1.3, fren:.4, tumsek:.4, direksiyon:.4, hiz:.8 } },
+  { id:"klima", name:"Klima kompresörü / kavrama sesi", loc:"klima", urg:1,
+    desc:"Klima açılınca başlayan uğultu, tıkırtı veya şıkırtı. Kompresör kavraması ya da rulmanı.",
+    tip:"Klimayı kapatınca ses kesiliyorsa kompresör ve kavrama kontrol edilmeli.",
+    p:{ f:[400,2500], feat:"peak", tonal:.45, imp:.35, rhythm:[8,20] },
+    c:{ klima:4.0, rolanti:1.1, fren:.4, tumsek:.4, direksiyon:.5, hiz:.5, vites:.5 } }
+];
+const FAULT_BY_ID = Object.fromEntries(FAULTS.map(f => [f.id, f]));
+const ICE_ONLY = ["kayis","biyel","supap","zincir","egzoz","turbo","tekleme","alternator","pompa"];
+const URG = { 1:"Düşük aciliyet", 2:"Orta aciliyet", 3:"Yüksek aciliyet", 4:"Acil – aracı kullanmayın" };
+
+// Model-specific, widely reported issues (prior boost). Year/fuel filters narrow them down.
+const VAG = { "Volkswagen":["Polo","Golf","Jetta","Passat","Tiguan","Caddy"], "Audi":["A3","A4"],
+              "Skoda":["Fabia","Octavia","Superb"], "Seat":["Ibiza","Leon"] };
+const KNOWN = [
+  { match: VAG, years:[2008,2014], fuel:["benzin","lpg"], fault:"zincir", x:1.9,
+    note:"1.2 / 1.4 TSI (EA111) motorlarda zincir esnemesi ve gerdirici sorunları sık bildirilmiştir; özellikle soğuk çalıştırmada şıkırtı." },
+  { match: { ...VAG, "Volkswagen":[...VAG.Volkswagen,"T-Roc"], "Skoda":[...VAG.Skoda,"Scala","Kamiq","Karoq"], "Seat":[...VAG.Seat,"Arona","Ateca"] },
+    years:[2009,2021], fault:"sanziman", x:1.5,
+    note:"7 ileri kuru kavramalı DSG (DQ200) donanımlı araçlarda kalkış/vites geçişinde silkeleme ve takırtı şikâyetleri yaygındır." },
+  { match: { "Ford":["Focus","Fiesta"] }, years:[2011,2018], fuel:["benzin","lpg"], fault:"sanziman", x:1.6,
+    note:"PowerShift (DPS6) otomatik şanzımanlarda kavrama titremesi ve vites geçiş sorunları geniş çapta bildirilmiştir." },
+  { match: { "Peugeot":["208","2008","301","308","3008","508"], "Citroën":["C3","C4","C-Elysée","C5 Aircross","Berlingo"],
+             "Opel":["Corsa","Mokka","Crossland","Astra"] },
+    years:[2014,2025], fuel:["benzin","lpg","hibrit"], fault:"zincir", x:1.6,
+    note:"1.2 PureTech motorlarda yağ içinde çalışan triger kayışının erken bozulması (ve parçaların yağ hattını tıkaması) sık bildirilen bir sorundur." },
+  { match: { "Peugeot":["308","3008","508"], "Citroën":["C4"] }, years:[2007,2015], fuel:["benzin","lpg"], fault:"zincir", x:1.4,
+    note:"1.6 THP motorlarda zincir gerdirici/esneme kaynaklı soğuk çalıştırma şıkırtısı bilinen bir sorundur." },
+  { match: { "BMW":["1 Serisi","3 Serisi","5 Serisi","X1","X3"] }, years:[2007,2016], fault:"zincir", x:1.8,
+    note:"N47 (dizel) ve N20 (benzinli) motorlarda zincir kılavuzu/zincir esnemesi kaynaklı ses ve hasar vakaları bilinmektedir." },
+  { match: { "Mercedes-Benz":["C Serisi","E Serisi"] }, years:[2002,2012], fuel:["benzin","lpg"], fault:"zincir", x:1.6,
+    note:"M271 (1.8 kompresör/turbo) motorlarda zincir esnemesi ve dişli aşınması sık bildirilmiştir." },
+  { match: { "Renault":["Clio","Symbol","Megane","Fluence","Captur","Kadjar"], "Dacia":["Sandero","Logan","Duster"],
+             "Nissan":["Micra","Juke","Qashqai"] },
+    years:[2005,2018], fuel:["dizel"], fault:"biyel", x:1.4,
+    note:"1.5 dCi (K9K) motorlarda, özellikle uzun yağ değişim aralığıyla kullanılmış araçlarda biyel yatağı aşınması bildirilmektedir." },
+  { match: { "Renault":["Clio","Megane","Captur","Kadjar"], "Dacia":["Duster"] }, years:[2012,2017], fuel:["benzin","lpg"], fault:"zincir", x:1.3,
+    note:"1.2 TCe (H5Ft) motorlarda yağ eksiltme ve buna bağlı zincir/gerdirici sorunları bildirilmiştir." },
+  { match: { "Hyundai":["Tucson","Elantra"], "Kia":["Sportage"] }, years:[2011,2019], fuel:["benzin","lpg"], fault:"biyel", x:1.3,
+    note:"Aracınızda 2.0 / 2.4 GDI (Theta II) motor varsa, bu motor ailesinde biyel yatağı arızası nedeniyle geri çağırmalar yapılmıştır." }
+];
+
+// ---------------------------------------------------------------- UI setup
+const $ = id => document.getElementById(id);
+const brandSel = $("brand"), modelSel = $("model");
+brandSel.innerHTML = `<option value="">Seçin…</option>` + Object.keys(BRANDS).map(b => `<option>${b}</option>`).join("");
+function fillModels() {
+  const ms = BRANDS[brandSel.value] || [];
+  modelSel.innerHTML = ms.length ? ms.map(m => `<option>${m}</option>`).join("") : `<option value="">Önce marka seçin</option>`;
+  if (EV_BRANDS.includes(brandSel.value)) $("fuel").value = "elektrik";
+}
+brandSel.addEventListener("change", fillModels); fillModels();
+
+const condBox = $("conds");
+condBox.innerHTML = CONDITIONS.map(([id, l]) => `<button type="button" class="chip" aria-pressed="false" data-c="${id}">${l}</button>`).join("");
+condBox.addEventListener("click", e => {
+  const b = e.target.closest(".chip"); if (!b) return;
+  b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") === "true" ? "false" : "true");
+});
+const selectedConds = () => [...condBox.querySelectorAll('.chip[aria-pressed="true"]')].map(b => b.dataset.c);
+
+$("demo").innerHTML = `<option value="">🎧 Örnek arıza sesiyle dene…</option>` +
+  FAULTS.map(f => `<option value="${f.id}">${f.name}</option>`).join("");
+
+// markers
+$("markers").innerHTML = Object.entries(LOCS).map(([k, L]) =>
+  L.pts.map(([x, y]) => `<circle class="mk-ring" data-l="${k}" cx="${x}" cy="${y}" r="9"/><circle class="mk" data-l="${k}" cx="${x}" cy="${y}" r="6"/>`).join("")
+).join("");
+function showLoc(key) {
+  document.querySelectorAll("#markers circle").forEach(c => c.classList.toggle("on", c.dataset.l === key));
+  $("exh").classList.toggle("on", !!LOCS[key].exh);
+  $("locLabel").textContent = "📍 " + LOCS[key].label;
+}
+
+// ---------------------------------------------------------------- audio plumbing
+let AC = null;
+const ac = () => (AC ||= new (window.AudioContext || window.webkitAudioContext)());
+let current = null;          // { x: Float32Array, sr, url, label }
+let playing = null;
+
+function setStatus(t, err) { const s = $("status"); s.textContent = t || ""; s.classList.toggle("err", !!err); }
+function stopAll() { if (playing) { try { playing.stop(); } catch {} playing = null; } $("player").pause(); }
+function playSamples(x, sr) {
+  stopAll();
+  const ctx = ac(); ctx.resume();
+  const buf = ctx.createBuffer(1, x.length, sr); buf.copyToChannel(x, 0);
+  const src = ctx.createBufferSource(); src.buffer = buf; src.connect(ctx.destination); src.start();
+  playing = src;
+}
+function encodeWAV(x, sr) {
+  const n = x.length, b = new ArrayBuffer(44 + n * 2), v = new DataView(b);
+  const w = (o, s) => [...s].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+  w(0, "RIFF"); v.setUint32(4, 36 + n * 2, true); w(8, "WAVE"); w(12, "fmt ");
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  w(36, "data"); v.setUint32(40, n * 2, true);
+  for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, Math.max(-1, Math.min(1, x[i])) * 32767, true);
+  return new Blob([b], { type: "audio/wav" });
+}
+function setCurrent(x, sr, url, label) {
+  if (current?.url && current.url !== url) URL.revokeObjectURL(current.url);
+  current = { x, sr, url, label };
+  $("player").src = url; $("playerBox").classList.remove("hidden");
+  $("srcLabel").textContent = label; $("analyzeBtn").disabled = false;
+}
+async function decodeBlob(blob, label) {
+  setStatus("Ses çözümleniyor…");
+  try {
+    const arr = await blob.arrayBuffer();
+    const buf = await new Promise((res, rej) => { const p = ac().decodeAudioData(arr, res, rej); if (p?.then) p.then(res, rej); });
+    const n = buf.length, x = new Float32Array(n);
+    for (let c = 0; c < buf.numberOfChannels; c++) { const d = buf.getChannelData(c); for (let i = 0; i < n; i++) x[i] += d[i] / buf.numberOfChannels; }
+    setCurrent(x, buf.sampleRate, URL.createObjectURL(blob), label + ` · ${(n / buf.sampleRate).toFixed(1)} sn`);
+    setStatus("Hazır. “Sesi analiz et”e dokunun.");
+  } catch (e) { setStatus("Bu ses dosyası çözümlenemedi. Farklı bir dosya veya kayıt deneyin.", true); }
+}
+
+// ---------------------------------------------------------------- recording
+let rec = null, recStream = null, recTimer = null, vizRAF = null;
+const MAX_REC = 15;
+$("recBtn").addEventListener("click", async () => {
+  if (rec) { rec.stop(); return; }
+  stopAll();
+  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+    setStatus("Bu tarayıcı kayıt desteklemiyor. Dosya yüklemeyi deneyin.", true); return;
+  }
+  try {
+    recStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+  } catch (e) { setStatus("Mikrofon izni verilmedi. Tarayıcı ayarlarından mikrofona izin verin.", true); return; }
+  const ctx = ac(); ctx.resume();
+  const an = ctx.createAnalyser(); an.fftSize = 2048;
+  const srcNode = ctx.createMediaStreamSource(recStream); srcNode.connect(an);
+  drawViz(an);
+  const chunks = [];
+  rec = new MediaRecorder(recStream);
+  rec.ondataavailable = e => e.data.size && chunks.push(e.data);
+  rec.onstop = () => {
+    clearInterval(recTimer); cancelAnimationFrame(vizRAF); srcNode.disconnect();
+    recStream.getTracks().forEach(t => t.stop()); rec = null;
+    $("recBtn").classList.remove("on"); $("recText").textContent = "Yeniden kaydetmek için dokunun";
+    decodeBlob(new Blob(chunks, { type: chunks[0]?.type || "audio/webm" }), "🎙️ Sizin kaydınız");
+  };
+  rec.start();
+  $("recBtn").classList.add("on");
+  const t0 = Date.now();
+  const tick = () => { const s = (Date.now() - t0) / 1000; $("recText").textContent = `Kaydediliyor… ${s.toFixed(0)} / ${MAX_REC} sn (durdurmak için dokunun)`; if (s >= MAX_REC) rec?.stop(); };
+  tick(); recTimer = setInterval(tick, 250);
+  setStatus("");
+});
+function drawViz(an) {
+  const cv = $("viz"), g = cv.getContext("2d"), data = new Uint8Array(an.frequencyBinCount);
+  const color = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#E4572E";
+  const loop = () => {
+    an.getByteFrequencyData(data);
+    g.clearRect(0, 0, cv.width, cv.height); g.fillStyle = color;
+    const bars = 120;
+    for (let i = 0; i < bars; i++) {
+      // log-spaced bins 40 Hz – 12 kHz
+      const f = 40 * Math.pow(300, i / bars), k = Math.min(data.length - 1, Math.round(f / (an.context.sampleRate / an.fftSize)));
+      const h = (data[k] / 255) * cv.height;
+      g.fillRect(i * (cv.width / bars), cv.height - h, cv.width / bars - 2, h);
+    }
+    vizRAF = requestAnimationFrame(loop);
+  };
+  loop();
+}
+$("file").addEventListener("change", e => { const f = e.target.files[0]; if (f) decodeBlob(f, "📁 " + f.name); e.target.value = ""; });
+$("demo").addEventListener("change", e => {
+  const id = e.target.value; if (!id) return;
+  const sr = 44100, x = SYNTH[id](sr, 6);
+  setCurrent(x, sr, URL.createObjectURL(encodeWAV(x, sr)), "🎧 Örnek ses: " + FAULT_BY_ID[id].name + " (sentetik)");
+  setStatus("Örnek ses yüklendi. Belirtileri seçip analiz edebilirsiniz.");
+  e.target.value = "";
+});
+
+// ---------------------------------------------------------------- synthetic reference sounds
+function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+function biquadBP(f, q, sr) {
+  const w = 2 * Math.PI * f / sr, al = Math.sin(w) / (2 * q), a0 = 1 + al;
+  const b0 = al / a0, b2 = -al / a0, a1 = -2 * Math.cos(w) / a0, a2 = (1 - al) / a0;
+  let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+  return x => { const y = b0 * x + b2 * x2 - a1 * y1 - a2 * y2; x2 = x1; x1 = x; y2 = y1; y1 = y; return y; };
+}
+function lowpass(f, sr) { const a = Math.exp(-2 * Math.PI * f / sr); let y = 0; return x => (y = (1 - a) * x + a * y); }
+function engineBed(x, sr, lvl, rpm = 780, seed = 7) {
+  const r = rng(seed), fire = rpm / 60 * 2, ph = Array.from({ length: 12 }, () => r() * 6.28), lp = lowpass(300, sr);
+  for (let i = 0; i < x.length; i++) {
+    const t = i / sr; let s = 0;
+    for (let k = 1; k <= 12; k++) s += Math.sin(2 * Math.PI * fire * k / 2 * t + ph[k - 1]) / k;
+    x[i] += lvl * (0.6 * s + 2.5 * lp(r() * 2 - 1));
+  }
+}
+function roadNoise(x, sr, lvl, seed = 3) { const r = rng(seed), lp = lowpass(500, sr); for (let i = 0; i < x.length; i++) x[i] += lvl * 3 * lp(r() * 2 - 1); }
+function impulses(x, sr, times, fn) {
+  for (const t0 of times) { const i0 = Math.floor(t0 * sr); for (let j = 0; j < sr * 0.12 && i0 + j < x.length; j++) x[i0 + j] += fn(j / sr); }
+}
+function periodic(rate, dur, jitter = 0, r = Math.random, skip = null) {
+  const out = []; let k = 0;
+  for (let t = 0.05; t < dur; t += 1 / rate, k++) if (!skip || !skip(k)) out.push(t + (r() - .5) * jitter / rate);
+  return out;
+}
+function normalize(x) { let m = 0; for (const v of x) m = Math.max(m, Math.abs(v)); const g = m ? 0.85 / m : 1; for (let i = 0; i < x.length; i++) x[i] *= g; return x; }
+function tone(x, sr, f, a, opts = {}) {
+  let ph = 0;
+  for (let i = 0; i < x.length; i++) {
+    const t = i / sr, fi = f * (1 + (opts.vib || 0) * Math.sin(2 * Math.PI * (opts.vibHz || 5) * t)) * (1 + (opts.sweep || 0) * t / (x.length / sr));
+    ph += 2 * Math.PI * fi / sr;
+    const am = opts.am ? 1 - opts.am + opts.am * (0.5 + 0.5 * Math.sin(2 * Math.PI * opts.amHz * t)) : 1;
+    x[i] += a * am * (Math.sin(ph) + (opts.h2 || 0) * Math.sin(2 * ph));
+  }
+}
+const SYNTH = {
+  kayis(sr, d) { const x = new Float32Array(sr * d); engineBed(x, sr, .06); tone(x, sr, 2600, .5, { vib: .03, vibHz: 7, h2: .3, am: .3, amHz: 1.3 }); return normalize(x); },
+  fren_balata(sr, d) { const x = new Float32Array(sr * d); roadNoise(x, sr, .05); tone(x, sr, 6200, .45, { vib: .004, vibHz: 4, am: .5, amHz: .6 }); return normalize(x); },
+  fren_disk(sr, d) {
+    const x = new Float32Array(sr * d), r = rng(11), bp = biquadBP(1300, .7, sr); roadNoise(x, sr, .05);
+    for (let i = 0; i < x.length; i++) { const t = i / sr, m = Math.pow(0.5 + 0.5 * Math.sin(2 * Math.PI * 6 * t), 3); x[i] += 1.4 * (0.25 + m) * bp(r() * 2 - 1); }
+    return normalize(x);
+  },
+  rulman(sr, d) { const x = new Float32Array(sr * d); roadNoise(x, sr, .06); tone(x, sr, 190, .5, { h2: .4, am: .7, amHz: 1.6, sweep: .1 }); return normalize(x); },
+  biyel(sr, d) {
+    const x = new Float32Array(sr * d), r = rng(5); engineBed(x, sr, .05);
+    impulses(x, sr, periodic(13, d, .03, r), t => Math.exp(-t / .014) * (Math.sin(2 * Math.PI * 320 * t) + .5 * Math.sin(2 * Math.PI * 640 * t) + .3 * (r() - .5)));
+    return normalize(x);
+  },
+  supap(sr, d) {
+    const x = new Float32Array(sr * d), r = rng(9); engineBed(x, sr, .05);
+    impulses(x, sr, periodic(6.5, d, .02, r), t => .8 * Math.exp(-t / .0035) * (Math.sin(2 * Math.PI * 3600 * t) + .6 * (r() - .5)));
+    return normalize(x);
+  },
+  zincir(sr, d) {
+    const x = new Float32Array(sr * d), r = rng(13), bp = biquadBP(2200, 1.2, sr); engineBed(x, sr, .05);
+    impulses(x, sr, periodic(21, d, .25, r), t => (0.5 + r()) * Math.exp(-t / .006) * (bp(r() * 2 - 1) * 3 + .5 * Math.sin(2 * Math.PI * 1800 * t)));
+    return normalize(x);
+  },
+  egzoz(sr, d) {
+    const x = new Float32Array(sr * d), r = rng(17), bp = biquadBP(650, 1, sr); engineBed(x, sr, .04);
+    impulses(x, sr, periodic(26, d, .05, r), t => Math.exp(-t / .011) * bp(r() * 2 - 1) * 4);
+    return normalize(x);
+  },
+  aks(sr, d) {
+    const x = new Float32Array(sr * d), r = rng(19); roadNoise(x, sr, .05);
+    impulses(x, sr, periodic(4, d, .04, r), t => Math.exp(-t / .008) * (Math.sin(2 * Math.PI * 1900 * t) + .7 * (r() - .5)));
+    return normalize(x);
+  },
+  suspansiyon(sr, d) {
+    const x = new Float32Array(sr * d), r = rng(23), times = []; roadNoise(x, sr, .06);
+    for (let t = .1; t < d; t += .15 + r() * .9) times.push(t);
+    impulses(x, sr, times, t => Math.exp(-t / .04) * (Math.sin(2 * Math.PI * 130 * t) + .6 * Math.sin(2 * Math.PI * 310 * t) + .3 * (r() - .5)));
+    return normalize(x);
+  },
+  pompa(sr, d) { const x = new Float32Array(sr * d); engineBed(x, sr, .06); tone(x, sr, 680, .5, { h2: .35, vib: .02, vibHz: .7, am: .25, amHz: .5 }); return normalize(x); },
+  alternator(sr, d) { const x = new Float32Array(sr * d); engineBed(x, sr, .06); tone(x, sr, 2100, .4, { h2: .2, vib: .003, vibHz: 3 }); return normalize(x); },
+  turbo(sr, d) {
+    const x = new Float32Array(sr * d), r = rng(29), bp = biquadBP(6000, 1.5, sr); engineBed(x, sr, .08, 1800);
+    tone(x, sr, 4200, .45, { sweep: .6 }); for (let i = 0; i < x.length; i++) x[i] += .15 * bp(r() * 2 - 1);
+    return normalize(x);
+  },
+  sanziman(sr, d) { const x = new Float32Array(sr * d); roadNoise(x, sr, .06); tone(x, sr, 720, .45, { h2: .25, sweep: .25, vib: .002, vibHz: 9 }); return normalize(x); },
+  tekleme(sr, d) {
+    const x = new Float32Array(sr * d), r = rng(31), lp = lowpass(400, sr);
+    impulses(x, sr, periodic(26, d, .05, r, k => k % 4 === 2 || r() < .12), t => Math.exp(-t / .018) * (Math.sin(2 * Math.PI * 85 * t) + .6 * lp(r() - .5)));
+    return normalize(x);
+  },
+  klima(sr, d) {
+    const x = new Float32Array(sr * d), r = rng(37), bp = biquadBP(1500, 2, sr); engineBed(x, sr, .06);
+    tone(x, sr, 950, .25, { am: .4, amHz: 1 });
+    impulses(x, sr, periodic(13, d, .1, r), t => .6 * Math.exp(-t / .007) * bp(r() * 2 - 1) * 3);
+    return normalize(x);
+  }
+};
+
+// ---------------------------------------------------------------- feature extraction
+function fft(re, im) {
+  const n = re.length;
+  for (let i = 1, j = 0; i < n; i++) { let b = n >> 1; for (; j & b; b >>= 1) j ^= b; j ^= b; if (i < j) { [re[i], re[j]] = [re[j], re[i]]; [im[i], im[j]] = [im[j], im[i]]; } }
+  for (let len = 2; len <= n; len <<= 1) {
+    const a = -2 * Math.PI / len, wr = Math.cos(a), wi = Math.sin(a);
+    for (let i = 0; i < n; i += len) {
+      let cr = 1, ci = 0;
+      for (let j = 0; j < len / 2; j++) {
+        const k = i + j, l = k + len / 2, tr = re[l] * cr - im[l] * ci, ti = re[l] * ci + im[l] * cr;
+        re[l] = re[k] - tr; im[l] = im[k] - ti; re[k] += tr; im[k] += ti;
+        const t = cr * wr - ci * wi; ci = cr * wi + ci * wr; cr = t;
+      }
+    }
+  }
+}
+const clamp01 = v => Math.max(0, Math.min(1, v));
+function extract(xIn, sr) {
+  const n = Math.min(xIn.length, Math.floor(sr * 12));
+  let mean = 0; for (let i = 0; i < n; i++) mean += xIn[i]; mean /= n || 1;
+  const x = new Float32Array(n); for (let i = 0; i < n; i++) x[i] = xIn[i] - mean;
+
+  // spectra: per-frame tonal peak (handles sweeping tones) + average power spectrum
+  const N = 4096, hop = 2048, half = N / 2, avg = new Float64Array(half), re = new Float64Array(N), im = new Float64Array(N);
+  const win = Float64Array.from({ length: N }, (_, i) => 0.5 - 0.5 * Math.cos(2 * Math.PI * i / (N - 1)));
+  const binHz = sr / N, kLo = Math.ceil(60 / binHz), kHi = Math.min(Math.floor(12000 / binHz), half - 32);
+  const mag = new Float64Array(half), cum = new Float64Array(half + 1), peaks = [];
+  let frames = 0;
+  for (let s = 0; s === 0 || s + N <= n; s += hop) {
+    for (let i = 0; i < N; i++) { re[i] = (x[s + i] || 0) * win[i]; im[i] = 0; }
+    fft(re, im);
+    let mx = 1e-12;
+    for (let k = 0; k < half; k++) { mag[k] = Math.hypot(re[k], im[k]); avg[k] += mag[k] * mag[k]; cum[k + 1] = cum[k] + mag[k]; if (k >= kLo && k <= kHi) mx = Math.max(mx, mag[k]); }
+    let best = null;
+    for (let k = kLo; k <= kHi; k++) {
+      if (mag[k] < mag[k - 1] || mag[k] < mag[k + 1]) continue;
+      const a = Math.max(1, k - 30), b = Math.min(half - 1, k + 30);
+      const loc = (cum[b + 1] - cum[a] - (cum[k + 3] - cum[k - 2])) / (b - a + 1 - 5);
+      const prom = mag[k] / (loc + 1e-12), sc = Math.log(prom) + 0.5 * Math.log(mag[k] / mx);
+      if (!best || sc > best.sc) best = { sc, k, prom };
+    }
+    if (best) peaks.push(best);
+    frames++;
+    if (s + hop + N > n) break;
+  }
+  const proms = peaks.map(p => p.prom).sort((a, b) => a - b), medProm = proms[proms.length >> 1] || 1;
+  const tonalFreqs = peaks.filter(p => p.prom >= medProm).map(p => p.k * binHz).sort((a, b) => a - b);
+  const peakHz = tonalFreqs[tonalFreqs.length >> 1] || 0;
+  let num = 0, den = 0, eLow = 0, eMid = 0, eHigh = 0;
+  for (let k = kLo; k <= kHi; k++) {
+    const f = k * binHz, p = avg[k]; num += f * p; den += p;
+    if (f < 250) eLow += p; else if (f < 2000) eMid += p; else eHigh += p;
+  }
+  const eTot = eLow + eMid + eHigh || 1;
+
+  // 10 ms RMS envelope → impulsiveness & rhythm
+  const w = Math.round(sr * 0.01), envRate = sr / w, env = [];
+  for (let s = 0; s + w <= n; s += w) { let e = 0; for (let i = s; i < s + w; i++) e += x[i] * x[i]; env.push(Math.sqrt(e / w)); }
+  const sorted = [...env].sort((a, b) => a - b), pct = q => sorted[Math.min(sorted.length - 1, Math.floor(q * sorted.length))] || 0;
+  const imp = clamp01((pct(.95) / (pct(.5) + 1e-9) - 1.3) / 3);
+  const envS = env.map((v, i) => 0.25 * (env[i - 1] ?? v) + 0.5 * v + 0.25 * (env[i + 1] ?? v));
+  const em = envS.reduce((a, b) => a + b, 0) / (env.length || 1), e0 = envS.map(v => v - em);
+  let r0 = 0; for (const v of e0) r0 += v * v;
+  const lags = [], minLag = 3, maxLag = Math.min(Math.floor(envRate * 1.25), Math.floor(env.length / 2));
+  let rmax = 0;
+  for (let L = minLag; L <= maxLag; L++) {
+    let r = 0; for (let i = 0; i + L < e0.length; i++) r += e0[i] * e0[i + L];
+    r = r0 ? r / r0 * (e0.length / (e0.length - L)) : 0; lags[L] = r; rmax = Math.max(rmax, r);
+  }
+  let lagSel = 0;
+  for (let L = minLag + 1; L < maxLag; L++) if (lags[L] >= lags[L - 1] && lags[L] >= lags[L + 1] && lags[L] >= 0.7 * rmax) { lagSel = L; break; }
+  const periodicity = lagSel ? clamp01(rmax) : 0;
+  let rms = 0; for (let i = 0; i < n; i++) rms += x[i] * x[i]; rms = Math.sqrt(rms / (n || 1));
+
+  return {
+    dur: n / sr, rms, peakHz, prom: medProm,
+    tonal: clamp01((Math.log10(medProm) - 0.7) / 0.9),
+    centroid: den ? num / den : 0, imp, periodicity, rate: lagSel ? envRate / lagSel : 0,
+    bands: [eLow / eTot, eMid / eTot, eHigh / eTot]
+  };
+}
+
+// ---------------------------------------------------------------- scoring
+function rangeMatch(v, [lo, hi], width = 0.6) {
+  if (v <= 0) return 0;
+  if (v >= lo && v <= hi) return 1;
+  const d = v < lo ? Math.log2(lo / v) : Math.log2(v / hi);
+  return Math.exp(-d * d / (2 * width * width));
+}
+function audioScore(F, p) {
+  const fm = rangeMatch(p.feat === "peak" ? F.peakHz : F.centroid, p.f);
+  const tm = 1 - Math.abs(F.tonal - p.tonal), im = 1 - Math.abs(F.imp - p.imp);
+  const rm = p.rhythm ? 0.25 + 0.75 * F.periodicity * rangeMatch(F.rate, p.rhythm, 0.5) : 1 - 0.7 * F.periodicity * F.imp;
+  return 0.35 * fm + 0.2 * tm + 0.25 * im + 0.2 * rm;
+}
+function vehiclePrior(fault, v) {
+  let x = 1; const notes = [];
+  if (v.fuel === "elektrik" && ICE_ONLY.includes(fault.id)) x *= 0.03;
+  if (v.fuel === "dizel" && fault.id === "turbo") x *= 1.3;
+  if (v.fuel === "dizel" && fault.id === "tekleme") x *= 0.7;
+  if (v.fuel === "lpg" && fault.id === "supap") { x *= 1.4; notes.push("LPG kullanımında supap ve supap yuvası aşınması daha sık görülür; supap ayarı periyodik yapılmalıdır."); }
+  if (v.year && v.year >= 2015 && fault.id === "pompa") x *= 0.5;     // most newer cars use electric steering
+  if (v.km >= 150000 && ["rulman","suspansiyon","biyel","zincir","sanziman","aks"].includes(fault.id)) x *= 1.25;
+  if (v.km >= 250000 && ["biyel","zincir","turbo"].includes(fault.id)) x *= 1.2;
+  for (const k of KNOWN) {
+    if (k.fault !== fault.id || !(k.match[v.brand] || []).includes(v.model)) continue;
+    if (k.fuel && !k.fuel.includes(v.fuel)) continue;
+    if (v.year && (v.year < k.years[0] || v.year > k.years[1])) continue;
+    x *= v.year ? k.x : 1 + (k.x - 1) / 2;
+    notes.push(`${v.brand} ${v.model}: ${k.note}` + (v.year ? "" : " (Model yılı girilirse bu bilgi daha isabetli kullanılır.)"));
+  }
+  return { x, notes };
+}
+function diagnose(F, conds, v) {
+  const raw = FAULTS.map(f => {
+    const a = audioScore(F, f.p);
+    let c = 1; for (const k of conds) c *= f.c[k] ?? 0.8;
+    const pr = vehiclePrior(f, v);
+    return { f, a, w: Math.exp(7 * a) * c * pr.x, notes: pr.notes };
+  });
+  const sum = raw.reduce((s, r) => s + r.w, 0);
+  raw.forEach(r => r.prob = r.w / sum);
+  return raw.sort((a, b) => b.prob - a.prob);
+}
+
+// ---------------------------------------------------------------- results UI
+function vehicle() {
+  return { brand: brandSel.value, model: modelSel.value, fuel: $("fuel").value,
+           year: parseInt($("year").value) || 0, km: parseInt($("km").value) || 0 };
+}
+$("analyzeBtn").addEventListener("click", () => {
+  if (!current) return;
+  const F = extract(current.x, current.sr), conds = selectedConds(), v = vehicle();
+  if (F.rms < 0.002) setStatus("Kayıt çok sessiz görünüyor; sonuç güvenilir olmayabilir. Telefonu sese daha yakın tutun.", true);
+  else setStatus("");
+  const res = diagnose(F, conds, v);
+  renderResults(res, F, conds, v);
+});
+function renderResults(res, F, conds, v) {
+  let pts = 0;
+  if (F.dur >= 4) pts++; if (F.rms >= 0.005) pts++; if (conds.length) pts++; if (res[0].prob - res[1].prob >= 0.1) pts++;
+  const conf = pts <= 1 ? ["Güven: düşük", "var(--bad)"] : pts <= 3 ? ["Güven: orta", "var(--warn)"] : ["Güven: iyi", "var(--ok)"];
+  $("conf").textContent = conf[0]; $("conf").style.color = conf[1]; $("conf").style.borderColor = conf[1];
+  const vt = v.brand ? `${v.brand} ${v.model}${v.year ? " (" + v.year + ")" : ""} · ${$("fuel").selectedOptions[0].text}${v.km ? " · " + v.km.toLocaleString("tr-TR") + " km" : ""}` : "Araç bilgisi girilmedi";
+  $("carLine").textContent = vt + (conds.length ? " · Belirtiler: " + conds.map(c => CONDITIONS.find(x => x[0] === c)[1]).join(", ") : " · Belirti seçilmedi");
+
+  const top = res.slice(0, 6);
+  $("resList").innerHTML = top.map((r, i) => `
+    <div class="res${i === 0 ? " sel" : ""}" data-i="${i}">
+      <div class="res-top"><span class="res-name">${i + 1}. ${r.f.name}</span><span class="pct">%${Math.round(r.prob * 100)}</span></div>
+      <div class="bar"><i style="width:${(r.prob / top[0].prob * 100).toFixed(1)}%"></i></div>
+      <div class="meta"><span>📍 ${LOCS[r.f.loc].label}</span><span class="urg u${r.f.urg}">${URG[r.f.urg]}</span></div>
+      <div class="detail">
+        <p>${r.f.desc}</p>
+        <p><b>Ne yapmalı:</b> ${r.f.tip}</p>
+        ${r.notes.map(n => `<div class="note">ℹ️ ${n}</div>`).join("")}
+        <div class="row" style="margin-top:10px">
+          <button class="btn small" data-play="${r.f.id}">▶ Bu arızanın örnek sesini dinle</button>
+          <button class="btn small" data-mine="1">▶ Kendi kaydımı dinle</button>
+        </div>
+      </div>
+    </div>`).join("");
+  showLoc(top[0].f.loc);
+
+  $("tech").innerHTML = [
+    ["Baskın ton", `${Math.round(F.peakHz)} Hz`], ["Spektral merkez", `${Math.round(F.centroid)} Hz`],
+    ["Tonluluk (ıslık/uğultu)", `%${Math.round(F.tonal * 100)}`], ["Vuruntu / darbe", `%${Math.round(F.imp * 100)}`],
+    ["Ritim", F.rate ? `${F.rate.toFixed(1)} /sn (%${Math.round(F.periodicity * 100)} düzenli)` : "belirgin değil"],
+    ["Bas / orta / tiz", F.bands.map(b => "%" + Math.round(b * 100)).join(" / ")],
+    ["Süre", `${F.dur.toFixed(1)} sn`]
+  ].map(([a, b]) => `<div>${a}<b>${b}</b></div>`).join("");
+
+  $("resultCard").classList.remove("hidden");
+  $("resultCard").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+$("resList").addEventListener("click", e => {
+  const pl = e.target.closest("[data-play]");
+  if (pl) { const sr = 44100; playSamples(SYNTH[pl.dataset.play](sr, 5), sr); return; }
+  if (e.target.closest("[data-mine]")) { playMine(); return; }
+  const card = e.target.closest(".res"); if (!card) return;
+  document.querySelectorAll(".res").forEach(c => c.classList.toggle("sel", c === card));
+  const r = FAULTS.find(f => card.querySelector(".res-name").textContent.endsWith(f.name));
+  if (r) showLoc(r.loc);
+});
+function playMine() { if (!current) return; stopAll(); const p = $("player"); p.currentTime = 0; p.play(); }
+$("playMine").addEventListener("click", playMine);
+$("stopAll").addEventListener("click", stopAll);
+
+// exposed for automated checks
+window.__diag = { SYNTH, extract, diagnose, FAULTS };
+</script>
+</body>
+</html>
