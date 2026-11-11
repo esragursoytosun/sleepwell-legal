@@ -1,0 +1,13 @@
+{
+  "name": "arac-ses-analiz",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Araç sesinden olası arızayı, yerini ve olasılığını tahmin eden web uygulaması",
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "test": "node --test tests/*.test.js",
+    "test:e2e": "node scripts/e2e.mjs"
+  },
+  "engines": { "node": ">=20" }
+}
