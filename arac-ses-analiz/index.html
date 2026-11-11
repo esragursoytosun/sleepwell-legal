@@ -2,113 +2,178 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="description" content="Aracınızın sesini kaydedin; olası arızayı, yerini ve olasılığını öğrenin, servise bilgili gidin.">
-<meta name="theme-color" content="#D94A22">
+<meta name="theme-color" content="#EF4E23">
 <title>Araç Ses Teşhisi</title>
 <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
+<div class="bg-glow" aria-hidden="true"></div>
+
+<!-- Degradeler (halka ve gösterge) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" style="stop-color:var(--accent-2)"/><stop offset=".55" style="stop-color:var(--accent)"/><stop offset="1" style="stop-color:var(--accent-3)"/>
+    </linearGradient>
+    <linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" style="stop-color:var(--accent-2)"/><stop offset=".55" style="stop-color:var(--accent)"/><stop offset="1" style="stop-color:var(--accent-3)"/>
+    </linearGradient>
+  </defs>
+</svg>
+
 <div class="wrap">
   <header class="app-header">
-    <h1>Araç Ses Teşhisi</h1>
-    <p>Sesi kaydedin, olası sorunu ve yerini öğrenin, servise bilgili gidin.</p>
-    <ol class="stepper" id="stepper" aria-label="Adımlar">
-      <li data-step="0"><span>1</span>Araç</li>
-      <li data-step="1"><span>2</span>Belirti</li>
-      <li data-step="2"><span>3</span>Kayıt</li>
-      <li data-step="3"><span>4</span>Sonuç</li>
-    </ol>
+    <div class="brand">
+      <span class="logo" data-icon="wave"></span>
+      <div>
+        <div class="brand-name">Araç Ses Teşhisi</div>
+        <div class="brand-sub">Servise bilgili gidin</div>
+      </div>
+      <span class="beta">Beta</span>
+    </div>
+    <nav class="progress" aria-label="Adımlar">
+      <div class="track"><i id="trackFill"></i></div>
+      <ol class="stepper" id="stepper">
+        <li data-step="0"><span class="dot"><b>1</b><span data-icon="check"></span></span>Araç</li>
+        <li data-step="1"><span class="dot"><b>2</b><span data-icon="check"></span></span>Belirti</li>
+        <li data-step="2"><span class="dot"><b>3</b><span data-icon="check"></span></span>Kayıt</li>
+        <li data-step="3"><span class="dot"><b>4</b><span data-icon="check"></span></span>Sonuç</li>
+      </ol>
+    </nav>
   </header>
 
   <main>
     <!-- 1 · Araç -->
-    <section class="card step" id="step-0" aria-labelledby="h-0">
-      <h2 id="h-0" tabindex="-1">Aracınız</h2>
-      <p class="hint">Marka, model, yıl ve kilometre tahmini güçlendirir. Bilmediğiniz alanları boş bırakabilirsiniz.</p>
-      <div class="grid">
-        <label class="field">Marka <select id="brand"></select></label>
-        <label class="field">Model <select id="model"></select></label>
-        <label class="field">Model yılı <input id="year" type="number" inputmode="numeric" min="1980" max="2030" placeholder="ör. 2016"></label>
-        <label class="field">Yakıt <select id="fuel"></select></label>
-        <label class="field">Kilometre <input id="km" type="number" inputmode="numeric" min="0" step="1000" placeholder="ör. 145000"></label>
+    <section class="step" id="step-0" aria-labelledby="h-0">
+      <div class="hero">
+        <h2 id="h-0" tabindex="-1">Arabanızdan gelen sesin <em>ne olduğunu</em> öğrenin.</h2>
+        <p>Sesi kaydedin; olası arızayı, aracın neresinden geldiğini ve ne kadar acil olduğunu görün. Servise bilgili gidin.</p>
       </div>
-      <div class="nav">
-        <span></span>
-        <button class="btn primary" data-next>Devam</button>
+      <ul class="features">
+        <li><span class="f-ic" data-icon="mic"></span><b>Kaydedin</b><span>10 saniyelik ses ya da video yeter</span></li>
+        <li><span class="f-ic" data-icon="sparkle"></span><b>Analiz</b><span>Ses, belirtiler ve modeliniz birlikte değerlendirilir</span></li>
+        <li><span class="f-ic" data-icon="chat"></span><b>İkinci görüş</b><span>Sonucu tek dokunuşla ustaya gönderin</span></li>
+      </ul>
+      <div class="card">
+        <h3><span data-icon="car"></span>Aracınız</h3>
+        <p class="hint">Marka, model, yıl ve kilometre tahmini güçlendirir. Bilmediğiniz alanları boş bırakabilirsiniz.</p>
+        <div class="grid">
+          <label class="field">Marka <select id="brand"></select></label>
+          <label class="field">Model <select id="model"></select></label>
+          <label class="field">Model yılı <input id="year" type="number" inputmode="numeric" min="1980" max="2030" placeholder="ör. 2016"></label>
+          <label class="field">Yakıt <select id="fuel"></select></label>
+          <label class="field">Kilometre <input id="km" type="number" inputmode="numeric" min="0" step="1000" placeholder="ör. 145000"></label>
+        </div>
+        <div class="nav">
+          <span></span>
+          <button class="btn primary" data-next>Devam <span data-icon="right"></span></button>
+        </div>
       </div>
     </section>
 
     <!-- 2 · Belirti -->
-    <section class="card step" id="step-1" aria-labelledby="h-1" hidden>
-      <h2 id="h-1" tabindex="-1">Ses ne zaman çıkıyor?</h2>
-      <p class="hint">Uyanların hepsini seçin. Emin değilseniz boş bırakıp devam edebilirsiniz.</p>
-      <div class="chips" id="conditions"></div>
-      <div class="nav">
-        <button class="btn" data-back>Geri</button>
-        <button class="btn primary" data-next>Devam</button>
+    <section class="step" id="step-1" aria-labelledby="h-1" hidden>
+      <div class="card">
+        <h2 id="h-1" tabindex="-1">Ses ne zaman çıkıyor?</h2>
+        <p class="hint">Uyanların hepsini seçin. Emin değilseniz boş bırakıp devam edebilirsiniz.</p>
+        <div class="chips" id="conditions"></div>
+        <div class="nav">
+          <button class="btn ghost" data-back><span data-icon="left"></span> Geri</button>
+          <button class="btn primary" data-next>Devam <span data-icon="right"></span></button>
+        </div>
       </div>
     </section>
 
     <!-- 3 · Kayıt -->
-    <section class="card step" id="step-2" aria-labelledby="h-2" hidden>
-      <h2 id="h-2" tabindex="-1">Sesi kaydedin</h2>
-      <ul class="tips">
-        <li>Telefonu sesin geldiği yere <b>yakın</b> tutun (motor için kaputu açın).</li>
-        <li><b>5–10 saniye</b> kaydedin; kayıt sırasında konuşmayın.</li>
-        <li>Rüzgârlı yerde mikrofonu elinizle siper edin.</li>
-      </ul>
-      <div class="rec-row">
-        <button class="rec" id="recBtn" aria-label="Kaydı başlat ya da durdur"></button>
-        <div>
+    <section class="step" id="step-2" aria-labelledby="h-2" hidden>
+      <div class="card">
+        <h2 id="h-2" tabindex="-1">Sesi kaydedin</h2>
+        <ul class="tips">
+          <li><span data-icon="pin"></span>Sesin geldiği yere <b>yakın</b> tutun</li>
+          <li><span data-icon="clock"></span><b>5–10 saniye</b> kaydedin</li>
+          <li><span data-icon="speaker"></span>Kayıtta <b>konuşmayın</b></li>
+        </ul>
+
+        <div class="rec-stage">
+          <div class="rec-wrap" id="recWrap">
+            <span class="rec-halo"></span>
+            <svg class="rec-ring" viewBox="0 0 120 120" aria-hidden="true">
+              <circle class="ring-track" cx="60" cy="60" r="56"/>
+              <circle class="ring-fill" id="recRing" cx="60" cy="60" r="56"/>
+            </svg>
+            <button class="rec" id="recBtn" aria-label="Kaydı başlat ya da durdur"><span data-icon="mic"></span></button>
+          </div>
+          <div class="rec-time" id="recTime">00:00</div>
           <div class="rec-text" id="recText">Kayda başlamak için dokunun</div>
           <div class="hint" id="recSub"></div>
         </div>
-      </div>
-      <canvas id="viz" width="800" height="90" aria-hidden="true"></canvas>
-      <div class="row alt-sources">
-        <label class="btn small">Ses / video dosyası yükle
-          <input id="file" type="file" accept="audio/*,video/*" hidden>
-        </label>
-        <select id="demo" aria-label="Örnek arıza sesiyle dene"></select>
-      </div>
-      <div id="recording" hidden>
-        <div class="hint" id="recLabel"></div>
-        <audio id="player" controls></audio>
-      </div>
-      <div class="notice" id="recStatus" role="status" aria-live="polite" hidden></div>
-      <div class="nav">
-        <button class="btn" data-back>Geri</button>
-        <button class="btn primary" id="analyzeBtn" disabled>Analiz et</button>
+
+        <div class="viz-box">
+          <span class="viz-label" id="vizLabel">Ses</span>
+          <canvas id="viz" aria-hidden="true"></canvas>
+        </div>
+
+        <div class="row alt-sources">
+          <label class="btn small"><span data-icon="upload"></span> Dosya yükle
+            <input id="file" type="file" accept="audio/*,video/*" hidden>
+          </label>
+          <select id="demo" aria-label="Örnek arıza sesiyle dene"></select>
+        </div>
+
+        <div class="recording" id="recording" hidden>
+          <div class="hint"><span data-icon="wave"></span><span id="recLabel"></span></div>
+          <audio id="player" controls></audio>
+        </div>
+        <div class="notice" id="recStatus" role="status" aria-live="polite" hidden></div>
+
+        <div class="nav">
+          <button class="btn ghost" data-back><span data-icon="left"></span> Geri</button>
+          <button class="btn primary" id="analyzeBtn" disabled><span data-icon="sparkle"></span> Analiz et</button>
+        </div>
+
+        <div class="analyzing" id="analyzing" hidden aria-live="polite">
+          <div class="an-visual"><canvas id="scanViz" aria-hidden="true"></canvas><span class="scan-line"></span></div>
+          <div class="an-title">Ses analiz ediliyor</div>
+          <ol class="an-steps" id="anSteps">
+            <li><span class="st" data-icon="check"></span>Frekans spektrumu çıkarılıyor</li>
+            <li><span class="st" data-icon="check"></span>Vuruntu ve ritim ölçülüyor</li>
+            <li><span class="st" data-icon="check"></span>Arıza profilleriyle karşılaştırılıyor</li>
+            <li><span class="st" data-icon="check"></span>Aracınız ve belirtiler ekleniyor</li>
+          </ol>
+        </div>
       </div>
     </section>
 
     <!-- 4 · Sonuç -->
     <section class="step" id="step-3" aria-labelledby="h-3" hidden>
-      <div class="card">
-        <div class="result-head">
-          <div>
-            <div class="eyebrow">En olası bölge</div>
-            <h2 id="h-3" tabindex="-1"><span id="groupName"></span> <span class="pct" id="groupPct"></span></h2>
-          </div>
-          <span class="badge" id="confBadge"></span>
+      <div class="card result-hero">
+        <div class="gauge" aria-hidden="true">
+          <svg viewBox="0 0 120 120"><circle class="g-track" cx="60" cy="60" r="52"/><circle class="g-fill" id="gaugeFill" cx="60" cy="60" r="52"/></svg>
+          <div class="g-center"><span class="pct" id="groupPct"></span><small>olasılık</small></div>
         </div>
-        <p class="hint" id="summaryLine"></p>
-        <div class="notice" id="confNote" hidden></div>
+        <div class="rh-text">
+          <div class="eyebrow">En olası bölge</div>
+          <h2 id="h-3" tabindex="-1"><span id="groupName"></span></h2>
+          <p class="hint" id="summaryLine"></p>
+          <span class="badge" id="confBadge"></span>
+          <div class="group-chips" id="groupChips"></div>
+        </div>
       </div>
+      <div class="notice" id="confNote" hidden></div>
 
-      <div class="card" id="questionsCard" hidden>
-        <h3>Tahmini netleştirelim</h3>
+      <div class="card questions-card" id="questionsCard" hidden>
+        <h3><span data-icon="sparkle"></span>Tahmini netleştirelim <span class="q-count" id="answeredLine"></span></h3>
         <p class="hint">Birkaç kısa soru, benzer ses çıkaran parçaları birbirinden ayırır.</p>
         <div id="questions"></div>
         <div class="row" id="answeredRow" hidden>
-          <span class="hint" id="answeredLine"></span>
-          <button class="btn small" id="resetAnswersBtn">Cevapları sıfırla</button>
+          <button class="btn small ghost" id="resetAnswersBtn"><span data-icon="refresh"></span> Cevapları sıfırla</button>
         </div>
       </div>
 
       <div class="card">
-        <h3>Olası arızalar</h3>
+        <h3><span data-icon="engine"></span>Olası arızalar</h3>
         <div class="results">
           <div class="carbox">
             <div id="carDiagram"></div>
@@ -118,27 +183,27 @@
         </div>
       </div>
 
-      <div class="card">
-        <h3>Sonraki adım</h3>
-        <p class="hint">Sonucu ve kaydı güvendiğiniz bir ustaya gönderip ikinci görüş alabilirsiniz.</p>
-        <div class="row">
-          <button class="btn primary" id="shareBtn">İkinci görüş al</button>
-          <button class="btn" id="copyBtn">Özeti kopyala</button>
-          <a class="btn" id="downloadBtn" download>Kaydı indir</a>
+      <div class="card cta-card">
+        <h3><span data-icon="chat"></span>Sonraki adım</h3>
+        <p class="hint">Sonucu ve kaydı güvendiğiniz bir ustaya gönderip ikinci görüş alın.</p>
+        <div class="cta-row">
+          <button class="btn primary" id="shareBtn"><span data-icon="chat"></span> İkinci görüş al</button>
+          <button class="btn" id="copyBtn"><span data-icon="copy"></span> Özeti kopyala</button>
+          <a class="btn" id="downloadBtn" download><span data-icon="download"></span> Kaydı indir</a>
         </div>
         <div class="notice" id="shareStatus" role="status" aria-live="polite" hidden></div>
-        <div class="row" style="margin-top:14px">
-          <button class="btn small" id="playMineBtn">Kaydımı dinle</button>
-          <button class="btn small" id="stopBtn">Sesi durdur</button>
-          <button class="btn small" id="restartBtn">Yeni analiz</button>
+        <div class="tools">
+          <button class="btn small" id="playMineBtn"><span data-icon="play"></span> Kaydımı dinle</button>
+          <button class="btn small" id="stopBtn"><span data-icon="stop"></span> Durdur</button>
+          <button class="btn small" id="restartBtn"><span data-icon="refresh"></span> Yeni analiz</button>
         </div>
         <details>
-          <summary>Teknik detay (sesin ölçülen özellikleri)</summary>
+          <summary>Teknik detay <span data-icon="chevron"></span></summary>
           <div class="tech" id="tech"></div>
         </details>
       </div>
 
-      <p class="disclaimer">Bu uygulama bir ön tahmin aracıdır; kesin teşhis değildir. Ses özelliklerini, verdiğiniz bilgileri ve modelde sık bildirilen sorunları birleştirerek olasılık hesaplar. Fren, direksiyon, süspansiyon ya da motor vuruntusu şüphesinde aracı kullanmadan önce bir servise kontrol ettirin.</p>
+      <p class="disclaimer"><span data-icon="info"></span><span>Bu uygulama bir ön tahmin aracıdır; kesin teşhis değildir. Ses özelliklerini, verdiğiniz bilgileri ve modelde sık bildirilen sorunları birleştirerek olasılık hesaplar. Fren, direksiyon, süspansiyon ya da motor vuruntusu şüphesinde aracı kullanmadan önce bir servise kontrol ettirin.</span></p>
     </section>
   </main>
 </div>

@@ -6,13 +6,28 @@ import { encodeWav } from "../audio/wav.js";
 import { checkQuality } from "../audio/quality.js";
 import { recordingSupported, startRecording, decodeToMono } from "../audio/recorder.js";
 import { stopPlayback } from "../audio/context.js";
+import { drawIdle, drawWaveform, liveSpectrum } from "./waveform.js";
 import { state } from "../state.js";
 
-let active = null;      // süren kayıt
+const RING = 351.86; // 2π·56
+let active = null;     // süren kayıt
 let timer = null;
-let raf = null;
+let stopViz = null;
 
-/** Yeni kaydı duruma yazar, oynatıcıyı ve kalite bildirimini günceller. */
+const mmss = s => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+
+function setRing(progress) {
+  $("recRing").style.strokeDashoffset = String(RING * (1 - Math.max(0, Math.min(1, progress))));
+}
+
+/** Görselleştirme alanını mevcut duruma göre yeniden çizer. */
+export function redrawViz() {
+  if (active) return;
+  if (state.recording) { $("vizLabel").textContent = "Kaydınız"; drawWaveform($("viz"), state.recording.samples); }
+  else { $("vizLabel").textContent = "Ses"; drawIdle($("viz")); }
+}
+
+/** Yeni kaydı duruma yazar, oynatıcıyı, görseli ve kalite bildirimini günceller. */
 function setRecording(samples, sr, blob, label) {
   if (state.recording) URL.revokeObjectURL(state.recording.url);
   const quality = checkQuality(samples, sr, { minSeconds: CONFIG.minRecordSeconds });
@@ -23,6 +38,9 @@ function setRecording(samples, sr, blob, label) {
   $("recLabel").textContent = `${label} · ${(samples.length / sr).toFixed(1)} sn`;
   $("player").src = state.recording.url;
   $("analyzeBtn").disabled = quality.level === "bad";
+  $("recTime").textContent = mmss(samples.length / sr);
+  setRing(Math.min(1, samples.length / sr / CONFIG.maxRecordSeconds));
+  redrawViz();
 
   if (quality.level === "ok") {
     setNotice($("recStatus"), "Kayıt uygun görünüyor. Analiz edebilirsiniz.", "ok");
@@ -43,26 +61,6 @@ async function loadBlob(blob, label) {
   }
 }
 
-function drawSpectrum(analyser) {
-  const canvas = $("viz"), g = canvas.getContext("2d");
-  const data = new Uint8Array(analyser.frequencyBinCount);
-  const color = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();
-  const bars = 120, binHz = analyser.context.sampleRate / analyser.fftSize;
-  const loop = () => {
-    analyser.getByteFrequencyData(data);
-    g.clearRect(0, 0, canvas.width, canvas.height);
-    g.fillStyle = color;
-    for (let i = 0; i < bars; i++) {
-      const hz = 40 * Math.pow(300, i / bars);                       // 40 Hz – 12 kHz, logaritmik
-      const k = Math.min(data.length - 1, Math.round(hz / binHz));
-      const h = data[k] / 255 * canvas.height;
-      g.fillRect(i * canvas.width / bars, canvas.height - h, canvas.width / bars - 2, h);
-    }
-    raf = requestAnimationFrame(loop);
-  };
-  loop();
-}
-
 async function toggleRecording() {
   if (active) { active.stop(); return; }
   stopPlayback();
@@ -79,22 +77,29 @@ async function toggleRecording() {
   }
   setNotice($("recStatus"), "");
   $("recBtn").classList.add("on");
-  drawSpectrum(active.analyser);
+  $("recWrap").classList.add("on");
+  $("vizLabel").textContent = "Canlı";
+  stopViz = liveSpectrum($("viz"), active.analyser, level => $("recWrap").style.setProperty("--level", level.toFixed(3)));
+
   const started = Date.now();
   const tick = () => {
     const s = (Date.now() - started) / 1000;
-    $("recText").textContent = `Kaydediliyor… ${Math.floor(s)} sn`;
+    $("recTime").textContent = mmss(s);
+    setRing(s / CONFIG.maxRecordSeconds);
+    $("recText").textContent = "Kaydediliyor…";
     $("recSub").textContent = s < 5 ? "En az 5 saniye kaydedin" : "Durdurmak için dokunun";
     if (s >= CONFIG.maxRecordSeconds) active?.stop();
   };
   tick();
-  timer = setInterval(tick, 250);
+  timer = setInterval(tick, 200);
 
   const blob = await active.done;
   clearInterval(timer);
-  cancelAnimationFrame(raf);
+  stopViz?.();
   active = null;
   $("recBtn").classList.remove("on");
+  $("recWrap").classList.remove("on");
+  $("recWrap").style.setProperty("--level", "0");
   $("recText").textContent = "Yeniden kaydetmek için dokunun";
   $("recSub").textContent = `En fazla ${CONFIG.maxRecordSeconds} saniye`;
   await loadBlob(blob, "Sizin kaydınız");
@@ -119,6 +124,7 @@ export function initRecordView() {
     setRecording(samples, sr, encodeWav(samples, sr), `Örnek ses (yapay): ${FAULT_BY_ID[id].name}`);
     e.target.value = "";
   });
+  window.addEventListener("resize", redrawViz);
 }
 
 /** Kaydı ve kayıt adımındaki göstergeleri temizler. */
@@ -129,5 +135,8 @@ export function resetRecordView() {
   $("player").removeAttribute("src");
   $("analyzeBtn").disabled = true;
   $("recText").textContent = "Kayda başlamak için dokunun";
+  $("recTime").textContent = "00:00";
+  setRing(0);
   setNotice($("recStatus"), "");
+  redrawViz();
 }

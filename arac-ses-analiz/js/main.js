@@ -6,10 +6,13 @@ import { SYNTH } from "./audio/synth.js";
 import { playSamples, stopPlayback } from "./audio/context.js";
 import { diagnose } from "./engine/diagnose.js";
 import { $, setNotice } from "./ui/dom.js";
+import { hydrateIcons } from "./ui/icons.js";
+import { wait } from "./ui/animate.js";
+import { drawWaveform } from "./ui/waveform.js";
 import { initWizard, showStep } from "./ui/wizard.js";
 import { initVehicleForm } from "./ui/vehicle-form.js";
 import { initConditions } from "./ui/conditions-view.js";
-import { initRecordView, resetRecordView } from "./ui/record-view.js";
+import { initRecordView, resetRecordView, redrawViz } from "./ui/record-view.js";
 import { renderCarDiagram } from "./ui/car-diagram.js";
 import { initResultsView, renderResults } from "./ui/results-view.js";
 import { copySummary, shareSecondOpinion } from "./ui/share.js";
@@ -27,14 +30,29 @@ function runDiagnosis({ fresh = false } = {}) {
   renderResults(result, state, { fresh });
 }
 
-function analyze() {
-  if (!state.recording) return;
+/** Analiz: tarama animasyonu gösterilirken hesap yapılır, sonra sonuç adımına geçilir. */
+async function analyze() {
+  if (!state.recording || $("analyzeBtn").disabled) return;
+  $("analyzeBtn").disabled = true;
+  const overlay = $("analyzing"), steps = [...$("anSteps").children];
+  steps.forEach(li => li.className = "");
+  overlay.hidden = false;
+  drawWaveform($("scanViz"), state.recording.samples);
+
   const { samples, sr } = state.recording;
-  state.features = extractFeatures(samples, sr, CONFIG.analysisSeconds);
+  for (let i = 0; i < steps.length; i++) {
+    steps[i].className = "active";
+    await wait(i === 0 ? 120 : 380);
+    if (i === 0) state.features = extractFeatures(samples, sr, CONFIG.analysisSeconds);
+    steps[i].className = "done";
+  }
   state.answers = {};
   setNotice($("shareStatus"), "");
-  runDiagnosis({ fresh: true });
+  await wait(250);
+  overlay.hidden = true;
+  $("analyzeBtn").disabled = false;
   showStep(3);
+  runDiagnosis({ fresh: true });
 }
 
 function stopAllAudio() {
@@ -43,12 +61,15 @@ function stopAllAudio() {
 }
 
 function init() {
+  hydrateIcons();
   loadVehicle();
   initWizard();
   initVehicleForm();
   initConditions();
   initRecordView();
   renderCarDiagram($("carDiagram"));
+  // Tuval yalnızca görünürken doğru ölçülür; kayıt adımına her girişte yeniden çizilir.
+  document.addEventListener("stepchange", e => { if (e.detail === 2) redrawViz(); });
   initResultsView({
     onAnswer(questionId, answer) { state.answers[questionId] = answer; runDiagnosis(); },
     onResetAnswers() { state.answers = {}; runDiagnosis(); },
@@ -58,7 +79,7 @@ function init() {
   $("analyzeBtn").addEventListener("click", analyze);
   $("playMineBtn").addEventListener("click", () => { stopAllAudio(); $("player").currentTime = 0; $("player").play(); });
   $("stopBtn").addEventListener("click", stopAllAudio);
-  $("restartBtn").addEventListener("click", () => { stopAllAudio(); resetRecordView(); showStep(2); });
+  $("restartBtn").addEventListener("click", () => { stopAllAudio(); showStep(2); resetRecordView(); });
 
   $("shareBtn").addEventListener("click", async () => {
     const outcome = await shareSecondOpinion(state, result);

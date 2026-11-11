@@ -25,6 +25,20 @@ async function newPage(viewport = { width: 390, height: 844 }) {
   return page;
 }
 const shot = async (page, name) => { if (shotDir) await page.screenshot({ path: join(shotDir, name + ".png"), fullPage: true }); };
+/** Analiz düğmesine basar, tarama animasyonunun bitip sonuç adımının açılmasını bekler. */
+async function analyze(page) {
+  await page.click("#analyzeBtn");
+  await page.waitForSelector("#step-3:not([hidden])");
+  await page.waitForTimeout(1300); // giriş animasyonları ve sayaçlar
+}
+/** Bir soruyu cevaplar ve soru listesinin yenilenmesini bekler. */
+async function answer(page, selector, value) {
+  const q = page.locator(selector).first();
+  const id = await q.getAttribute("data-q");
+  await q.locator(`[data-answer="${value}"]`).click();
+  await page.waitForSelector(`.question[data-q="${id}"]`, { state: "detached" });
+  await page.waitForTimeout(1000); // kartların yer değiştirmesi ve sayaçlar
+}
 const visibleStep = page => page.evaluate(() => [...document.querySelectorAll(".step")].findIndex(s => !s.hidden));
 
 try {
@@ -45,7 +59,7 @@ try {
   assert.equal(await page.isDisabled("#analyzeBtn"), false);
   assert.match(await page.textContent("#recStatus"), /uygun/);
   await shot(page, "3-kayit");
-  await page.click("#analyzeBtn");
+  await analyze(page);
   assert.equal(await visibleStep(page), 3);
   assert.equal(await page.textContent("#groupName"), "Motor");
   assert.match(await page.textContent(".fault.sel .fault-name"), /zincir/i);
@@ -73,14 +87,14 @@ try {
   await page.click('.chip[data-id="tumsek"]');
   await page.click("#step-1 [data-next]");
   await page.selectOption("#demo", "z_rot");
-  await page.click("#analyzeBtn");
+  await analyze(page);
   assert.match(await page.textContent("#groupName"), /Alt takım/);
   assert.equal(await page.locator(".question").count(), 3);
   const before = await page.textContent("#faultList");
   for (let round = 0; round < 6 && await page.locator('.question[data-q="ince_tikirti"]').count() === 0; round++) {
-    await page.locator('.question [data-answer="unknown"]').first().click();
+    await answer(page, ".question", "unknown");
   }
-  await page.click('.question[data-q="ince_tikirti"] [data-answer="yes"]');
+  await answer(page, '.question[data-q="ince_tikirti"]', "yes");
   assert.notEqual(await page.textContent("#faultList"), before);
   assert.match(await page.textContent("#faultList .fault:first-child .fault-name"), /Z rot/);
   assert.match(await page.textContent("#answeredLine"), /soru cevaplandı/);
@@ -90,6 +104,7 @@ try {
   assert.notEqual(await page.textContent("#locLabel"), loc1);
   await shot(page, "5-sorular-masaustu");
   await page.click("#resetAnswersBtn");
+  await page.waitForTimeout(300);
   assert.equal(await page.isHidden("#answeredRow"), true);
 
   // Yeni analiz kayıt adımına döner ve kaydı temizler

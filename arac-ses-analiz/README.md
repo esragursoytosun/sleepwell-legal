@@ -43,6 +43,12 @@ barındırmaya (GitHub Pages, Netlify, Cloudflare Pages) olduğu gibi yüklenebi
 | `questionsPerRound` | Aynı anda gösterilen takip sorusu sayısı |
 | `resultsShown` | Listelenen arıza sayısı |
 
+## Tasarım
+
+Açık ve koyu tema (cihaz ayarını izler). Adım geçişleri, kayıt sırasında ses düzeyine tepki veren düğme ve süre
+halkası, canlı spektrum, analiz sırasında tarama animasyonu, dolan olasılık göstergesi, sayarak artan yüzdeler ve
+cevap verildikçe yer değiştiren arıza kartları vardır. "Hareketi azalt" tercihinde animasyonlar kapanır.
+
 ## Klasör yapısı
 
 ```
@@ -67,6 +73,9 @@ js/
     fft.js, wav.js      Yardımcılar
   engine/diagnose.js  Teşhis motoru: olasılıklar, bölge, güven, soru seçimi
   ui/                 Ekran modülleri (form, kayıt, sonuç, çizim, paylaşım)
+    icons.js            Çizgi ikonları
+    animate.js          Sayaç ve animasyon yardımcıları
+    waveform.js         Dalga ve canlı spektrum çizimi
 tests/                Birim testleri (node:test)
 scripts/              Geliştirme sunucusu ve uçtan uca test
 ```
