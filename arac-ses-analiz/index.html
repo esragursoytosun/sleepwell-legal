@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="description" content="Aracınızın sesini kaydedin; olası arızayı, yerini ve olasılığını öğrenin, servise bilgili gidin.">
-<meta name="theme-color" content="#EF4E23">
+<meta name="theme-color" content="#061117">
 <title>Araç Ses Teşhisi</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap">
 <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
@@ -15,10 +16,10 @@
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" style="stop-color:var(--accent-2)"/><stop offset=".55" style="stop-color:var(--accent)"/><stop offset="1" style="stop-color:var(--accent-3)"/>
+      <stop offset="0" style="stop-color:var(--accent-2)"/><stop offset="1" style="stop-color:var(--accent-3)"/>
     </linearGradient>
     <linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" style="stop-color:var(--accent-2)"/><stop offset=".55" style="stop-color:var(--accent)"/><stop offset="1" style="stop-color:var(--accent-3)"/>
+      <stop offset="0" style="stop-color:var(--accent-2)"/><stop offset="1" style="stop-color:var(--accent-3)"/>
     </linearGradient>
   </defs>
 </svg>
@@ -50,6 +51,11 @@
       <div class="hero">
         <h2 id="h-0" tabindex="-1">Arabanızdan gelen sesin <em>ne olduğunu</em> öğrenin.</h2>
         <p>Sesi kaydedin; olası arızayı, aracın neresinden geldiğini ve ne kadar acil olduğunu görün. Servise bilgili gidin.</p>
+        <div class="stage stage-hero" id="heroCar">
+          <span class="hud tl"><span class="live"></span>Tarama</span>
+          <span class="hud tr">Motor · Fren · Alt takım<br><b>21 arıza profili</b></span>
+          <span class="hud br">Sürükleyerek döndürün</span>
+        </div>
       </div>
       <ul class="features">
         <li><span class="f-ic" data-icon="mic"></span><b>Kaydedin</b><span>10 saniyelik ses ya da video yeter</span></li>
@@ -228,7 +234,9 @@
       <div class="card">
         <h3><span data-icon="engine"></span>Olası arızalar</h3>
         <div class="results">
-          <div class="carbox">
+          <div class="stage stage-result carbox" id="carStage">
+            <span class="hud tl"><span class="live"></span>Olası konum</span>
+            <span class="hud br">Sürükleyerek döndürün</span>
             <div id="carDiagram"></div>
             <div class="loc-label" id="locLabel"></div>
           </div>

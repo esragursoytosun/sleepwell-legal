@@ -13,7 +13,8 @@ import { initWizard, showStep } from "./ui/wizard.js";
 import { initVehicleForm } from "./ui/vehicle-form.js";
 import { initConditions } from "./ui/conditions-view.js";
 import { initRecordView, resetRecordView, redrawViz } from "./ui/record-view.js";
-import { renderCarDiagram } from "./ui/car-diagram.js";
+import { renderCarDiagram, scanCar } from "./ui/car-diagram.js";
+import { createCar3D } from "./ui/car3d.js";
 import { initResultsView, renderResults } from "./ui/results-view.js";
 import { copySummary, shareSecondOpinion } from "./ui/share.js";
 import { strengthOverTime } from "./audio/locate.js";
@@ -71,6 +72,7 @@ async function analyze() {
   $("analyzeBtn").disabled = false;
   showStep(3);
   runDiagnosis({ fresh: true });
+  scanCar();
 }
 
 function stopAllAudio() {
@@ -86,6 +88,7 @@ function init() {
   initConditions();
   initRecordView();
   renderCarDiagram($("carDiagram"));
+  if (!createCar3D($("heroCar"), { mode: "hero" })) $("heroCar").hidden = true;
   // Tuval yalnızca görünürken doğru ölçülür; kayıt adımına her girişte yeniden çizilir.
   document.addEventListener("stepchange", e => { if (e.detail === 2) redrawViz(); });
   initResultsView({

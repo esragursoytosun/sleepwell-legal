@@ -45,3 +45,9 @@ test("bilinen sorunlar var olan arıza, marka ve modellere işaret eder", () => 
     }
   }
 });
+
+test("her konumun üç boyutlu sahnede karşılığı vardır", async () => {
+  const src = await (await import("node:fs/promises")).readFile(new URL("../js/ui/car3d.js", import.meta.url), "utf8");
+  const block = src.slice(src.indexOf("const LOC3D = {"), src.indexOf("// ---------------------------------------------------------------- yardımcılar"));
+  for (const key of Object.keys(LOCATIONS)) assert.ok(new RegExp(`\\b${key}: \\{`).test(block), key);
+});

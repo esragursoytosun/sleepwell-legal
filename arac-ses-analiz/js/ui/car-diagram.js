@@ -1,8 +1,26 @@
 import { LOCATIONS } from "../data/faults.js";
 import { icon } from "./icons.js";
+import { createCar3D } from "./car3d.js";
+
+let car3d = null;
+
+/**
+ * Araç görünümünü hazırlar: mümkünse üç boyutlu sahne, WebGL yoksa üstten iki boyutlu çizim.
+ * @param {HTMLElement} container iki boyutlu çizimin yazılacağı öğe; üç boyutlu sahne onun üst öğesine (sahneye) çizilir
+ */
+export function renderCarDiagram(container) {
+  const stage = container.parentElement;
+  car3d = createCar3D(stage, { mode: "result" });
+  if (car3d) { container.hidden = true; return; }
+  stage.classList.add("flat");
+  renderFlat(container);
+}
+
+/** Yeni bir analizde sahnede tarama animasyonu oynatır. */
+export function scanCar() { car3d?.scan(); }
 
 /** Aracın üstten görünümü; arızanın olası yeri işaretlenir. */
-export function renderCarDiagram(container) {
+function renderFlat(container) {
   const markers = Object.entries(LOCATIONS).map(([key, loc]) => loc.pts.map(([x, y]) =>
     `<circle class="mk-ring" data-loc="${key}" cx="${x}" cy="${y}" r="8"/><circle class="mk" data-loc="${key}" cx="${x}" cy="${y}" r="5.5"/>`
   ).join("")).join("");
@@ -35,8 +53,11 @@ export function renderCarDiagram(container) {
 
 /** Verilen konumu çizimde vurgular ve konum etiketini yazar. */
 export function highlightLocation(container, labelEl, key) {
-  for (const c of container.querySelectorAll("[data-loc]")) c.classList.toggle("on", c.dataset.loc === key);
-  container.querySelector(".exhaust").classList.toggle("on", !!LOCATIONS[key].exhaust);
+  if (car3d) car3d.focus(key);
+  else {
+    for (const c of container.querySelectorAll("[data-loc]")) c.classList.toggle("on", c.dataset.loc === key);
+    container.querySelector(".exhaust").classList.toggle("on", !!LOCATIONS[key].exhaust);
+  }
   labelEl.innerHTML = `${icon("pin")}<span>${LOCATIONS[key].label}</span>`;
   labelEl.style.animation = "none";
   void labelEl.offsetWidth;

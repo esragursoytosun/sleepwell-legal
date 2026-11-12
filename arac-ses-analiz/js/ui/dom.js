@@ -38,7 +38,6 @@ export const cssVar = name => getComputedStyle(document.documentElement).getProp
 export function accentGradient(g, w) {
   const grad = g.createLinearGradient(0, 0, w, 0);
   grad.addColorStop(0, cssVar("--accent-2"));
-  grad.addColorStop(0.55, cssVar("--accent"));
   grad.addColorStop(1, cssVar("--accent-3"));
   return grad;
 }

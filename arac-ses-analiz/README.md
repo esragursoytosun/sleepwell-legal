@@ -94,12 +94,14 @@ js/
     quote.js            Teklif kontrolü
     compare.js          Yönlendirmeli test: iki kaydın karşılaştırılması
   ui/                 Ekran modülleri (form, kayıt, sonuç, çizim, paylaşım)
+    car3d.js            Üç boyutlu "röntgen" araç sahnesi (WebGL yoksa iki boyutlu çizime düşülür)
     icons.js            Çizgi ikonları
     animate.js          Sayaç ve animasyon yardımcıları
     waveform.js         Dalga ve canlı spektrum çizimi
 tests/                Birim testleri (node:test)
   cases/              Gerçek vakalar (yalnızca ölçülen ses özellikleri; ses/görüntü saklanmaz)
 scripts/              Geliştirme sunucusu, uçtan uca test, doğruluk ölçümü
+vendor/               three.js 0.160.0 (MIT lisanslı; 3B sahne için, kurulum gerektirmesin diye depoda tutulur)
 docs/
   usta-agi.md         Güvenilir usta ağına kabul, çalışma kuralları, puanlama, denetim
   veri-ekleme.md      Gerçek vaka, fiyat ve usta ekleme rehberi
