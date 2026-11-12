@@ -19,6 +19,9 @@ export function renderCarDiagram(container) {
 /** Yeni bir analizde sahnede tarama animasyonu oynatır. */
 export function scanCar() { car3d?.scan(); }
 
+/** Sonuç sahnesindeki aracın gövde tipini ayarlar. */
+export function setCarBody(type) { car3d?.setBody(type); }
+
 /** Aracın üstten görünümü; arızanın olası yeri işaretlenir. */
 function renderFlat(container) {
   const markers = Object.entries(LOCATIONS).map(([key, loc]) => loc.pts.map(([x, y]) =>

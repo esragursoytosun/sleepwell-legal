@@ -122,6 +122,18 @@ function renderFaults(result, fresh) {
   selectFault(shown.some(r => r.fault.id === selectedId) ? selectedId : shown[0].fault.id);
 }
 
+/** Sahnedeki ses çubukları: kaydın gerçek dalga biçiminden. */
+function renderStageBars(samples) {
+  const n = 30, per = Math.floor(samples.length / n), peaks = [];
+  let max = 1e-6;
+  for (let c = 0; c < n; c++) {
+    let p = 0;
+    for (let i = c * per, end = i + per; i < end; i += 8) p = Math.max(p, Math.abs(samples[i]));
+    peaks.push(p); max = Math.max(max, p);
+  }
+  $("stageBars").innerHTML = peaks.map((p, i) => `<i style="--h:${Math.max(0.12, p / max).toFixed(2)};--d:${(i * 0.06).toFixed(2)}s"></i>`).join("");
+}
+
 function renderTech(F) {
   const rows = [
     ["Baskın ton", `${Math.round(F.peakHz)} Hz`],
@@ -137,7 +149,7 @@ function renderTech(F) {
 
 /** Sonuç adımının tamamını çizer. `fresh` yeni bir analizse animasyonlar baştan oynar. */
 export function renderResults(result, state, { fresh = false } = {}) {
-  if (fresh) selectedId = null;
+  if (fresh) { selectedId = null; renderStageBars(state.recording.samples); }
   renderHead(result, state, fresh);
   renderQuestions(result, state);
   renderFaults(result, fresh);

@@ -80,28 +80,85 @@ function mirrored(make) {
 }
 
 // ---------------------------------------------------------------- araç
-function bodyShape() {
+/**
+ * Gövde tipleri: yan profilin üst çizgisi (arkadan öne), çamurluk yarıçapı ve yan cam çizgileri.
+ * Alt çizgi ve tekerlek yuvaları hepsinde ortaktır.
+ */
+const BODIES = {
+  hatchback: {
+    arch: 0.43,
+    top(s) {
+      s.moveTo(-2.1, 0.4); s.lineTo(-2.15, 0.72);
+      s.quadraticCurveTo(-2.14, 1.0, -1.98, 1.1);          // arka
+      s.quadraticCurveTo(-1.8, 1.42, -1.25, 1.46);         // bagaj camı
+      s.quadraticCurveTo(-0.4, 1.5, 0.2, 1.43);            // tavan
+      s.quadraticCurveTo(0.6, 1.3, 0.98, 1.04);            // ön cam
+      s.quadraticCurveTo(1.6, 0.98, 1.95, 0.86);           // kaput
+      s.quadraticCurveTo(2.14, 0.78, 2.15, 0.6); s.lineTo(2.12, 0.4);
+    },
+    glass: [[-1.62, 1.04], [-1.5, 1.3], [-1.05, 1.39], [-0.3, 1.42], [0.2, 1.37], [0.86, 1.05]],
+    pillar: [[-0.42, 1.05], [-0.4, 1.41]]
+  },
+  sedan: {
+    arch: 0.43,
+    top(s) {
+      s.moveTo(-2.2, 0.4); s.lineTo(-2.26, 0.74);
+      s.quadraticCurveTo(-2.25, 0.98, -2.08, 1.02);        // bagaj arkası
+      s.lineTo(-1.5, 1.06);                                // bagaj kapağı
+      s.quadraticCurveTo(-1.2, 1.38, -0.7, 1.42);          // arka cam
+      s.quadraticCurveTo(-0.2, 1.46, 0.25, 1.4);           // tavan
+      s.quadraticCurveTo(0.62, 1.28, 1.0, 1.02);           // ön cam
+      s.quadraticCurveTo(1.6, 0.96, 2.0, 0.84);            // kaput
+      s.quadraticCurveTo(2.2, 0.76, 2.22, 0.6); s.lineTo(2.18, 0.4);
+    },
+    glass: [[-1.3, 1.07], [-1.08, 1.32], [-0.6, 1.39], [0.2, 1.35], [0.88, 1.04]],
+    pillar: [[-0.3, 1.06], [-0.28, 1.39]]
+  },
+  suv: {
+    arch: 0.47,
+    top(s) {
+      s.moveTo(-2.1, 0.46); s.lineTo(-2.16, 0.82);
+      s.quadraticCurveTo(-2.16, 1.2, -2.02, 1.32);         // arka
+      s.quadraticCurveTo(-1.9, 1.66, -1.4, 1.7);           // bagaj camı
+      s.quadraticCurveTo(-0.4, 1.74, 0.25, 1.66);          // tavan
+      s.quadraticCurveTo(0.62, 1.5, 0.95, 1.18);           // ön cam
+      s.quadraticCurveTo(1.6, 1.12, 1.98, 1.0);            // kaput
+      s.quadraticCurveTo(2.16, 0.92, 2.17, 0.68); s.lineTo(2.14, 0.44);
+    },
+    glass: [[-1.72, 1.24], [-1.6, 1.54], [-1.0, 1.63], [0.2, 1.59], [0.84, 1.2]],
+    pillar: [[-0.4, 1.22], [-0.38, 1.62]]
+  },
+  van: {
+    arch: 0.43,
+    top(s) {
+      s.moveTo(-2.15, 0.42); s.lineTo(-2.2, 0.8);
+      s.lineTo(-2.2, 1.72);                                // dik arka
+      s.quadraticCurveTo(-2.18, 1.86, -2.0, 1.87);
+      s.lineTo(0.3, 1.84);                                 // düz tavan
+      s.quadraticCurveTo(0.75, 1.72, 1.15, 1.24);          // ön cam
+      s.quadraticCurveTo(1.7, 1.14, 2.0, 1.0);             // kısa kaput
+      s.quadraticCurveTo(2.16, 0.92, 2.17, 0.68); s.lineTo(2.14, 0.42);
+    },
+    glass: [[0.0, 1.26], [0.05, 1.72], [0.42, 1.7], [1.0, 1.26]],
+    pillar: [[-0.08, 0.5], [-0.08, 1.8]]                    // yük bölmesi çizgisi
+  }
+};
+
+function bodyShape(type) {
+  const spec = BODIES[type] || BODIES.hatchback;
   const s = new THREE.Shape();
-  s.moveTo(-2.1, 0.4);
-  s.lineTo(-2.15, 0.72);
-  s.quadraticCurveTo(-2.14, 1.0, -1.98, 1.1);          // arka
-  s.quadraticCurveTo(-1.8, 1.42, -1.25, 1.46);         // bagaj camı
-  s.quadraticCurveTo(-0.4, 1.5, 0.2, 1.43);            // tavan
-  s.quadraticCurveTo(0.6, 1.3, 0.98, 1.04);            // ön cam
-  s.quadraticCurveTo(1.6, 0.98, 1.95, 0.86);           // kaput
-  s.quadraticCurveTo(2.14, 0.78, 2.15, 0.6);           // burun
-  s.lineTo(2.12, 0.4);
-  s.lineTo(AXLE + 0.43, 0.34);
-  s.absarc(AXLE, 0.34, 0.43, 0, Math.PI, false);       // ön çamurluk
-  s.lineTo(-AXLE + 0.43, 0.34);
-  s.absarc(-AXLE, 0.34, 0.43, 0, Math.PI, false);      // arka çamurluk
-  s.lineTo(-2.1, 0.4);
+  spec.top(s);
+  const start = s.getPoint(0);
+  s.lineTo(AXLE + spec.arch, 0.34);
+  s.absarc(AXLE, 0.34, spec.arch, 0, Math.PI, false);       // ön çamurluk
+  s.lineTo(-AXLE + spec.arch, 0.34);
+  s.absarc(-AXLE, 0.34, spec.arch, 0, Math.PI, false);      // arka çamurluk
+  s.lineTo(start.x, start.y);
   return s;
 }
 
 function bodyGeometry(shape) {
-  const s = shape;
-  const geo = new THREE.ExtrudeGeometry(s, { depth: HALF_W * 2 - 0.16, bevelEnabled: true, bevelThickness: 0.08, bevelSize: 0.06, bevelSegments: 3, curveSegments: 14 });
+  const geo = new THREE.ExtrudeGeometry(shape, { depth: HALF_W * 2 - 0.16, bevelEnabled: true, bevelThickness: 0.08, bevelSize: 0.06, bevelSegments: 3, curveSegments: 14 });
   geo.translate(0, 0, -(HALF_W - 0.08));
   return geo;
 }
@@ -116,14 +173,13 @@ function profileLines(shape) {
   return g;
 }
 
-function windowLines() {
-  const pts = [[-1.62, 1.04], [-1.5, 1.3], [-1.05, 1.39], [-0.3, 1.42], [0.2, 1.37], [0.86, 1.05], [-1.62, 1.04]];
-  const pillar = [[-0.42, 1.05], [-0.4, 1.41]];
+function windowLines(type) {
+  const spec = BODIES[type] || BODIES.hatchback;
   const g = new THREE.Group();
   for (const side of [1, -1]) {
     const z = side * (HALF_W + 0.005);
     const mk = p => new THREE.BufferGeometry().setFromPoints(p.map(([x, y]) => new THREE.Vector3(x, y, z)));
-    g.add(new THREE.Line(mk(pts), lineMat(0.6)), new THREE.Line(mk(pillar), lineMat(0.45)));
+    g.add(new THREE.LineLoop(mk(spec.glass), lineMat(0.6)), new THREE.Line(mk(spec.pillar), lineMat(0.45)));
   }
   return g;
 }
@@ -201,7 +257,7 @@ function eachMaterial(obj, fn) {
 /**
  * @param {HTMLElement} container sahnenin çizileceği kutu (boyutu CSS'ten gelir)
  * @param {{mode?: "hero"|"result"}} [opts] "hero": sürekli döner ve tarama yapar; "result": seçilen konuma döner
- * @returns {null | {focus: (key: string) => void, scan: () => void, dispose: () => void}}
+ * @returns {null | {focus: (key: string) => void, scan: () => void, setBody: (type: string) => void, dispose: () => void}}
  */
 export function createCar3D(container, { mode = "result" } = {}) {
   let renderer;
@@ -232,12 +288,25 @@ export function createCar3D(container, { mode = "result" } = {}) {
   scene.add(floorGlow);
 
   // gövde
-  const shape = bodyShape(), bodyGeo = bodyGeometry(shape);
-  car.add(new THREE.Mesh(bodyGeo, fillMat(0.07)));
-  car.add(new THREE.LineSegments(new THREE.EdgesGeometry(bodyGeo, 30), lineMat(0.35)));
-  car.add(profileLines(shape));
-  car.add(windowLines());
-  for (const x of [AXLE, -AXLE]) for (const s of [1, -1]) car.add(wheel(x, s));
+  const body = new THREE.Group();
+  car.add(body);
+  let bodyType = null;
+  /** Gövdeyi verilen tipe göre yeniden kurar (hatchback, sedan, suv, van). */
+  function setBody(type) {
+    if (!BODIES[type]) type = "hatchback";
+    if (type === bodyType) return;
+    const first = bodyType === null;
+    bodyType = type;
+    body.traverse(o => { o.geometry?.dispose(); o.material?.dispose(); });
+    body.clear();
+    const shape = bodyShape(type), geo = bodyGeometry(shape);
+    body.add(new THREE.Mesh(geo, fillMat(0.07)));
+    body.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo, 30), lineMat(0.35)));
+    body.add(profileLines(shape), windowLines(type));
+    if (!first) scan();
+  }
+  const wheels = [];
+  for (const x of [AXLE, -AXLE]) for (const s of [1, -1]) { const w = wheel(x, s); wheels.push(w); car.add(w); }
 
   const parts = buildParts();
   for (const obj of Object.values(parts)) {
@@ -252,6 +321,7 @@ export function createCar3D(container, { mode = "result" } = {}) {
   scanPlane.add(scanEdge);
   car.add(scanPlane);
   let scanStart = -1;
+  setBody("hatchback");
 
   // ışıklı noktalar
   const glowMap = glowTexture("rgba(255,236,190,1)", "rgba(255,181,46,.7)"), ringMap = ringTexture();
@@ -263,7 +333,7 @@ export function createCar3D(container, { mode = "result" } = {}) {
   // Başlangıç açısı: ön-yan (tam önden bakış aracı kısa gösterir)
   const HOME = -1.05;
   let yaw = HOME, yawTarget = HOME, drag = 0, dragTarget = 0, lastInteract = -1e9;
-  const look = new THREE.Vector3(0, 0.62, 0), lookTarget = look.clone();
+  const look = new THREE.Vector3(0, mode === "hero" ? 1.25 : 0.95, 0), lookTarget = look.clone();
   let dist = 6.6, distTarget = 6.6;
 
   function focus(key) {
@@ -288,7 +358,7 @@ export function createCar3D(container, { mode = "result" } = {}) {
     const side = Math.abs(mean.z) > 0.05 ? Math.sign(mean.z) : -1;
     const angle = Math.atan2(1, mean.x * 0.6 + 0.4);          // 0 = tam önden, π = tam arkadan
     yawTarget = side * Math.min(2.25, Math.max(0.95, angle)); // her zaman yandan bir açı
-    lookTarget.set(mean.x * 0.45, 0.62, 0);
+    lookTarget.set(mean.x * 0.45, 0.95, 0);
     distTarget = 5.9;
     dragTarget = 0;
   }
@@ -345,11 +415,12 @@ export function createCar3D(container, { mode = "result" } = {}) {
     look.lerp(lookTarget, ease(3));
     dist += (distTarget - dist) * ease(3);
     // Dar sahnede araç kadraja sığsın diye kamera uzaklaşır.
-    const a = yaw + drag, fit = Math.max(1, 1.55 / camera.aspect);
+    const a = yaw + drag, fit = Math.max(1, (mode === "hero" ? 1.6 : 2.05) / camera.aspect);
     camera.position.set(look.x + Math.cos(a) * dist * fit, 2.15 * fit, Math.sin(a) * dist * fit);
     camera.lookAt(look);
 
     // ışıklı noktalar ve etkin parçalar
+    if (mode === "hero" && !still) for (const w of wheels) w.rotation.z -= dt * 1.6;
     const pulse = still ? 0.5 : 0.5 + 0.5 * Math.sin(t * 4);
     spots.children.forEach((s, i) => {
       if (i % 2 === 0) { s.scale.setScalar(0.42 + 0.1 * pulse); }
@@ -381,7 +452,7 @@ export function createCar3D(container, { mode = "result" } = {}) {
     renderer.dispose();
     canvas.remove();
   }
-  return { focus, scan, dispose };
+  return { focus, scan, setBody, dispose };
 }
 
 /** LOCATIONS'taki her konumun üç boyutlu karşılığı var mı? (testler için) */

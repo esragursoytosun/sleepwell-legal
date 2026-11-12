@@ -47,6 +47,9 @@ async function wavFile(name, hz, toneAmp, seconds = 5) {
   const x = Float32Array.from({ length: 44100 * seconds }, (_, i) => 0.05 * rnd() + toneAmp * Math.sin(2 * Math.PI * hz * i / 44100));
   return { name, mimeType: "audio/wav", buffer: Buffer.from(await encodeWav(x, 44100).arrayBuffer()) };
 }
+/** Sonuç ekranında bir sekmeyi açar. */
+const tab = (page, id) => page.click(`.tab[data-tab="${id}"]`);
+const hiddenAttr = (page, sel) => page.evaluate(q => document.querySelector(q).hidden, sel);
 const visibleStep = page => page.evaluate(() => [...document.querySelectorAll(".step")].findIndex(s => !s.hidden));
 
 try {
@@ -81,15 +84,20 @@ try {
   assert.match(await page.textContent("#planAsk"), /Onayım olmadan/);
   assert.match(await page.textContent("#planFlags"), /ön ödeme/);
   assert.match(await page.textContent("#planPrices"), /toplanıyor/);
-  assert.equal(await page.isHidden("#planWarranty"), true);
+  assert.equal(await hiddenAttr(page, "#planWarranty"), true);
   // Neden bu sonuç: gerekçe var; ses kaydı video olmadığı için konum yerine ipucu
   assert.ok(await page.locator("#reasons li").count() >= 1);
   assert.match(await page.textContent("#reasons"), /Soğuk çalıştırmada/);
-  assert.equal(await page.isHidden("#locate"), true);
+  assert.equal(await hiddenAttr(page, "#locate"), true);
   assert.match(await page.textContent("#locHint"), /video çekerseniz/);
 
   // Teklif kontrolü: ilgili kalem + ilgisiz pahalı kalem → ikinci görüş
   assert.equal(await page.isDisabled("#quoteCheckBtn"), true);
+  // Sekmeler: aynı anda tek bölüm görünür
+  assert.equal(await page.isVisible("#faultList"), true);
+  assert.equal(await page.isVisible("#quoteCard"), false);
+  await tab(page, "teklif");
+  assert.equal(await page.isVisible("#faultList"), false);
   await page.click('#quoteRelated .pchip[data-part="triger_seti"]');
   await page.click(".more-parts summary");
   await page.click('#quoteOther .pchip[data-part="sanziman"]');
@@ -100,6 +108,7 @@ try {
 
   // Sonuç bildirme: kaydedilir, gönder düğmesi açılır
   assert.equal(await page.isDisabled("#fbSendBtn"), true);
+  await tab(page, "paylas");
   await page.selectOption("#fbPart", "triger_seti");
   await page.selectOption("#fbResolved", "yes");
   await page.fill("#fbPaid", "9000");
@@ -130,6 +139,10 @@ try {
   // Yeni model araç: garanti uyarısı
   await page.selectOption("#brand", "Fiat");
   await page.selectOption("#model", "Egea");
+  assert.match(await page.textContent("#heroBody"), /Fiat Egea · Sedan/);
+  await page.selectOption("#model", "Doblo");
+  assert.match(await page.textContent("#heroBody"), /Hafif ticari/);
+  await page.selectOption("#model", "Egea");
   await page.fill("#year", String(new Date().getFullYear()));
   await page.locator("#year").blur();
   await page.click("#step-0 [data-next]");
@@ -140,7 +153,9 @@ try {
   assert.match(await page.textContent("#groupName"), /Alt takım/);
   assert.match(await page.textContent("#planWarranty"), /garantisinde/);
   assert.match(await page.textContent("#planMechanics"), /Şehrinizi seçerseniz/);
-  assert.equal(await page.isHidden("#guidedCard"), true);
+  assert.equal(await hiddenAttr(page, "#guidedCard"), true);
+  assert.equal(await hiddenAttr(page, "#tabDot"), false);
+  await tab(page, "netlestir");
   assert.equal(await page.locator(".question").count(), 3);
   const before = await page.textContent("#faultList");
   for (let round = 0; round < 6 && await page.locator('.question[data-q="ince_tikirti"]').count() === 0; round++) {
@@ -152,14 +167,17 @@ try {
   assert.match(await page.textContent("#answeredLine"), /soru cevaplandı/);
   // Başka bir arızayı seçince çizimdeki konum değişir
   const loc1 = await page.textContent("#locLabel");
+  await tab(page, "ozet");
   await page.click("#faultList .fault:nth-child(2) .fault-head");
   assert.notEqual(await page.textContent("#locLabel"), loc1);
   await shot(page, "5-sorular-masaustu");
+  await tab(page, "netlestir");
   await page.click("#resetAnswersBtn");
   await page.waitForTimeout(300);
-  assert.equal(await page.isHidden("#answeredRow"), true);
+  assert.equal(await hiddenAttr(page, "#answeredRow"), true);
 
   // Yeni analiz kayıt adımına döner ve kaydı temizler
+  await tab(page, "paylas");
   await page.click("#restartBtn");
   assert.equal(await visibleStep(page), 2);
   assert.equal(await page.isDisabled("#analyzeBtn"), true);
@@ -172,7 +190,8 @@ try {
   await page.click("#step-1 [data-next]");
   await page.selectOption("#demo", "alternator");
   await analyze(page);
-  assert.equal(await page.isHidden("#guidedCard"), false);
+  assert.equal(await hiddenAttr(page, "#guidedCard"), false);
+  await tab(page, "netlestir");
   assert.equal(await page.locator(".gtest").count(), 3);
   // Gaz verince ton inceliyor → "devir" sorusu ölçülerek cevaplanır
   await page.setInputFiles('.gtest[data-test="gaz"] [data-test-file]', await wavFile("gaz.wav", 2750, 0.3));

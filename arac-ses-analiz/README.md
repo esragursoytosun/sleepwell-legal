@@ -56,9 +56,15 @@ barındırmaya (GitHub Pages, Netlify, Cloudflare Pages) olduğu gibi yüklenebi
 
 ## Tasarım
 
-Açık ve koyu tema (cihaz ayarını izler). Adım geçişleri, kayıt sırasında ses düzeyine tepki veren düğme ve süre
-halkası, canlı spektrum, analiz sırasında tarama animasyonu, dolan olasılık göstergesi, sayarak artan yüzdeler ve
-cevap verildikçe yer değiştiren arıza kartları vardır. "Hareketi azalt" tercihinde animasyonlar kapanır.
+- **Üç boyutlu araç:** saydam "röntgen" gövde içinde motor, kayış, egzoz, frenler ve ön takım parçaları görünür.
+  Arızanın olası yeri ışıkla işaretlenir, araç o parçaya döner ve sürüklenerek döndürülebilir. Gövde, seçilen modele
+  göre değişir (hatchback, sedan, SUV, hafif ticari). WebGL yoksa iki boyutlu çizim gösterilir.
+- **Derli toplu sonuç ekranı:** araç ve sonuç özeti üstte sabit kalır; ayrıntılar beş sekmeye bölünür
+  (Özet, Ne yapmalı, Netleştir, Teklif, Paylaş).
+- **Renk ve yazı:** mürekkep mavisi yüzeyler, kehribar vurgu, camgöbeği ölçüm çizgileri; Barlow ve Barlow Condensed.
+  Açık ve koyu tema cihaz ayarını izler; 3B sahne iki temada da koyudur.
+- **Animasyonlar:** adım ve sekme geçişleri, tarama çizgisi, dönen tekerlekler, ses düzeyine tepki veren kayıt düğmesi,
+  dolan gösterge, sayarak artan yüzdeler, yer değiştiren arıza kartları. "Hareketi azalt" tercihinde kapanır.
 
 ## Klasör yapısı
 
@@ -95,6 +101,7 @@ js/
     compare.js          Yönlendirmeli test: iki kaydın karşılaştırılması
   ui/                 Ekran modülleri (form, kayıt, sonuç, çizim, paylaşım)
     car3d.js            Üç boyutlu "röntgen" araç sahnesi (WebGL yoksa iki boyutlu çizime düşülür)
+    tabs.js             Sonuç ekranındaki sekmeler
     icons.js            Çizgi ikonları
     animate.js          Sayaç ve animasyon yardımcıları
     waveform.js         Dalga ve canlı spektrum çizimi

@@ -42,3 +42,34 @@ export const CITIES = [
   "Niğde", "Ordu", "Osmaniye", "Rize", "Sakarya", "Samsun", "Şanlıurfa", "Siirt", "Sinop", "Şırnak", "Sivas",
   "Tekirdağ", "Tokat", "Trabzon", "Tunceli", "Uşak", "Van", "Yalova", "Yozgat", "Zonguldak"
 ];
+
+/** Gövde tipleri (üç boyutlu araç görünümü için). Listede olmayan modeller hatchback sayılır. */
+export const BODY_LABEL = { hatchback: "Hatchback", sedan: "Sedan", suv: "SUV", van: "Hafif ticari" };
+
+const BODY_MODELS = {
+  sedan: {
+    "Audi": ["A4", "A6"], "BMW": ["3 Serisi", "5 Serisi"], "Citroën": ["C-Elysée"], "Dacia": ["Logan"],
+    "Fiat": ["Egea", "Linea"], "Honda": ["Civic", "City"], "Hyundai": ["Accent Blue", "Elantra"],
+    "Mercedes-Benz": ["C Serisi", "E Serisi", "CLA"], "Opel": ["Insignia"], "Peugeot": ["301", "508"],
+    "Renault": ["Symbol", "Taliant", "Megane", "Fluence"], "Skoda": ["Octavia", "Superb"], "Tesla": ["Model 3"],
+    "Toyota": ["Corolla"], "Volkswagen": ["Jetta", "Passat"]
+  },
+  suv: {
+    "Audi": ["Q3", "Q5"], "BMW": ["X1", "X3"], "Citroën": ["C5 Aircross"], "Dacia": ["Duster", "Jogger"],
+    "Ford": ["Kuga", "Puma"], "Honda": ["CR-V", "HR-V"], "Hyundai": ["Bayon", "Tucson"], "Kia": ["Stonic", "Sportage"],
+    "Mercedes-Benz": ["GLA"], "Nissan": ["Juke", "Qashqai"], "Opel": ["Mokka", "Crossland"], "Peugeot": ["2008", "3008"],
+    "Renault": ["Captur", "Kadjar"], "Seat": ["Arona", "Ateca"], "Skoda": ["Kamiq", "Karoq"], "Tesla": ["Model Y"],
+    "Togg": ["T10X"], "Toyota": ["C-HR", "RAV4"], "Volkswagen": ["Tiguan", "T-Roc"]
+  },
+  van: {
+    "Citroën": ["Berlingo"], "Fiat": ["Doblo", "Fiorino"], "Ford": ["Courier", "Connect"], "Volkswagen": ["Caddy"]
+  }
+};
+
+/** Marka ve modele göre gövde tipi. */
+export function bodyTypeOf(brand, model) {
+  for (const [type, brands] of Object.entries(BODY_MODELS)) {
+    if ((brands[brand] || []).includes(model)) return type;
+  }
+  return "hatchback";
+}

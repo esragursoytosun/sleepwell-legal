@@ -48,20 +48,16 @@
   <main>
     <!-- 1 · Araç -->
     <section class="step" id="step-0" aria-labelledby="h-0">
-      <div class="hero">
-        <h2 id="h-0" tabindex="-1">Arabanızdan gelen sesin <em>ne olduğunu</em> öğrenin.</h2>
-        <p>Sesi kaydedin; olası arızayı, aracın neresinden geldiğini ve ne kadar acil olduğunu görün. Servise bilgili gidin.</p>
-        <div class="stage stage-hero" id="heroCar">
-          <span class="hud tl"><span class="live"></span>Tarama</span>
-          <span class="hud tr">Motor · Fren · Alt takım<br><b>21 arıza profili</b></span>
-          <span class="hud br">Sürükleyerek döndürün</span>
+      <div class="stage stage-hero" id="heroStage">
+        <div class="hero-copy">
+          <h2 id="h-0" tabindex="-1">Arabanızdan gelen sesin <em>ne olduğunu</em> öğrenin.</h2>
+          <p>Sesi kaydedin; olası arızayı, yerini ve aciliyetini görün. Servise bilgili gidin.</p>
         </div>
+        <span class="hud tr"><span class="live"></span>Tarama</span>
+        <span class="hud bl" id="heroBody">Aracınızı seçin</span>
+        <span class="hud br">Sürükleyerek döndürün</span>
+        <div id="heroCar"></div>
       </div>
-      <ul class="features">
-        <li><span class="f-ic" data-icon="mic"></span><b>Kaydedin</b><span>10 saniyelik ses ya da video yeter</span></li>
-        <li><span class="f-ic" data-icon="sparkle"></span><b>Analiz</b><span>Ses, belirtiler ve modeliniz birlikte değerlendirilir</span></li>
-        <li><span class="f-ic" data-icon="chat"></span><b>İkinci görüş</b><span>Sonucu tek dokunuşla ustaya gönderin</span></li>
-      </ul>
       <div class="card">
         <h3><span data-icon="car"></span>Aracınız</h3>
         <p class="hint">Marka, model, yıl ve kilometre tahmini güçlendirir; şehir, bölgenizdeki güvenilir ustaları bulmamızı sağlar. Bilmediğiniz alanları boş bırakabilirsiniz.</p>
@@ -155,28 +151,57 @@
 
     <!-- 4 · Sonuç -->
     <section class="step" id="step-3" aria-labelledby="h-3" hidden>
-      <div class="card result-hero">
+      <div class="stage stage-result carbox" id="carStage">
+        <div class="stage-head">
+          <div class="eyebrow">En olası bölge</div>
+          <h2 id="h-3" tabindex="-1"><span id="groupName"></span></h2>
+          <span class="badge" id="confBadge"></span>
+        </div>
         <div class="gauge" aria-hidden="true">
           <svg viewBox="0 0 120 120"><circle class="g-track" cx="60" cy="60" r="52"/><circle class="g-fill" id="gaugeFill" cx="60" cy="60" r="52"/></svg>
           <div class="g-center"><span class="pct" id="groupPct"></span><small>olasılık</small></div>
         </div>
-        <div class="rh-text">
-          <div class="eyebrow">En olası bölge</div>
-          <h2 id="h-3" tabindex="-1"><span id="groupName"></span></h2>
-          <p class="hint" id="summaryLine"></p>
-          <span class="badge" id="confBadge"></span>
-          <div class="group-chips" id="groupChips"></div>
-        </div>
+        <div id="carDiagram"></div>
+        <div class="loc-label" id="locLabel"></div>
+        <div class="stage-bars" id="stageBars" aria-hidden="true"></div>
       </div>
+      <div class="result-meta">
+        <p class="hint" id="summaryLine"></p>
+        <div class="group-chips" id="groupChips"></div>
+      </div>
+
+      <div class="tabs" id="tabs" role="tablist" aria-label="Sonuç bölümleri">
+        <button role="tab" class="tab" data-tab="ozet" id="tab-ozet" aria-controls="panel-ozet"><span data-icon="engine"></span>Özet</button>
+        <button role="tab" class="tab" data-tab="plan" id="tab-plan" aria-controls="panel-plan"><span data-icon="compass"></span>Ne yapmalı</button>
+        <button role="tab" class="tab" data-tab="netlestir" id="tab-netlestir" aria-controls="panel-netlestir"><span data-icon="sparkle"></span>Netleştir<i class="tab-dot" id="tabDot" hidden></i></button>
+        <button role="tab" class="tab" data-tab="teklif" id="tab-teklif" aria-controls="panel-teklif"><span data-icon="receipt"></span>Teklif</button>
+        <button role="tab" class="tab" data-tab="paylas" id="tab-paylas" aria-controls="panel-paylas"><span data-icon="chat"></span>Paylaş</button>
+      </div>
+
+      <div class="tab-panel" role="tabpanel" id="panel-ozet" aria-labelledby="tab-ozet">
       <div class="notice" id="confNote" hidden></div>
-
-      <div class="card guided-card" id="guidedCard" hidden>
-        <h3><span data-icon="gauge"></span>Ölçerek netleştirelim</h3>
-        <p class="hint">Kısa bir test kaydı yapın; uygulama ilk kayıtla karşılaştırıp farkı kendisi ölçer. Her test yaklaşık 5 saniye sürer.</p>
-        <div class="notice warn" id="guidedSafety"></div>
-        <div id="guidedTests"></div>
+      <div class="card">
+        <h3><span data-icon="engine"></span>Olası arızalar</h3>
+        <p class="hint">Bir arızaya dokunun; araç o parçaya döner.</p>
+        <div class="results"><div id="faultList"></div></div>
+      </div>
+      <div class="card" id="evidenceCard">
+        <h3><span data-icon="wave"></span>Neden bu sonuç?</h3>
+        <ul class="reasons" id="reasons"></ul>
+        <div class="locate" id="locate" hidden>
+          <div class="loc-frame"><img id="locFrame" alt="Videoda sesin en güçlü olduğu an"><span class="loc-tag" id="locTag"></span></div>
+          <div class="loc-info">
+            <p id="locText"></p>
+            <canvas id="locChart" aria-hidden="true"></canvas>
+            <div class="hint">Videonun saniyelerine göre sesin gücü</div>
+          </div>
+        </div>
+        <p class="hint" id="locHint" hidden></p>
       </div>
 
+      </div>
+
+      <div class="tab-panel" role="tabpanel" id="panel-plan" aria-labelledby="tab-plan" hidden>
       <div class="card plan-card" id="planCard">
         <h3><span data-icon="compass"></span>Ne yapmalısınız?</h3>
         <p class="hint" id="planFor"></p>
@@ -208,6 +233,9 @@
         </section>
       </div>
 
+      </div>
+
+      <div class="tab-panel" role="tabpanel" id="panel-netlestir" aria-labelledby="tab-netlestir" hidden>
       <div class="card questions-card" id="questionsCard" hidden>
         <h3><span data-icon="sparkle"></span>Tahmini netleştirelim <span class="q-count" id="answeredLine"></span></h3>
         <p class="hint">Birkaç kısa soru, benzer ses çıkaran parçaları birbirinden ayırır.</p>
@@ -217,33 +245,17 @@
         </div>
       </div>
 
-      <div class="card" id="evidenceCard">
-        <h3><span data-icon="wave"></span>Neden bu sonuç?</h3>
-        <ul class="reasons" id="reasons"></ul>
-        <div class="locate" id="locate" hidden>
-          <div class="loc-frame"><img id="locFrame" alt="Videoda sesin en güçlü olduğu an"><span class="loc-tag" id="locTag"></span></div>
-          <div class="loc-info">
-            <p id="locText"></p>
-            <canvas id="locChart" aria-hidden="true"></canvas>
-            <div class="hint">Videonun saniyelerine göre sesin gücü</div>
-          </div>
-        </div>
-        <p class="hint" id="locHint" hidden></p>
+      <div class="card guided-card" id="guidedCard" hidden>
+        <h3><span data-icon="gauge"></span>Ölçerek netleştirelim</h3>
+        <p class="hint">Kısa bir test kaydı yapın; uygulama ilk kayıtla karşılaştırıp farkı kendisi ölçer. Her test yaklaşık 5 saniye sürer.</p>
+        <div class="notice warn" id="guidedSafety"></div>
+        <div id="guidedTests"></div>
       </div>
 
-      <div class="card">
-        <h3><span data-icon="engine"></span>Olası arızalar</h3>
-        <div class="results">
-          <div class="stage stage-result carbox" id="carStage">
-            <span class="hud tl"><span class="live"></span>Olası konum</span>
-            <span class="hud br">Sürükleyerek döndürün</span>
-            <div id="carDiagram"></div>
-            <div class="loc-label" id="locLabel"></div>
-          </div>
-          <div id="faultList"></div>
-        </div>
+      <div class="card" id="clarifyEmpty" hidden><p class="hint">Bu sonuç için sorulacak ayırt edici bir soru ya da yapılacak bir test yok.</p></div>
       </div>
 
+      <div class="tab-panel" role="tabpanel" id="panel-teklif" aria-labelledby="tab-teklif" hidden>
       <div class="card quote-card" id="quoteCard">
         <h3><span data-icon="receipt"></span>Ustanın teklifini kontrol edin</h3>
         <p class="hint">Teklifte ya da faturada geçen kalemleri seçin; teşhisle uyuşup uyuşmadığına bakalım.</p>
@@ -260,6 +272,9 @@
         <div id="quoteResult"></div>
       </div>
 
+      </div>
+
+      <div class="tab-panel" role="tabpanel" id="panel-paylas" aria-labelledby="tab-paylas" hidden>
       <div class="card cta-card">
         <h3><span data-icon="chat"></span>Sonraki adım</h3>
         <p class="hint">Sonucu ve kaydı güvendiğiniz bir ustaya gönderip ikinci görüş alın.</p>
@@ -294,6 +309,8 @@
           <button class="btn" id="fbSendBtn" disabled><span data-icon="chat"></span> Ekibimize gönder</button>
         </div>
         <div class="notice" id="fbStatus" role="status" aria-live="polite" hidden></div>
+      </div>
+
       </div>
 
       <p class="disclaimer"><span data-icon="info"></span><span>Bu uygulama bir ön tahmin aracıdır; kesin teşhis değildir. Ses özelliklerini, verdiğiniz bilgileri ve modelde sık bildirilen sorunları birleştirerek olasılık hesaplar. Fren, direksiyon, süspansiyon ya da motor vuruntusu şüphesinde aracı kullanmadan önce bir servise kontrol ettirin.</span></p>

@@ -51,3 +51,13 @@ test("her konumun üç boyutlu sahnede karşılığı vardır", async () => {
   const block = src.slice(src.indexOf("const LOC3D = {"), src.indexOf("// ---------------------------------------------------------------- yardımcılar"));
   for (const key of Object.keys(LOCATIONS)) assert.ok(new RegExp(`\\b${key}: \\{`).test(block), key);
 });
+
+test("gövde tipi: bilinen modeller doğru, bilinmeyenler hatchback", async () => {
+  const { bodyTypeOf, BODY_LABEL } = await import("../js/data/vehicles.js");
+  assert.equal(bodyTypeOf("Volkswagen", "T-Roc"), "suv");
+  assert.equal(bodyTypeOf("Fiat", "Egea"), "sedan");
+  assert.equal(bodyTypeOf("Ford", "Courier"), "van");
+  assert.equal(bodyTypeOf("Renault", "Clio"), "hatchback");
+  assert.equal(bodyTypeOf("", ""), "hatchback");
+  for (const type of ["hatchback", "sedan", "suv", "van"]) assert.ok(BODY_LABEL[type]);
+});

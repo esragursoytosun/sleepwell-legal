@@ -13,7 +13,9 @@ import { initWizard, showStep } from "./ui/wizard.js";
 import { initVehicleForm } from "./ui/vehicle-form.js";
 import { initConditions } from "./ui/conditions-view.js";
 import { initRecordView, resetRecordView, redrawViz } from "./ui/record-view.js";
-import { renderCarDiagram, scanCar } from "./ui/car-diagram.js";
+import { renderCarDiagram, scanCar, setCarBody } from "./ui/car-diagram.js";
+import { initTabs, showTab } from "./ui/tabs.js";
+import { BODY_LABEL, bodyTypeOf } from "./data/vehicles.js";
 import { createCar3D } from "./ui/car3d.js";
 import { initResultsView, renderResults } from "./ui/results-view.js";
 import { copySummary, shareSecondOpinion } from "./ui/share.js";
@@ -38,6 +40,9 @@ function runDiagnosis({ fresh = false } = {}) {
   });
   renderResults(result, state, { fresh });
   renderGuided(result, state);
+  // "Netleştir" sekmesi: açık soru varsa işaret konur; soru da test de yoksa bilgi notu gösterilir
+  $("tabDot").hidden = $("questions").querySelectorAll(".question").length === 0;
+  $("clarifyEmpty").hidden = !($("questionsCard").hidden && $("guidedCard").hidden);
   renderPlan(result, state);
   renderEvidence(result, state);
   renderQuote(result);
@@ -71,6 +76,7 @@ async function analyze() {
   overlay.hidden = true;
   $("analyzeBtn").disabled = false;
   showStep(3);
+  showTab("ozet");
   runDiagnosis({ fresh: true });
   scanCar();
 }
@@ -88,7 +94,18 @@ function init() {
   initConditions();
   initRecordView();
   renderCarDiagram($("carDiagram"));
-  if (!createCar3D($("heroCar"), { mode: "hero" })) $("heroCar").hidden = true;
+  initTabs();
+  // Açılıştaki ve sonuçtaki araç, seçilen modelin gövde tipine bürünür
+  const hero = createCar3D($("heroStage"), { mode: "hero" });
+  if (!hero) $("heroStage").classList.add("flat");
+  const syncBody = () => {
+    const v = state.vehicle, type = v.brand ? bodyTypeOf(v.brand, v.model) : "hatchback";
+    hero?.setBody(type);
+    setCarBody(type);
+    $("heroBody").textContent = v.brand && v.brand !== "Diğer" ? `${v.brand} ${v.model} · ${BODY_LABEL[type]}` : "Aracınızı seçin";
+  };
+  for (const id of ["brand", "model"]) $(id).addEventListener("change", syncBody);
+  syncBody();
   // Tuval yalnızca görünürken doğru ölçülür; kayıt adımına her girişte yeniden çizilir.
   document.addEventListener("stepchange", e => { if (e.detail === 2) redrawViz(); });
   initResultsView({
@@ -112,7 +129,7 @@ function init() {
     setTimeout(() => { $("copyAskBtn").lastChild.textContent = " Listeyi kopyala"; }, 2000);
   });
   $("planMechanics").addEventListener("click", e => {
-    if (e.target.closest("[data-second-opinion]")) { $("shareBtn").click(); return; }
+    if (e.target.closest("[data-second-opinion]")) { showTab("paylas", { scroll: true }); $("shareBtn").click(); return; }
     const btn = e.target.closest("[data-mech]");
     const m = btn && MECHANICS.find(x => x.id === btn.dataset.mech);
     if (m) window.open(`https://wa.me/${m.whatsapp}?text=${encodeURIComponent(buildSummary(state, result))}`, "_blank", "noopener");
