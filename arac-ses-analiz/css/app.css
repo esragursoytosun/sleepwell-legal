@@ -481,6 +481,21 @@ details[open] summary .ic { transform: rotate(180deg); }
 /* ------------------------------------------------------------ sonuç bildirme */
 .feedback-card .grid { margin-top: 12px; }
 
+
+/* ------------------------------------------------------------ yönlendirmeli test */
+.gtest { display: grid; grid-template-columns: 1fr auto; gap: 8px 14px; align-items: center; padding: 14px 0; border-top: 1px solid var(--border); }
+.gtest:first-child { border-top: 0; }
+.gtest b { display: block; }
+.gtest p { color: var(--muted); font-size: .88rem; margin-top: 2px; }
+.gtest-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.gtest .btn.recording { background: var(--grad); color: #fff; border-color: transparent; animation: pulse-soft 1s ease-in-out infinite alternate; }
+@keyframes pulse-soft { to { box-shadow: 0 0 0 6px var(--accent-soft); } }
+.gtest-result { grid-column: 1 / -1; display: flex; gap: 8px; align-items: flex-start; font-size: .9rem; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border); animation: pop .35s var(--spring) both; }
+.gtest-result .ic { width: 18px; height: 18px; margin-top: 1px; color: var(--muted); }
+.gtest-result.measured { background: color-mix(in srgb, var(--ok) 9%, var(--surface)); border-color: color-mix(in srgb, var(--ok) 30%, transparent); }
+.gtest-result.measured .ic { color: var(--ok); }
+@media (max-width: 560px) { .gtest { grid-template-columns: 1fr; } .gtest-actions { justify-content: flex-start; } }
+
 /* ------------------------------------------------------------ hareketi azalt */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; animation-delay: 0s !important; }

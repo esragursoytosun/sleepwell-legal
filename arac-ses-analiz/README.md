@@ -16,6 +16,9 @@ Amaç, sürücünün servise bilgili gitmesidir. Sonuç bir **ön tahmindir**, k
    - **Neden bu sonuç?** Sesin ölçülen özellikleri ve destekleyen belirtiler. Video yüklenmişse sesin en güçlü olduğu
      an ve o anın karesi gösterilir; telefon kaynağa yaklaştıkça ses güçlendiği için bu kare sesin yerini gösterir.
    - Takip soruları benzer ses çıkaran parçaları ayırır.
+   - **Ölçerek netleştirme:** motor bölmesi seslerinde kullanıcı 5 saniyelik test kayıtları yapar (gaz vererek,
+     klimayı değiştirerek, elektrik yükü vererek). Uygulama test kaydını ilk kayıtla karşılaştırır ve ilgili soruyu
+     kendisi cevaplar: ton devirle inceliyor mu, değişiklik sesi etkiliyor mu?
    - **Teklif kontrolü:** ustanın teklifindeki kalemler teşhisle karşılaştırılır; sesle ilgisiz pahalı kalemler uyarılır.
    - **Sonuç ne oldu?** Servisten sonra gerçek sonuç kaydedilir ve isterse ekibe gönderilir (doğruluk ölçümü için).
 
@@ -89,6 +92,7 @@ js/
     explain.js          "Neden bu sonuç?" gerekçeleri
     advice.js           Eylem planı: aciliyet, garanti, fiyat, usta eşleştirme
     quote.js            Teklif kontrolü
+    compare.js          Yönlendirmeli test: iki kaydın karşılaştırılması
   ui/                 Ekran modülleri (form, kayıt, sonuç, çizim, paylaşım)
     icons.js            Çizgi ikonları
     animate.js          Sayaç ve animasyon yardımcıları
@@ -127,6 +131,9 @@ değerlendirilir. Böylece motorun normal tıkırtısı, gerçek kayıtlarda ton
 - Alt takım parçaları (rotil, rot başı, Z rot vb.) sesle birbirinden güvenilir biçimde ayrılamaz; ayrımı
   takip soruları yapar. Kesin tespit için aracın liftte kontrolü gerekir.
 - Arızanın sol/sağ tarafı tek kayıttan belirlenemez.
+- Yönlendirmeli test yalnızca araç dururken yapılabilen motor bölmesi testlerini kapsar; alt takım ve fren için
+  (sürüş gerektirdiğinden) sorular kullanılır. Karşılaştırma eşikleri yapay seslerle ayarlandı; gerçek kayıtlarla
+  doğrulanmadı.
 - Videodaki görüntü yalnızca sesin en güçlü olduğu anı göstermek için kullanılır; parçaların görüntüden
   tanınması yoktur.
 - Fiyat ve usta verisi henüz boştur; gerçek veri gelene kadar uygulama fiyat yorumu yapmaz.

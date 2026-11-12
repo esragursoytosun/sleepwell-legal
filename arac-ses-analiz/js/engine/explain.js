@@ -31,9 +31,10 @@ export function describeSound(F) {
 
 /**
  * En olası arızayı destekleyen gerekçeler.
+ * `measured`: soru kimliği → yönlendirmeli testte ölçülen sonucun metni.
  * @returns {string[]}
  */
-export function explainTop(entry, { features, conditions = [], answers = {} }) {
+export function explainTop(entry, { features, conditions = [], answers = {}, measured = {} }) {
   const fault = entry.fault;
   const out = describeSound(features);
 
@@ -42,7 +43,9 @@ export function explainTop(entry, { features, conditions = [], answers = {} }) {
 
   for (const q of QUESTIONS) {
     const a = answers[q.id];
-    if ((a === "yes" || a === "no") && answerFactor(q, a, fault) >= 1.5) {
+    if (!(a === "yes" || a === "no") || answerFactor(q, a, fault) < 1.5) continue;
+    if (measured[q.id]) out.push(`Yaptığınız testte ölçüldü: ${measured[q.id]}`);
+    else {
       out.push(`“${q.text}” sorusuna “${a === "yes" ? "Evet" : "Hayır"}” dediniz; bu, bu arızayı destekliyor.`);
     }
   }

@@ -22,6 +22,7 @@ import { renderEvidence } from "./ui/evidence-view.js";
 import { initQuoteView, renderQuote, resetQuote } from "./ui/quote-view.js";
 import { initFeedbackView, resetFeedback } from "./ui/feedback-view.js";
 import { MECHANICS } from "./data/mechanics.js";
+import { initGuidedView, renderGuided } from "./ui/guided-view.js";
 import { buildSummary } from "./ui/share.js";
 
 let result = null;
@@ -35,6 +36,7 @@ function runDiagnosis({ fresh = false } = {}) {
     quality: state.recording.quality.level
   });
   renderResults(result, state, { fresh });
+  renderGuided(result, state);
   renderPlan(result, state);
   renderEvidence(result, state);
   renderQuote(result);
@@ -60,6 +62,7 @@ async function analyze() {
     steps[i].className = "done";
   }
   state.answers = {};
+  state.measured = {};
   setNotice($("shareStatus"), "");
   resetQuote();
   resetFeedback();
@@ -87,10 +90,11 @@ function init() {
   document.addEventListener("stepchange", e => { if (e.detail === 2) redrawViz(); });
   initResultsView({
     onAnswer(questionId, answer) { state.answers[questionId] = answer; runDiagnosis(); },
-    onResetAnswers() { state.answers = {}; runDiagnosis(); },
+    onResetAnswers() { state.answers = {}; state.measured = {}; runDiagnosis(); },
     onPlayExample(faultId) { stopAllAudio(); playSamples(SYNTH[faultId](44100, 5), 44100); }
   });
 
+  initGuidedView(() => state, (questionId, answer) => { state.answers[questionId] = answer; runDiagnosis(); }, () => renderGuided(result, state));
   initQuoteView(() => ({ result, vehicle: state.vehicle }));
   initFeedbackView(() => ({ state, result }));
 

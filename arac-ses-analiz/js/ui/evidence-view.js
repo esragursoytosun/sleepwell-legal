@@ -2,6 +2,7 @@ import { $, accentGradient, cssVar, esc, fitCanvas } from "./dom.js";
 import { icon } from "./icons.js";
 import { explainTop } from "../engine/explain.js";
 import { MIN_LOCATE_RANGE_DB } from "../audio/locate.js";
+import { GUIDED_TESTS } from "../engine/compare.js";
 
 /** Videonun verilen saniyesindeki kareyi resim olarak alır (alınamazsa null). */
 export function grabFrame(url, t, width = 480) {
@@ -47,7 +48,9 @@ let renderToken = 0;
 
 /** "Neden bu sonuç?" kartı: gerekçeler ve (videoysa) sesin en güçlü olduğu an. */
 export async function renderEvidence(result, state) {
-  const reasons = explainTop(result.ranked[0], { features: state.features, conditions: [...state.conditions], answers: state.answers });
+  const measured = {};
+  for (const t of GUIDED_TESTS) if (state.measured[t.id]?.answer !== "unknown" && state.measured[t.id]) measured[t.question] = state.measured[t.id].text;
+  const reasons = explainTop(result.ranked[0], { features: state.features, conditions: [...state.conditions], answers: state.answers, measured });
   $("reasons").innerHTML = reasons.map(r => `<li>${icon("check")}<span>${esc(r)}</span></li>`).join("");
 
   const loc = state.locate, rec = state.recording;

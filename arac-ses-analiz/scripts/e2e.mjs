@@ -7,6 +7,7 @@ import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 import { join } from "node:path";
 import { createStaticServer } from "./serve.mjs";
+import { encodeWav } from "../js/audio/wav.js";
 
 const { chromium } = createRequire(import.meta.url)("playwright");
 const shotDir = process.env.SCREENSHOT_DIR;
@@ -38,6 +39,13 @@ async function answer(page, selector, value) {
   await q.locator(`[data-answer="${value}"]`).click();
   await page.waitForSelector(`.question[data-q="${id}"]`, { state: "detached" });
   await page.waitForTimeout(1000); // kartların yer değiştirmesi ve sayaçlar
+}
+/** Test için WAV dosyası: gürültü içinde sabit ton (toneAmp 0 ise yalnızca gürültü). */
+async function wavFile(name, hz, toneAmp, seconds = 5) {
+  let seed = 3;
+  const rnd = () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296) * 2 - 1;
+  const x = Float32Array.from({ length: 44100 * seconds }, (_, i) => 0.05 * rnd() + toneAmp * Math.sin(2 * Math.PI * hz * i / 44100));
+  return { name, mimeType: "audio/wav", buffer: Buffer.from(await encodeWav(x, 44100).arrayBuffer()) };
 }
 const visibleStep = page => page.evaluate(() => [...document.querySelectorAll(".step")].findIndex(s => !s.hidden));
 
@@ -132,6 +140,7 @@ try {
   assert.match(await page.textContent("#groupName"), /Alt takım/);
   assert.match(await page.textContent("#planWarranty"), /garantisinde/);
   assert.match(await page.textContent("#planMechanics"), /Şehrinizi seçerseniz/);
+  assert.equal(await page.isHidden("#guidedCard"), true);
   assert.equal(await page.locator(".question").count(), 3);
   const before = await page.textContent("#faultList");
   for (let round = 0; round < 6 && await page.locator('.question[data-q="ince_tikirti"]').count() === 0; round++) {
@@ -155,6 +164,30 @@ try {
   assert.equal(await visibleStep(page), 2);
   assert.equal(await page.isDisabled("#analyzeBtn"), true);
   await page.close();
+
+  // --- Senaryo 3: yönlendirmeli test; ölçüm soruları cevaplar ve alternatörü öne çıkarır
+  page = await newPage();
+  await page.click("#step-0 [data-next]");
+  await page.click('.chip[data-id="rolanti"]');
+  await page.click("#step-1 [data-next]");
+  await page.selectOption("#demo", "alternator");
+  await analyze(page);
+  assert.equal(await page.isHidden("#guidedCard"), false);
+  assert.equal(await page.locator(".gtest").count(), 3);
+  // Gaz verince ton inceliyor → "devir" sorusu ölçülerek cevaplanır
+  await page.setInputFiles('.gtest[data-test="gaz"] [data-test-file]', await wavFile("gaz.wav", 2750, 0.3));
+  await page.waitForSelector('.gtest[data-test="gaz"] .gtest-result.measured');
+  assert.match(await page.textContent('.gtest[data-test="gaz"] .gtest-result'), /inceldi/);
+  assert.equal(await page.locator('.question[data-q="devir"]').count(), 0);
+  // Elektrik yüküyle ton kayboluyor → ses yüke bağlı → alternatör
+  await page.setInputFiles('.gtest[data-test="elektrik"] [data-test-file]', await wavFile("yuk.wav", 2100, 0));
+  await page.waitForSelector('.gtest[data-test="elektrik"] .gtest-result.measured');
+  await page.waitForTimeout(1200);
+  assert.match(await page.textContent("#faultList .fault:first-child .fault-name"), /Alternatör/);
+  assert.match(await page.textContent("#reasons"), /Yaptığınız testte ölçüldü/);
+  await shot(page, "6-yonlendirmeli-test");
+  await page.close();
+  // Alt takım sesinde yönlendirmeli test önerilmez (senaryo 2'de denetlendi)
 
   assert.deepEqual(errors, [], "tarayıcı hatası olmamalı");
   console.log("E2E: tüm senaryolar geçti");

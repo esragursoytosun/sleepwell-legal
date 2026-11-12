@@ -9,7 +9,9 @@ export const state = {
   features: null,
   /** Sesin zaman içindeki gücü (audio/locate.js) */
   locate: null,
-  answers: {}
+  answers: {},
+  /** Yönlendirmeli testlerde ölçülen sonuçlar: test kimliği → {answer, text} */
+  measured: {}
 };
 
 export function loadVehicle() {
