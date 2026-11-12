@@ -24,3 +24,21 @@ for (const c of cases) {
 }
 console.log(`\n${cases.length} vaka · bölge doğru: ${group}/${cases.length}` +
   (labelled ? ` · kesin arızası bilinen ${labelled} vakada ilk sıra: ${top1}, ilk 3: ${top3}` : " · kesin arızası bilinen vaka yok"));
+
+// --- Referans sesler: sosyal medyadan derlenen, etiketi doğrulanmamış örnekler. Doğruluk oranına katılmaz.
+import { readdirSync, readFileSync } from "node:fs";
+import { FAULT_BY_ID } from "../js/data/faults.js";
+const refDir = new URL("../tests/reference/", import.meta.url);
+for (const file of readdirSync(refDir).filter(f => f.endsWith(".json"))) {
+  const ref = JSON.parse(readFileSync(new URL(file, refDir), "utf8"));
+  console.log(`\nReferans (doğrulanmamış): ${ref.id}`);
+  let g = 0, t3 = 0;
+  for (const seg of ref.segments) {
+    const res = diagnose({ features: seg.features });
+    const rank = res.ranked.findIndex(r => r.fault.id === seg.fault) + 1;
+    const okGroup = res.groups[0].id === FAULT_BY_ID[seg.fault].group;
+    g += okGroup; t3 += rank <= 3;
+    console.log(`  ${seg.fault}: bölge ${okGroup ? "doğru" : "yanlış"} · sıra ${rank}`);
+  }
+  console.log(`  yalnızca sesle (belirti ve soru olmadan): bölge ${g}/${ref.segments.length}, ilk 3: ${t3}/${ref.segments.length}`);
+}

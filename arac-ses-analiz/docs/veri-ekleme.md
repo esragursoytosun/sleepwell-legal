@@ -38,3 +38,14 @@ karşıladığını denetler; bir değişiklik gerçek bir vakayı bozarsa test 
 - `stats` her tamamlanan işten sonra güncellenir.
 
 Eklemelerden sonra `npm test` çalıştırın; tanımsız parça ya da bölge kimliği varsa testler yakalar.
+
+## 4. Sosyal medyadan referans sesler
+
+TikTok, Instagram ve YouTube'daki "bu arıza böyle ses çıkarır" videoları ses profillerini ayarlamak için yol
+göstericidir, ama etiketleri doğrulanmamıştır ve sesler çoğu zaman kurgulanmıştır.
+
+- Dosya: `tests/reference/<ad>.json`; her ses parçası için arıza kimliği ve ölçülen özellikler.
+- **Ses ve görüntü saklanmaz, uygulamada gösterilmez.** Yalnızca ölçümler tutulur.
+- `npm run evaluate` bu sesleri ayrı bir bölümde raporlar; **doğruluk oranına katılmaz** ve testleri bağlamaz.
+- Tek bir videoya göre profil değiştirilmez. Aynı arıza için birkaç bağımsız kaynak aynı şeyi gösterdiğinde
+  ya da bilinen bir gerçekle örtüştüğünde değiştirilir (ör. fren ötmesinin frekans aralığı).

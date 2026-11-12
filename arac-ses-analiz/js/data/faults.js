@@ -111,7 +111,7 @@ export const FAULTS = [
   { id: "fren_balata", name: "Fren balatası aşınması (gıcırtı)", group: "fren", loc: "on_teker", urg: 3,
     desc: "Balata aşınma uyarı sacı diske sürtünce çok tiz bir ötme/gıcırtı yapar; genellikle fren yapınca başlar.",
     tip: "Balatalar ölçtürülmeli. Uzun süre ihmal edilirse disk de zarar görür.",
-    p: { f: [3000, 11000], feat: "peak", tonal: .8, imp: .1, rhythm: null },
+    p: { f: [1200, 11000], feat: "peak", tonal: .8, imp: .1, rhythm: null }, // gerçek fren ötmesi 1–12 kHz arasında olabilir
     c: { fren: 3.2, hiz: .8, rolanti: .3, soguk: .7, hizlanma: .5, klima: .4, direksiyon: .6 } },
   { id: "fren_disk", name: "Fren diski – metal metale sürtünme", group: "fren", loc: "on_teker", urg: 4,
     desc: "Balata tamamen bitince metal disk üzerine sürtünür: kaba bir hırıltı/öğütme sesi, tekerlek dönüşüyle ritmik.",

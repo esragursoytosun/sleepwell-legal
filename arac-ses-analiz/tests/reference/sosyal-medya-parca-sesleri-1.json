@@ -1,0 +1,184 @@
+{
+ "id": "sosyal-medya-parca-sesleri-1",
+ "date": "2026-11-08",
+ "source": "Kullanıcının ilettiği sosyal medya videosu: bir yedek parçacının 8 parçanın arıza sesini tanıttığı derleme. Yalnızca ölçülen ses özellikleri saklanır; ses ve görüntü saklanmaz.",
+ "reliability": "Etiketler videoyu hazırlayanın beyanıdır, doğrulanmamıştır. Sesler kısa (2,5–4 sn), kurgulanmış ve üzerine anlatım binmiş olabilir. Doğruluk oranına katılmaz; yalnızca profilleri ayarlarken yol göstericidir.",
+ "segments": [
+  {
+   "fault": "salincak",
+   "from": 1.3,
+   "to": 4,
+   "features": {
+    "dur": 2.7,
+    "rms": 0.2633,
+    "peakHz": 1399.6582,
+    "tonal": 0.0787,
+    "toneHz": 0,
+    "tonePersistence": 0.1579,
+    "centroid": 1619.3101,
+    "imp": 0.44,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.2283,
+     0.5265,
+     0.2452
+    ]
+   }
+  },
+  {
+   "fault": "kayis",
+   "from": 4.6,
+   "to": 7.2,
+   "features": {
+    "dur": 2.6,
+    "rms": 0.1545,
+    "peakHz": 3003.8818,
+    "tonal": 0.1988,
+    "toneHz": 0,
+    "tonePersistence": 0.1111,
+    "centroid": 2702.4666,
+    "imp": 0,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.2837,
+     0.1173,
+     0.5989
+    ]
+   }
+  },
+  {
+   "fault": "z_rot",
+   "from": 7.7,
+   "to": 11,
+   "features": {
+    "dur": 3.3,
+    "rms": 0.1694,
+    "peakHz": 419.8975,
+    "tonal": 0,
+    "toneHz": 0,
+    "tonePersistence": 0.0571,
+    "centroid": 898.9509,
+    "imp": 1,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.2439,
+     0.6831,
+     0.073
+    ]
+   }
+  },
+  {
+   "fault": "fren_balata",
+   "from": 11.7,
+   "to": 14.5,
+   "features": {
+    "dur": 2.8,
+    "rms": 0.2642,
+    "peakHz": 1464.2578,
+    "tonal": 1,
+    "toneHz": 0,
+    "tonePersistence": 0.3051,
+    "centroid": 1296.0546,
+    "imp": 0.0686,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.176,
+     0.8064,
+     0.0176
+    ]
+   }
+  },
+  {
+   "fault": "rotil",
+   "from": 15.2,
+   "to": 17.9,
+   "features": {
+    "dur": 2.7,
+    "rms": 0.2359,
+    "peakHz": 1108.96,
+    "tonal": 0,
+    "toneHz": 0,
+    "tonePersistence": 0.2456,
+    "centroid": 650.2434,
+    "imp": 0.0144,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.0911,
+     0.8864,
+     0.0225
+    ]
+   }
+  },
+  {
+   "fault": "amortisor_kafa",
+   "from": 18.4,
+   "to": 21.8,
+   "features": {
+    "dur": 3.4,
+    "rms": 0.179,
+    "peakHz": 322.998,
+    "tonal": 0,
+    "toneHz": 0,
+    "tonePersistence": 0.0417,
+    "centroid": 3536.6319,
+    "imp": 1,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.1693,
+     0.3092,
+     0.5215
+    ]
+   }
+  },
+  {
+   "fault": "viraj_lastik",
+   "from": 22.6,
+   "to": 26.2,
+   "features": {
+    "dur": 3.6,
+    "rms": 0.2308,
+    "peakHz": 1065.8936,
+    "tonal": 0,
+    "toneHz": 0,
+    "tonePersistence": 0.0921,
+    "centroid": 1713.4111,
+    "imp": 0.8863,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.223,
+     0.5636,
+     0.2134
+    ]
+   }
+  },
+  {
+   "fault": "rulman",
+   "from": 26.7,
+   "to": 29.8,
+   "features": {
+    "dur": 3.1,
+    "rms": 0.2528,
+    "peakHz": 247.6318,
+    "tonal": 0,
+    "toneHz": 0,
+    "tonePersistence": 0.0615,
+    "centroid": 227.5446,
+    "imp": 1,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.7896,
+     0.2035,
+     0.0069
+    ]
+   }
+  }
+ ]
+}
