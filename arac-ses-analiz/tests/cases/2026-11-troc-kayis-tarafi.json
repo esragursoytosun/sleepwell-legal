@@ -1,0 +1,44 @@
+{
+  "id": "2026-11-troc-kayis-tarafi",
+  "date": "2026-11-12",
+  "source": "Kullanıcı videosu (19 sn, motor rölantide, kaput açık). Yalnızca ölçülen ses özellikleri saklanır; ses ve görüntü saklanmaz.",
+  "vehicle": {
+    "brand": "Volkswagen",
+    "model": "T-Roc",
+    "fuel": "benzin",
+    "year": 2025,
+    "km": 15000
+  },
+  "conditions": [
+    "rolanti"
+  ],
+  "answers": {
+    "klima_kapat": "no"
+  },
+  "observed": "Yaklaşık 2.100 Hz'de sabit, tiz ton. Telefon alternatör ve gergi/avara bilyasına yaklaştıkça ses 25–33 dB'e çıkıyor, ön/radyatör tarafında 7–14 dB'e düşüyor.",
+  "outcome": "Periyodik bakımdan sonra ses kesildi; yapılan işlem henüz bilinmiyor.",
+  "expect": {
+    "group": "yardimci",
+    "anyOfTop3": [
+      "kayis",
+      "alternator"
+    ]
+  },
+  "features": {
+    "dur": 19,
+    "rms": 0.0859,
+    "peakHz": 2099.4873,
+    "tonal": 0.671,
+    "toneHz": 2099.4873,
+    "tonePersistence": 0.652,
+    "centroid": 2032.3401,
+    "imp": 0.355,
+    "periodicity": 0.8287,
+    "rate": 12.5,
+    "bands": [
+      0.2168,
+      0.2116,
+      0.5716
+    ]
+  }
+}

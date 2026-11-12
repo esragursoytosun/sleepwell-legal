@@ -11,6 +11,7 @@ export function vehicleLine(v) {
   if (!v.brand) return "Araç bilgisi girilmedi";
   const parts = [`${v.brand} ${v.model}${v.year ? ` (${v.year})` : ""}`, FUEL_LABEL[v.fuel]];
   if (v.km) parts.push(v.km.toLocaleString("tr-TR") + " km");
+  if (v.city) parts.push(v.city);
   return parts.join(" · ");
 }
 

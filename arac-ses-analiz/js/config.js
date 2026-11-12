@@ -7,7 +7,7 @@ export const CONFIG = {
   maxRecordSeconds: 15,
   minRecordSeconds: 3,
   /** Analizde kullanılan en uzun süre (saniye). */
-  analysisSeconds: 12,
+  analysisSeconds: 20,
   /** Aynı anda gösterilecek takip sorusu sayısı. */
   questionsPerRound: 3,
   /** Sonuç listesinde gösterilecek arıza sayısı. */

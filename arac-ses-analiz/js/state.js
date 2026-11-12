@@ -2,11 +2,13 @@
 const STORAGE_KEY = "arac-ses-analiz:vehicle";
 
 export const state = {
-  vehicle: { brand: "", model: "", fuel: "benzin", year: 0, km: 0 },
+  vehicle: { brand: "", model: "", fuel: "benzin", year: 0, km: 0, city: "" },
   conditions: new Set(),
-  /** @type {null | {samples: Float32Array, sr: number, blob: Blob, url: string, label: string, quality: {level: string, issues: object[]}}} */
+  /** @type {null | {samples: Float32Array, sr: number, blob: Blob, url: string, label: string, isVideo: boolean, quality: {level: string, issues: object[]}}} */
   recording: null,
   features: null,
+  /** Sesin zaman içindeki gücü (audio/locate.js) */
+  locate: null,
   answers: {}
 };
 

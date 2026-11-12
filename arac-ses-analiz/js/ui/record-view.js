@@ -31,7 +31,7 @@ export function redrawViz() {
 function setRecording(samples, sr, blob, label) {
   if (state.recording) URL.revokeObjectURL(state.recording.url);
   const quality = checkQuality(samples, sr, { minSeconds: CONFIG.minRecordSeconds });
-  state.recording = { samples, sr, blob, url: URL.createObjectURL(blob), label, quality };
+  state.recording = { samples, sr, blob, url: URL.createObjectURL(blob), label, quality, isVideo: (blob.type || "").startsWith("video/") };
   state.answers = {};
 
   $("recording").hidden = false;

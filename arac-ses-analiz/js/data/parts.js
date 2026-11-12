@@ -1,0 +1,47 @@
+/**
+ * Teklif ve faturalarda geçen parça/işlem kalemleri.
+ * `costly`: pahalı kalem; sesle ilişkisi zayıfsa teklif kontrolünde güçlü uyarı verilir.
+ * `routine`: periyodik bakım kalemi; tek başına şüpheli sayılmaz.
+ */
+export const PARTS = {
+  kayis: { label: "V-kayış" },
+  bilya: { label: "Gergi / avara bilyası" },
+  alternator: { label: "Alternatör", costly: true },
+  su_pompasi: { label: "Su pompası", costly: true },
+  aku: { label: "Akü" },
+  direksiyon_pompasi: { label: "Hidrolik direksiyon pompası", costly: true },
+  hidrolik_yag: { label: "Hidrolik direksiyon yağı", routine: true },
+  klima_kompresoru: { label: "Klima kompresörü", costly: true },
+  klima_gazi: { label: "Klima gazı dolumu" },
+  motor_revizyon: { label: "Motor revizyonu / yatak değişimi", costly: true },
+  supap_itici: { label: "Supap / hidrolik itici" },
+  motor_yagi: { label: "Motor yağı ve filtre", routine: true },
+  triger_seti: { label: "Triger zinciri / kayış seti", costly: true },
+  egzoz_conta: { label: "Egzoz manifold contası" },
+  egzoz_parca: { label: "Egzoz borusu / susturucu" },
+  turbo: { label: "Turbo", costly: true },
+  turbo_hortum: { label: "Turbo / intercooler hortumu" },
+  buji: { label: "Buji", routine: true },
+  bobin: { label: "Ateşleme bobini" },
+  enjektor: { label: "Enjektör", costly: true },
+  fren_balatasi: { label: "Fren balatası" },
+  fren_diski: { label: "Fren diski" },
+  kaliper: { label: "Fren kaliperi" },
+  teker_rulmani: { label: "Teker rulmanı" },
+  aks_kafasi: { label: "Aks kafası (mafsal)" },
+  aks_korugu: { label: "Aks körüğü" },
+  aks_komple: { label: "Komple aks", costly: true },
+  sanziman: { label: "Şanzıman revizyonu / değişimi", costly: true },
+  sanziman_yagi: { label: "Şanzıman yağı" },
+  debriyaj: { label: "Debriyaj seti", costly: true },
+  rotil: { label: "Rotil" },
+  rot_basi: { label: "Rot başı" },
+  rot_mili: { label: "Rot mili" },
+  rot_ayari: { label: "Rot (ön düzen) ayarı", routine: true },
+  z_rot: { label: "Z rot" },
+  viraj_lastigi: { label: "Viraj demiri lastiği" },
+  amortisor_takozu: { label: "Amortisör takozu / rulmanı" },
+  amortisor: { label: "Amortisör", costly: true },
+  salincak: { label: "Salıncak" },
+  salincak_burcu: { label: "Salıncak burcu" }
+};

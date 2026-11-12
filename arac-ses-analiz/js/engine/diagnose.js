@@ -31,6 +31,11 @@ export function audioScore(F, p) {
   else rhythm = 1 - 0.7 * F.periodicity * F.imp;
   // Düzenli ritimli bir ses, yol kaynaklı düzensiz vuruntu olamaz: bu durumda puan ayrıca kırpılır.
   const penalty = p.rhythm === "irregular" ? 1 - 0.6 * F.periodicity : 1;
+  // Kayıt boyunca sabit bir ton varsa, tonlu (ıslık/vınlama) arızalar o tona göre değerlendirilir:
+  // gerçek kayıtta tonun altında motorun normal tıkırtısı da duyulur ve o tıkırtı tonun kaynağı değildir.
+  if (F.toneHz && p.feat === "peak" && p.tonal >= 0.5 && !p.rhythm) {
+    return 0.45 * freq + 0.35 * tonal + 0.1 * imp + 0.1 * rhythm;
+  }
   return (0.35 * freq + 0.2 * tonal + 0.25 * imp + 0.2 * rhythm) * penalty;
 }
 

@@ -58,13 +58,14 @@
       </ul>
       <div class="card">
         <h3><span data-icon="car"></span>Aracınız</h3>
-        <p class="hint">Marka, model, yıl ve kilometre tahmini güçlendirir. Bilmediğiniz alanları boş bırakabilirsiniz.</p>
+        <p class="hint">Marka, model, yıl ve kilometre tahmini güçlendirir; şehir, bölgenizdeki güvenilir ustaları bulmamızı sağlar. Bilmediğiniz alanları boş bırakabilirsiniz.</p>
         <div class="grid">
           <label class="field">Marka <select id="brand"></select></label>
           <label class="field">Model <select id="model"></select></label>
           <label class="field">Model yılı <input id="year" type="number" inputmode="numeric" min="1980" max="2030" placeholder="ör. 2016"></label>
           <label class="field">Yakıt <select id="fuel"></select></label>
           <label class="field">Kilometre <input id="km" type="number" inputmode="numeric" min="0" step="1000" placeholder="ör. 145000"></label>
+          <label class="field">Şehir <select id="city"></select></label>
         </div>
         <div class="nav">
           <span></span>
@@ -163,6 +164,37 @@
       </div>
       <div class="notice" id="confNote" hidden></div>
 
+      <div class="card plan-card" id="planCard">
+        <h3><span data-icon="compass"></span>Ne yapmalısınız?</h3>
+        <p class="hint" id="planFor"></p>
+        <div class="urgency" id="planUrgency"></div>
+        <div class="notice" id="planWarranty" hidden></div>
+        <div class="notice warn" id="planUncertain" hidden></div>
+        <div class="plan-grid">
+          <section class="plan-sec" id="planChecksSec">
+            <h4><span data-icon="check"></span>Önce kendiniz kontrol edin</h4>
+            <ol id="planChecks"></ol>
+          </section>
+          <section class="plan-sec">
+            <h4><span data-icon="chat"></span>Ustaya şunları söyleyin</h4>
+            <ol id="planAsk"></ol>
+            <button class="btn small" id="copyAskBtn"><span data-icon="copy"></span> Listeyi kopyala</button>
+          </section>
+          <section class="plan-sec flags">
+            <h4><span data-icon="alert"></span>Dikkat: bunlar kazık işareti olabilir</h4>
+            <ul id="planFlags"></ul>
+          </section>
+        </div>
+        <section class="plan-sec">
+          <h4><span data-icon="coin"></span>Makul fiyat</h4>
+          <div id="planPrices"></div>
+        </section>
+        <section class="plan-sec">
+          <h4><span data-icon="shield"></span>Güvenilir usta</h4>
+          <div id="planMechanics"></div>
+        </section>
+      </div>
+
       <div class="card questions-card" id="questionsCard" hidden>
         <h3><span data-icon="sparkle"></span>Tahmini netleştirelim <span class="q-count" id="answeredLine"></span></h3>
         <p class="hint">Birkaç kısa soru, benzer ses çıkaran parçaları birbirinden ayırır.</p>
@@ -170,6 +202,20 @@
         <div class="row" id="answeredRow" hidden>
           <button class="btn small ghost" id="resetAnswersBtn"><span data-icon="refresh"></span> Cevapları sıfırla</button>
         </div>
+      </div>
+
+      <div class="card" id="evidenceCard">
+        <h3><span data-icon="wave"></span>Neden bu sonuç?</h3>
+        <ul class="reasons" id="reasons"></ul>
+        <div class="locate" id="locate" hidden>
+          <div class="loc-frame"><img id="locFrame" alt="Videoda sesin en güçlü olduğu an"><span class="loc-tag" id="locTag"></span></div>
+          <div class="loc-info">
+            <p id="locText"></p>
+            <canvas id="locChart" aria-hidden="true"></canvas>
+            <div class="hint">Videonun saniyelerine göre sesin gücü</div>
+          </div>
+        </div>
+        <p class="hint" id="locHint" hidden></p>
       </div>
 
       <div class="card">
@@ -181,6 +227,22 @@
           </div>
           <div id="faultList"></div>
         </div>
+      </div>
+
+      <div class="card quote-card" id="quoteCard">
+        <h3><span data-icon="receipt"></span>Ustanın teklifini kontrol edin</h3>
+        <p class="hint">Teklifte ya da faturada geçen kalemleri seçin; teşhisle uyuşup uyuşmadığına bakalım.</p>
+        <div class="eyebrow sub">Bu sesle ilgili olabilecek kalemler</div>
+        <div class="part-chips" id="quoteRelated"></div>
+        <details class="more-parts">
+          <summary>Diğer kalemler <span data-icon="chevron"></span></summary>
+          <div class="part-chips" id="quoteOther"></div>
+        </details>
+        <div class="quote-row">
+          <label class="field">Toplam tutar (TL, isteğe bağlı) <input id="quoteTotal" type="number" inputmode="numeric" min="0" step="50" placeholder="ör. 3500"></label>
+          <button class="btn primary" id="quoteCheckBtn" disabled><span data-icon="check"></span> Kontrol et</button>
+        </div>
+        <div id="quoteResult"></div>
       </div>
 
       <div class="card cta-card">
@@ -201,6 +263,22 @@
           <summary>Teknik detay <span data-icon="chevron"></span></summary>
           <div class="tech" id="tech"></div>
         </details>
+      </div>
+
+      <div class="card feedback-card" id="feedbackCard">
+        <h3><span data-icon="flag"></span>Sonuç ne oldu?</h3>
+        <p class="hint">Servisten sonra ne çıktığını kaydedin. Sizin için bir kayıt olur; bize gönderirseniz uygulama daha doğru hâle gelir.</p>
+        <div class="grid">
+          <label class="field">Ne yapıldı? <select id="fbPart"></select></label>
+          <label class="field">Ses geçti mi? <select id="fbResolved"><option value="">Seçin…</option><option value="yes">Evet, geçti</option><option value="no">Hayır, devam ediyor</option></select></label>
+          <label class="field">Ödenen tutar (TL) <input id="fbPaid" type="number" inputmode="numeric" min="0" step="50" placeholder="ör. 2400"></label>
+          <label class="field">Usta teklifine sadık kaldı mı? <select id="fbKept"><option value="">Seçin…</option><option value="yes">Evet</option><option value="no">Hayır, fatura daha yüksek</option><option value="none">Önceden teklif almadım</option></select></label>
+        </div>
+        <div class="row">
+          <button class="btn primary" id="fbSaveBtn"><span data-icon="check"></span> Kaydet</button>
+          <button class="btn" id="fbSendBtn" disabled><span data-icon="chat"></span> Ekibimize gönder</button>
+        </div>
+        <div class="notice" id="fbStatus" role="status" aria-live="polite" hidden></div>
       </div>
 
       <p class="disclaimer"><span data-icon="info"></span><span>Bu uygulama bir ön tahmin aracıdır; kesin teşhis değildir. Ses özelliklerini, verdiğiniz bilgileri ve modelde sık bildirilen sorunları birleştirerek olasılık hesaplar. Fren, direksiyon, süspansiyon ya da motor vuruntusu şüphesinde aracı kullanmadan önce bir servise kontrol ettirin.</span></p>

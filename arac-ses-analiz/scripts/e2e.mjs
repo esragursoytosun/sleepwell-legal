@@ -67,6 +67,42 @@ try {
   assert.match(await page.textContent("#summaryLine"), /Peugeot 208 \(2018\)/);
   await shot(page, "4-sonuc");
 
+  // Ne yapmalısınız: aciliyet, ustaya söylenecekler, kırmızı bayraklar; 2018 model için kesin garanti iddiası yok
+  assert.match(await page.textContent("#planFor"), /zincir/i);
+  assert.match(await page.textContent("#planUrgency"), /Bu hafta baktırın/);
+  assert.match(await page.textContent("#planAsk"), /Onayım olmadan/);
+  assert.match(await page.textContent("#planFlags"), /ön ödeme/);
+  assert.match(await page.textContent("#planPrices"), /toplanıyor/);
+  assert.equal(await page.isHidden("#planWarranty"), true);
+  // Neden bu sonuç: gerekçe var; ses kaydı video olmadığı için konum yerine ipucu
+  assert.ok(await page.locator("#reasons li").count() >= 1);
+  assert.match(await page.textContent("#reasons"), /Soğuk çalıştırmada/);
+  assert.equal(await page.isHidden("#locate"), true);
+  assert.match(await page.textContent("#locHint"), /video çekerseniz/);
+
+  // Teklif kontrolü: ilgili kalem + ilgisiz pahalı kalem → ikinci görüş
+  assert.equal(await page.isDisabled("#quoteCheckBtn"), true);
+  await page.click('#quoteRelated .pchip[data-part="triger_seti"]');
+  await page.click(".more-parts summary");
+  await page.click('#quoteOther .pchip[data-part="sanziman"]');
+  await page.click("#quoteCheckBtn");
+  assert.match(await page.textContent("#quoteVerdict"), /ikinci görüş/);
+  assert.match(await page.textContent(".qi.unrelated"), /Şanzıman/);
+  await shot(page, "4b-teklif");
+
+  // Sonuç bildirme: kaydedilir, gönder düğmesi açılır
+  assert.equal(await page.isDisabled("#fbSendBtn"), true);
+  await page.selectOption("#fbPart", "triger_seti");
+  await page.selectOption("#fbResolved", "yes");
+  await page.fill("#fbPaid", "9000");
+  await page.click("#fbSaveBtn");
+  assert.match(await page.textContent("#fbStatus"), /Kaydedildi/);
+  assert.equal(await page.isDisabled("#fbSendBtn"), false);
+  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("arac-ses-analiz:cases")));
+  assert.equal(saved.length, 1);
+  assert.equal(saved[0].outcome.part, "triger_seti");
+  assert.equal(saved[0].prediction[0].fault, "zincir");
+
   // Paylaşım: dosya paylaşımı yoksa WhatsApp'a hazır mesaj açılır
   await page.click("#shareBtn");
   const opened = await page.evaluate(() => window.__opened);
@@ -83,12 +119,19 @@ try {
 
   // --- Senaryo 2: alt takım takırtısı; sorular parçayı netleştirir
   page = await newPage({ width: 1100, height: 900 });
+  // Yeni model araç: garanti uyarısı
+  await page.selectOption("#brand", "Fiat");
+  await page.selectOption("#model", "Egea");
+  await page.fill("#year", String(new Date().getFullYear()));
+  await page.locator("#year").blur();
   await page.click("#step-0 [data-next]");
   await page.click('.chip[data-id="tumsek"]');
   await page.click("#step-1 [data-next]");
   await page.selectOption("#demo", "z_rot");
   await analyze(page);
   assert.match(await page.textContent("#groupName"), /Alt takım/);
+  assert.match(await page.textContent("#planWarranty"), /garantisinde/);
+  assert.match(await page.textContent("#planMechanics"), /Şehrinizi seçerseniz/);
   assert.equal(await page.locator(".question").count(), 3);
   const before = await page.textContent("#faultList");
   for (let round = 0; round < 6 && await page.locator('.question[data-q="ince_tikirti"]').count() === 0; round++) {

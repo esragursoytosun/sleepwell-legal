@@ -16,6 +16,13 @@ import { initRecordView, resetRecordView, redrawViz } from "./ui/record-view.js"
 import { renderCarDiagram } from "./ui/car-diagram.js";
 import { initResultsView, renderResults } from "./ui/results-view.js";
 import { copySummary, shareSecondOpinion } from "./ui/share.js";
+import { strengthOverTime } from "./audio/locate.js";
+import { askText, renderPlan } from "./ui/plan-view.js";
+import { renderEvidence } from "./ui/evidence-view.js";
+import { initQuoteView, renderQuote, resetQuote } from "./ui/quote-view.js";
+import { initFeedbackView, resetFeedback } from "./ui/feedback-view.js";
+import { MECHANICS } from "./data/mechanics.js";
+import { buildSummary } from "./ui/share.js";
 
 let result = null;
 
@@ -28,6 +35,9 @@ function runDiagnosis({ fresh = false } = {}) {
     quality: state.recording.quality.level
   });
   renderResults(result, state, { fresh });
+  renderPlan(result, state);
+  renderEvidence(result, state);
+  renderQuote(result);
 }
 
 /** Analiz: tarama animasyonu gösterilirken hesap yapılır, sonra sonuç adımına geçilir. */
@@ -43,11 +53,16 @@ async function analyze() {
   for (let i = 0; i < steps.length; i++) {
     steps[i].className = "active";
     await wait(i === 0 ? 120 : 380);
-    if (i === 0) state.features = extractFeatures(samples, sr, CONFIG.analysisSeconds);
+    if (i === 0) {
+      state.features = extractFeatures(samples, sr, CONFIG.analysisSeconds);
+      state.locate = strengthOverTime(samples, sr, state.features);
+    }
     steps[i].className = "done";
   }
   state.answers = {};
   setNotice($("shareStatus"), "");
+  resetQuote();
+  resetFeedback();
   await wait(250);
   overlay.hidden = true;
   $("analyzeBtn").disabled = false;
@@ -76,7 +91,25 @@ function init() {
     onPlayExample(faultId) { stopAllAudio(); playSamples(SYNTH[faultId](44100, 5), 44100); }
   });
 
+  initQuoteView(() => ({ result, vehicle: state.vehicle }));
+  initFeedbackView(() => ({ state, result }));
+
   $("analyzeBtn").addEventListener("click", analyze);
+  $("copyAskBtn").addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(askText());
+      $("copyAskBtn").lastChild.textContent = " Kopyalandı";
+    } catch {
+      $("copyAskBtn").lastChild.textContent = " Kopyalanamadı";
+    }
+    setTimeout(() => { $("copyAskBtn").lastChild.textContent = " Listeyi kopyala"; }, 2000);
+  });
+  $("planMechanics").addEventListener("click", e => {
+    if (e.target.closest("[data-second-opinion]")) { $("shareBtn").click(); return; }
+    const btn = e.target.closest("[data-mech]");
+    const m = btn && MECHANICS.find(x => x.id === btn.dataset.mech);
+    if (m) window.open(`https://wa.me/${m.whatsapp}?text=${encodeURIComponent(buildSummary(state, result))}`, "_blank", "noopener");
+  });
   $("playMineBtn").addEventListener("click", () => { stopAllAudio(); $("player").currentTime = 0; $("player").play(); });
   $("stopBtn").addEventListener("click", stopAllAudio);
   $("restartBtn").addEventListener("click", () => { stopAllAudio(); showStep(2); resetRecordView(); });

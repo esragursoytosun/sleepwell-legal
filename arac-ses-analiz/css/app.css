@@ -408,6 +408,79 @@ details[open] summary .ic { transform: rotate(180deg); }
 .disclaimer { display: flex; gap: 10px; font-size: .8rem; color: var(--muted); margin-top: 18px; padding: 0 6px; }
 .disclaimer .ic { width: 18px; height: 18px; color: var(--faint); margin-top: 1px; }
 
+
+/* ------------------------------------------------------------ ne yapmalısınız */
+.plan-card h3 + .hint { margin-top: 2px; }
+.urgency {
+  display: flex; gap: 12px; align-items: flex-start; margin-top: 14px; padding: 14px 16px; border-radius: 16px;
+  background: color-mix(in srgb, var(--u) 11%, var(--surface)); border: 1px solid color-mix(in srgb, var(--u) 35%, transparent);
+  animation: pop .4s var(--spring) both;
+}
+.urgency > .ic { color: var(--u); width: 24px; height: 24px; margin-top: 1px; }
+.urgency b { display: block; font-size: 1.02rem; }
+.urgency span { color: var(--muted); font-size: .9rem; }
+.urgency.u1 { --u: var(--ok); } .urgency.u2 { --u: var(--warn); } .urgency.u3 { --u: var(--bad); } .urgency.u4 { --u: var(--critical); }
+.plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+.plan-grid .plan-sec:last-child { grid-column: 1 / -1; }
+@media (max-width: 640px) { .plan-grid { grid-template-columns: 1fr; } }
+.plan-sec { background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px; padding: 14px 16px; margin-top: 12px; }
+.plan-grid .plan-sec { margin-top: 0; }
+.plan-sec h4 { display: flex; align-items: center; gap: 8px; font-size: .92rem; margin-bottom: 8px; }
+.plan-sec h4 .ic { color: var(--accent); width: 18px; height: 18px; }
+.plan-sec ol, .plan-sec ul { margin-left: 20px; font-size: .9rem; color: var(--text); display: grid; gap: 6px; }
+.plan-sec li::marker { color: var(--accent); font-weight: 700; }
+.plan-sec .btn { margin-top: 12px; }
+.plan-sec.flags { background: color-mix(in srgb, var(--bad) 6%, var(--surface-2)); border-color: color-mix(in srgb, var(--bad) 22%, var(--border)); }
+.plan-sec.flags h4 .ic { color: var(--bad); }
+.plan-sec.flags li::marker { color: var(--bad); }
+.price-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.price-table th { text-align: left; color: var(--muted); font-weight: 650; font-size: .78rem; padding: 4px 6px; }
+.price-table td { padding: 8px 6px; border-top: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+.mech { display: flex; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--border); }
+.mech:first-child { border-top: 0; padding-top: 0; }
+.mech-ic { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); flex: none; }
+.mech-main { flex: 1; display: flex; flex-direction: column; }
+.mech-main .hint { margin-top: 0; font-size: .8rem; }
+.mech .btn { margin-top: 0; }
+
+/* ------------------------------------------------------------ neden bu sonuç */
+.reasons { list-style: none; display: grid; gap: 8px; margin-top: 12px; }
+.reasons li { display: flex; gap: 10px; align-items: flex-start; font-size: .92rem; animation: rise .45s var(--ease) both; }
+.reasons li:nth-child(2) { animation-delay: .05s; } .reasons li:nth-child(3) { animation-delay: .1s; } .reasons li:nth-child(4) { animation-delay: .15s; }
+.reasons .ic { color: var(--ok); width: 18px; height: 18px; margin-top: 2px; }
+.locate { display: grid; grid-template-columns: 170px 1fr; gap: 16px; align-items: center; margin-top: 16px; padding: 14px; border-radius: 16px; background: var(--surface-2); border: 1px solid var(--border); animation: pop .4s var(--spring) both; }
+@media (max-width: 560px) { .locate { grid-template-columns: 1fr; } .loc-frame { max-width: 240px; margin: 0 auto; } }
+.loc-frame { position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 0 0 3px var(--accent), 0 10px 24px -10px var(--glow); }
+.loc-frame img { display: block; width: 100%; height: auto; aspect-ratio: 9 / 14; object-fit: cover; }
+.loc-tag { position: absolute; left: 8px; top: 8px; background: var(--grad); color: #fff; font-size: .75rem; font-weight: 750; padding: 3px 9px; border-radius: 999px; }
+.loc-info p { font-size: .92rem; }
+#locChart { width: 100%; height: 64px; display: block; margin-top: 10px; }
+
+/* ------------------------------------------------------------ teklif kontrolü */
+.eyebrow.sub { margin-top: 16px; }
+.part-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.pchip {
+  font: inherit; font-size: .86rem; font-weight: 550; padding: 8px 13px; border-radius: 999px; cursor: pointer;
+  border: 1.5px solid var(--border); background: var(--surface-2); color: var(--text);
+  transition: background .2s, border-color .2s, transform .18s var(--ease);
+}
+.pchip:active { transform: scale(.96); }
+.pchip[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 650; }
+.more-parts summary { margin-top: 12px; }
+.quote-row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; margin-top: 16px; }
+.quote-row .field { flex: 1 1 200px; }
+.quote-items { list-style: none; display: grid; gap: 6px; margin-top: 12px; }
+.qi { display: flex; align-items: center; gap: 10px; font-size: .9rem; padding: 8px 12px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border); }
+.qi .ic { width: 17px; height: 17px; }
+.qi em { margin-left: auto; font-style: normal; font-size: .76rem; font-weight: 700; }
+.qi.related .ic, .qi.related em { color: var(--ok); }
+.qi.routine .ic, .qi.routine em { color: var(--muted); }
+.qi.unrelated { border-color: color-mix(in srgb, var(--bad) 35%, var(--border)); }
+.qi.unrelated .ic, .qi.unrelated em { color: var(--bad); }
+
+/* ------------------------------------------------------------ sonuç bildirme */
+.feedback-card .grid { margin-top: 12px; }
+
 /* ------------------------------------------------------------ hareketi azalt */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; animation-delay: 0s !important; }
