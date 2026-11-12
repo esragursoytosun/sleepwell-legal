@@ -89,6 +89,28 @@ function init() {
       setNotice($("shareStatus"), "Özet ve ses kaydı paylaşıldı.", "ok");
     }
   });
+  // Claude'da yayınlanan sürümde düz indirme bağlantısı çalışmaz; varsa platformun indirme izni kullanılır.
+  $("downloadBtn").addEventListener("click", async e => {
+    if (!window.claude?.use || !state.recording) return;
+    e.preventDefault();
+    const downloads = await window.claude.use("downloads");
+    if (!downloads) {
+      setNotice($("shareStatus"), "Bu görünümde dosya indirilemiyor.", "warn");
+      return;
+    }
+    const type = state.recording.blob.type;
+    const ext = type.includes("webm") ? "webm" : type.includes("mp4") ? "mp4" : null;
+    if (!ext) {
+      setNotice($("shareStatus"), "Bu kayıt türü burada indirilemiyor. Kendi kaydınızı ya da yüklediğiniz dosyayı indirebilirsiniz.", "warn");
+      return;
+    }
+    try {
+      await downloads.save({ filename: "arac-sesi." + ext, data: state.recording.blob });
+      setNotice($("shareStatus"), "Kayıt indirildi.", "ok");
+    } catch (err) {
+      if (err?.code !== "declined") setNotice($("shareStatus"), "Kayıt indirilemedi.", "bad");
+    }
+  });
   $("copyBtn").addEventListener("click", async () => {
     try {
       await copySummary(state, result);

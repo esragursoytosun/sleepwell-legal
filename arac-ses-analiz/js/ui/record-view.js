@@ -72,7 +72,7 @@ async function toggleRecording() {
   try {
     active = await startRecording();
   } catch {
-    setNotice($("recStatus"), "Mikrofon izni verilmedi. Tarayıcı ayarlarından bu site için mikrofona izin verin.", "bad");
+    setNotice($("recStatus"), "Mikrofona erişilemedi. Tarayıcı ayarlarından bu site için mikrofona izin verin ya da telefonda çektiğiniz bir ses/video dosyasını “Dosya yükle” ile ekleyin.", "bad");
     return;
   }
   setNotice($("recStatus"), "");
