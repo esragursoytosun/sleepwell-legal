@@ -96,3 +96,15 @@ test("WAV çözücü: 16 bit tek kanal ve iki kanallı dosyalar doğru okunur", 
   assert.ok(Math.abs(stereo.samples[10] - 0.25) < 1e-3);
   assert.throws(() => decodeWav(Buffer.from("bu bir wav değil, düz metin")), /WAV değil/);
 });
+
+test("MFCC özeti: sonlu değerler üretir ve farklı tınıları ayırır", async () => {
+  const { mfccSummary } = await import("../js/audio/mfcc.js");
+  const low = mfccSummary(sine(200, 2), SR), high = mfccSummary(sine(4000, 2), SR);
+  assert.equal(low.mean.length, 13);
+  assert.ok([...low.mean, ...low.std, ...high.mean].every(Number.isFinite));
+  const distance = low.mean.reduce((s, v, i) => s + (v - high.mean[i]) ** 2, 0);
+  assert.ok(distance > 10, `mesafe ${distance}`);
+  const again = mfccSummary(sine(200, 2), SR);
+  assert.deepEqual(again.mean, low.mean);
+  assert.ok(mfccSummary(sine(200, 0.01), SR).mean.every(Number.isFinite));   // çok kısa kayıt
+});

@@ -12,6 +12,7 @@ import { readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 import { extractFeatures } from "../js/audio/features.js";
 import { checkQuality } from "../js/audio/quality.js";
+import { mfccSummary } from "../js/audio/mfcc.js";
 
 /** WAV dosyasını mono örneklere çevirir (PCM 8/16/24/32 bit ve 32/64 bit kayan nokta). */
 export function decodeWav(buf) {
@@ -64,10 +65,12 @@ export function measureDataset(root) {
     try {
       const { samples, sr } = decodeWav(readFileSync(path));
       recordings.push({
+        file: basename(path),
         label: basename(dirname(path)),
         state: basename(dirname(dirname(path))),
         quality: checkQuality(samples, sr).level,
-        features: round(extractFeatures(samples, sr, 20))
+        features: round(extractFeatures(samples, sr, 20)),
+        mfcc: round(mfccSummary(samples, sr))
       });
     } catch (err) {
       skipped.push(`${path}: ${err.message}`);
@@ -80,7 +83,7 @@ if (process.argv[1] && resolve(process.argv[1]) === resolve(new URL(import.meta.
   const [root, out = "veri-seti-olcumleri.json"] = process.argv.slice(2);
   if (!root) { console.error("Kullanım: node scripts/measure-dataset.mjs <veri-seti-klasörü> [çıktı.json]"); process.exit(1); }
   const { recordings, skipped } = measureDataset(root);
-  writeFileSync(out, JSON.stringify({ measuredAt: new Date().toISOString().slice(0, 10), root: basename(resolve(root)), recordings }) + "\n");
+  writeFileSync(out, JSON.stringify({ version: 2, measuredAt: new Date().toISOString().slice(0, 10), root: basename(resolve(root)), recordings }) + "\n");
   const counts = {};
   for (const r of recordings) counts[`${r.state} / ${r.label}`] = (counts[`${r.state} / ${r.label}`] || 0) + 1;
   for (const [k, n] of Object.entries(counts)) console.log(String(n).padStart(5), k);

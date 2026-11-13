@@ -4,6 +4,7 @@
  */
 import { extractFeatures } from "../audio/features.js";
 import { checkQuality } from "../audio/quality.js";
+import { mfccSummary } from "../audio/mfcc.js";
 
 const $ = id => document.getElementById(id);
 const AUDIO = /\.(wav|mp3|m4a|ogg|flac|aac|webm)$/i;
@@ -33,7 +34,8 @@ $("folder").addEventListener("change", async e => {
     const label = parts.at(-2) || "", state = parts.at(-3) || "";
     try {
       const { samples, sr } = await decode(ctx, files[i]);
-      recordings.push({ label, state, quality: checkQuality(samples, sr).level, features: round(extractFeatures(samples, sr, 20)) });
+      recordings.push({ file: parts.at(-1), label, state, quality: checkQuality(samples, sr).level,
+        features: round(extractFeatures(samples, sr, 20)), mfcc: round(mfccSummary(samples, sr)) });
       const key = state ? `${state} / ${label}` : label;
       counts[key] = (counts[key] || 0) + 1;
     } catch { skipped++; }
@@ -44,7 +46,7 @@ $("folder").addEventListener("change", async e => {
     }
   }
   ctx.close();
-  result = { measuredAt: new Date().toISOString().slice(0, 10), root, recordings };
+  result = { version: 2, measuredAt: new Date().toISOString().slice(0, 10), root, recordings };
   $("status").textContent = `${recordings.length} kayıt ölçüldü` + (skipped ? `, ${skipped} dosya okunamadı` : "") + ". Sonuç dosyasını kaydedin.";
   $("counts").innerHTML = Object.entries(counts).map(([k, n]) => `<tr><td>${k.replace(/[&<>]/g, "")}</td><td>${n}</td></tr>`).join("");
   $("save").disabled = !recordings.length;
