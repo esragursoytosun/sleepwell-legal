@@ -50,7 +50,7 @@ let renderToken = 0;
 export async function renderEvidence(result, state) {
   const measured = {};
   for (const t of GUIDED_TESTS) if (state.measured[t.id]?.answer !== "unknown" && state.measured[t.id]) measured[t.question] = state.measured[t.id].text;
-  const reasons = explainTop(result.ranked[0], { features: state.features, conditions: [...state.conditions], answers: state.answers, measured });
+  const reasons = explainTop(result.ranked[0], { features: state.features, conditions: [...state.conditions], answers: state.answers, measured, codes: state.codes });
   $("reasons").innerHTML = reasons.map(r => `<li>${icon("check")}<span>${esc(r)}</span></li>`).join("");
 
   const loc = state.locate, rec = state.recording;

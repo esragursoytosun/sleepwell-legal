@@ -7,6 +7,7 @@
 import { FAULTS, GROUPS } from "../data/faults.js";
 import { KNOWN_ISSUES } from "../data/known-issues.js";
 import { QUESTIONS } from "../data/questions.js";
+import { lookupCode } from "../data/obd.js";
 
 const HIGH_KM_WEAR = ["rulman", "aks", "biyel", "zincir", "sanziman",
   "rotil", "rot_basi", "z_rot", "viraj_lastik", "amortisor_kafa", "salincak"];
@@ -88,16 +89,19 @@ export function answerFactor(question, answer, fault) {
  * @param {{brand?: string, model?: string, fuel?: string, year?: number, km?: number}} [input.vehicle]
  * @param {Record<string, "yes"|"no"|"unknown">} [input.answers]
  * @param {"ok"|"warn"|"bad"} [input.quality]
+ * @param {string[]} [input.codes] OBD arıza kodları (ör. ["P0301"])
  */
-export function diagnose({ features, conditions = [], vehicle = {}, answers = {}, quality = "ok" }) {
+export function diagnose({ features, conditions = [], vehicle = {}, answers = {}, quality = "ok", codes = [] }) {
   const v = { brand: "", model: "", fuel: "benzin", year: 0, km: 0, ...vehicle };
   const answered = QUESTIONS.filter(q => answers[q.id] === "yes" || answers[q.id] === "no");
+  const rules = codes.map(lookupCode).filter(Boolean);
 
   const ranked = FAULTS.map(fault => {
     const audio = audioScore(features, fault.p);
     const prior = vehiclePrior(fault, v);
     let weight = Math.exp(7 * audio) * conditionFactor(fault, conditions) * prior.x;
     for (const q of answered) weight *= answerFactor(q, answers[q.id], fault);
+    for (const rule of rules) weight *= rule.effects[fault.id] ?? 1;
     return { fault, audio, weight, notes: prior.notes, prob: 0 };
   });
   const total = ranked.reduce((s, r) => s + r.weight, 0) || 1;
@@ -117,12 +121,15 @@ function confidence({ ranked, groups, quality, features, conditions, answered })
   if (quality !== "ok") reasons.push("Kayıt kalitesi düşük.");
   if (features.dur < 4) reasons.push("Kayıt kısa.");
   if (!conditions.length && !answered.length) reasons.push("Sesin ne zaman çıktığı belirtilmedi.");
+  // Belirgin bir ton ya da vuruntu yoksa ses, profillerin hiçbirine güçlü biçimde benzemiyordur.
+  const weak = !features.toneHz && features.tonal < 0.35 && features.imp < 0.3;
+  if (weak) reasons.push("Kayıtta belirgin bir ton ya da vuruntu ölçülemedi; ses sürtünme/hışırtı türünde ya da aracın normal çalışma sesi olabilir.");
   if (groups[0].prob < 0.45) reasons.push("Ses birden fazla bölgeye benziyor.");
   else if (ranked[0].prob < 0.35) reasons.push("Aynı bölgedeki birkaç parça benzer ses çıkarıyor.");
 
   let level;
   if (quality === "bad" || groups[0].prob < 0.45) level = "low";
-  else if (quality === "ok" && groups[0].prob >= 0.7 && ranked[0].prob >= 0.4 && features.dur >= 4) level = "good";
+  else if (!weak && quality === "ok" && groups[0].prob >= 0.7 && ranked[0].prob >= 0.4 && features.dur >= 4) level = "good";
   else level = "mid";
   return { level, label: { low: "Güven: düşük", mid: "Güven: orta", good: "Güven: iyi" }[level], reasons };
 }

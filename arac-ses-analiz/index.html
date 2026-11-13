@@ -212,6 +212,15 @@
           </div>
         </div>
         <p class="hint" id="locHint" hidden></p>
+        <div class="baseline" id="baselineBox" hidden>
+          <h4><span data-icon="clock"></span>Aracınızın önceki hâliyle karşılaştırma</h4>
+          <p class="hint" id="baselineText"></p>
+          <div class="notice" id="baselineResult" hidden></div>
+          <div class="row">
+            <button class="btn small" id="baselineSave"><span data-icon="check"></span> Bu kaydı referans olarak sakla</button>
+            <button class="btn small ghost" id="baselineClear" hidden><span data-icon="refresh"></span> Referansı sil</button>
+          </div>
+        </div>
       </div>
 
       </div>
@@ -267,7 +276,16 @@
         <div id="guidedTests"></div>
       </div>
 
-      <div class="card" id="clarifyEmpty" hidden><p class="hint">Bu sonuç için sorulacak ayırt edici bir soru ya da yapılacak bir test yok.</p></div>
+      <div class="card obd-card" id="obdCard">
+        <h3><span data-icon="receipt"></span>Arıza kodu var mı?</h3>
+        <p class="hint" id="obdHint">Servis ya da bir OBD cihazı kod okuduysa yazın (ör. P0301). Kod, sesin kaynağını doğrudan göstermez; sorunun kaydedildiği sistemi gösterir.</p>
+        <div class="obd-row">
+          <label class="field">Arıza kodu <input id="obdInput" type="text" inputmode="text" autocapitalize="characters" autocomplete="off" placeholder="ör. P0301, P0420"></label>
+          <button class="btn" id="obdApply"><span data-icon="check"></span> Ekle</button>
+        </div>
+        <ul class="obd-list" id="obdList"></ul>
+        <button class="btn small ghost" id="obdClear" hidden><span data-icon="refresh"></span> Kodları sil</button>
+      </div>
       </div>
 
       <div class="tab-panel" role="tabpanel" id="panel-teklif" aria-labelledby="tab-teklif" hidden>

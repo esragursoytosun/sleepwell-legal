@@ -18,6 +18,8 @@ import { initTabs, showTab } from "./ui/tabs.js";
 import { BODY_LABEL, bodyTypeOf } from "./data/vehicles.js";
 import { dimensionsOf } from "./data/dimensions.js";
 import { initPhoto } from "./ui/photo.js";
+import { initObdView, renderObd } from "./ui/obd-view.js";
+import { initBaselineView, renderBaseline } from "./ui/baseline-view.js";
 import { createCar3D } from "./ui/car3d.js";
 import { initResultsView, renderResults } from "./ui/results-view.js";
 import { copySummary, shareSecondOpinion } from "./ui/share.js";
@@ -38,13 +40,15 @@ function runDiagnosis({ fresh = false } = {}) {
     conditions: [...state.conditions],
     vehicle: state.vehicle,
     answers: state.answers,
-    quality: state.recording.quality.level
+    quality: state.recording.quality.level,
+    codes: state.codes
   });
   renderResults(result, state, { fresh });
   renderGuided(result, state);
-  // "Netleştir" sekmesi: açık soru varsa işaret konur; soru da test de yoksa bilgi notu gösterilir
+  // "Netleştir" sekmesi: açık soru varsa işaret konur
   $("tabDot").hidden = $("questions").querySelectorAll(".question").length === 0;
-  $("clarifyEmpty").hidden = !($("questionsCard").hidden && $("guidedCard").hidden);
+  renderObd(state);
+  renderBaseline(state);
   renderPlan(result, state);
   renderEvidence(result, state);
   renderQuote(result);
@@ -71,6 +75,7 @@ async function analyze() {
   }
   state.answers = {};
   state.measured = {};
+  state.codes = [];
   setNotice($("shareStatus"), "");
   resetQuote();
   resetFeedback();
@@ -120,6 +125,8 @@ function init() {
   });
 
   initGuidedView(() => state, (questionId, answer) => { state.answers[questionId] = answer; runDiagnosis(); }, () => renderGuided(result, state));
+  initObdView(() => state, () => runDiagnosis());
+  initBaselineView(() => state);
   initQuoteView(() => ({ result, vehicle: state.vehicle }));
   initFeedbackView(() => ({ state, result }));
 

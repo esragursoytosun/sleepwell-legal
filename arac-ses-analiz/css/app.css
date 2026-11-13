@@ -606,6 +606,27 @@ h1, h2, h3, .brand-name, .rec-time, .pct, .an-title, .urgency b { font-family: v
 .meta-photo { width: 72px; height: 54px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border); flex: none; }
 @media (max-width: 480px) { .stage-photo { bottom: 38px; right: 12px; } }
 
+
+/* ------------------------------------------------------------ arıza kodu ve referans karşılaştırması */
+.obd-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; margin-top: 14px; }
+.obd-row .field { flex: 1 1 200px; }
+input[type=text] {
+  font: inherit; font-size: 1rem; font-weight: 500; color: var(--text); background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 11px 12px; width: 100%; min-height: 48px; text-transform: uppercase;
+}
+input[type=text]::placeholder { text-transform: none; }
+input[type=text]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); background-color: var(--surface); }
+.obd-list { list-style: none; display: grid; gap: 6px; margin-top: 12px; }
+.obd-list li { display: flex; gap: 10px; align-items: center; font-size: .9rem; padding: 9px 12px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border); animation: pop .35s var(--spring) both; }
+.obd-list b { font-variant-numeric: tabular-nums; letter-spacing: .04em; }
+.obd-list span { color: var(--muted); min-width: 0; }
+.obd-list .known .ic { color: var(--ok); } .obd-list .unknown .ic { color: var(--warn); }
+.obd-list .ic { width: 17px; height: 17px; }
+.obd-card > .btn { margin-top: 10px; }
+.baseline { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+.baseline h4 { display: flex; align-items: center; gap: 8px; font-size: .95rem; }
+.baseline h4 .ic { color: var(--accent); width: 18px; height: 18px; }
+
 /* ------------------------------------------------------------ yönlendirmeli test */
 .gtest { display: grid; grid-template-columns: 1fr auto; gap: 8px 14px; align-items: center; padding: 14px 0; border-top: 1px solid var(--border); }
 .gtest:first-child { border-top: 0; }

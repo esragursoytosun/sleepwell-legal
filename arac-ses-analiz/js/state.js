@@ -11,7 +11,9 @@ export const state = {
   locate: null,
   answers: {},
   /** Yönlendirmeli testlerde ölçülen sonuçlar: test kimliği → {answer, text} */
-  measured: {}
+  measured: {},
+  /** Kullanıcının girdiği OBD arıza kodları */
+  codes: []
 };
 
 export function loadVehicle() {

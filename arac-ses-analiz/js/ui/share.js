@@ -24,6 +24,7 @@ export function buildSummary(state, result) {
     lines.push("", "Cevaplanan sorular:");
     for (const q of answered) lines.push(`- ${q.text} ${state.answers[q.id] === "yes" ? "Evet" : "Hayır"}`);
   }
+  if (state.codes?.length) lines.push("", "Arıza kodları: " + state.codes.join(", "));
   lines.push("", `Uygulamanın tahmini (${result.confidence.label.toLowerCase()}):`);
   lines.push(`Bölge: ${result.groups[0].label} ${percent(result.groups[0].prob)}`);
   result.ranked.slice(0, 3).forEach((r, i) => lines.push(`${i + 1}) ${r.fault.name} ${percent(r.prob)}`));

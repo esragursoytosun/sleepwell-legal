@@ -19,6 +19,10 @@ Amaç, sürücünün servise bilgili gitmesidir. Sonuç bir **ön tahmindir**, k
    - **Ölçerek netleştirme:** motor bölmesi seslerinde kullanıcı 5 saniyelik test kayıtları yapar (gaz vererek,
      klimayı değiştirerek, elektrik yükü vererek). Uygulama test kaydını ilk kayıtla karşılaştırır ve ilgili soruyu
      kendisi cevaplar: ton devirle inceliyor mu, değişiklik sesi etkiliyor mu?
+   - **Arıza kodu:** servis ya da OBD cihazının okuduğu kodlar (ör. P0301) girilir; kodun işaret ettiği sistem
+     olasılıklara ve gerekçeye yansır. Tanınmayan kodlar açıkça belirtilir.
+   - **Önceki hâliyle karşılaştırma:** araç sağlamken alınan kayıt referans olarak saklanır; sonraki kayıtlarda
+     yeni bir ton, artan vuruntu ya da değişen ritim ölçülür. Kayıt referansa benziyorsa bu açıkça söylenir.
    - **Teklif kontrolü:** ustanın teklifindeki kalemler teşhisle karşılaştırılır; sesle ilgisiz pahalı kalemler uyarılır.
    - **Sonuç ne oldu?** Servisten sonra gerçek sonuç kaydedilir ve isterse ekibe gönderilir (doğruluk ölçümü için).
 
@@ -87,6 +91,7 @@ js/
     dimensions.js       Modellerin yaklaşık dış ölçüleri (3B araç oranları için)
     guidance.js         Arıza başına kontroller, ustaya söylenecekler, kırmızı bayraklar
     parts.js            Teklif/fatura kalemleri
+    obd.js              OBD arıza kodu aileleri ve işaret ettikleri arızalar
     prices.js           Doğrulanmış fiyat aralıkları (gerçek veri gelene kadar boş)
     mechanics.js        Doğrulanmış ustalar (kabul sürecinden geçenler; şimdilik boş)
   audio/              Ses işleme
@@ -103,6 +108,7 @@ js/
     advice.js           Eylem planı: aciliyet, garanti, fiyat, usta eşleştirme
     quote.js            Teklif kontrolü
     compare.js          Yönlendirmeli test: iki kaydın karşılaştırılması
+    baseline.js         Aracın referans (sağlam) kaydıyla karşılaştırma
   ui/                 Ekran modülleri (form, kayıt, sonuç, çizim, paylaşım)
     car3d.js            Üç boyutlu "röntgen" araç sahnesi (WebGL yoksa iki boyutlu çizime düşülür)
     tabs.js             Sonuç ekranındaki sekmeler

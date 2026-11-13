@@ -5,6 +5,7 @@
 import { CONDITION_LABEL } from "../data/conditions.js";
 import { QUESTIONS } from "../data/questions.js";
 import { answerFactor } from "./diagnose.js";
+import { lookupCode } from "../data/obd.js";
 
 const round10 = hz => Math.round(hz / 10) * 10;
 const hzText = hz => round10(hz).toLocaleString("tr-TR") + " Hz";
@@ -34,7 +35,7 @@ export function describeSound(F) {
  * `measured`: soru kimliği → yönlendirmeli testte ölçülen sonucun metni.
  * @returns {string[]}
  */
-export function explainTop(entry, { features, conditions = [], answers = {}, measured = {} }) {
+export function explainTop(entry, { features, conditions = [], answers = {}, measured = {}, codes = [] }) {
   const fault = entry.fault;
   const out = describeSound(features);
 
@@ -48,6 +49,10 @@ export function explainTop(entry, { features, conditions = [], answers = {}, mea
     else {
       out.push(`“${q.text}” sorusuna “${a === "yes" ? "Evet" : "Hayır"}” dediniz; bu, bu arızayı destekliyor.`);
     }
+  }
+  for (const code of codes) {
+    const rule = lookupCode(code);
+    if (rule && (rule.effects[fault.id] ?? 1) >= 1.5) out.push(`Girdiğiniz ${code} kodu (${rule.label.toLowerCase()}) bu arızayı destekliyor.`);
   }
   if (entry.notes.length) out.push("Aracınızın modelinde bu tür bir sorun sık bildirilmiş (ayrıntı arıza kartında).");
   return out;

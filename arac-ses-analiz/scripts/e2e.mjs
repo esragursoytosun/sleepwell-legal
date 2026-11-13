@@ -93,6 +93,23 @@ try {
 
   // Teklif kontrolü: ilgili kalem + ilgisiz pahalı kalem → ikinci görüş
   assert.equal(await page.isDisabled("#quoteCheckBtn"), true);
+  // Referans kayıt: saklanır; aynı kayıtla karşılaştırma "çok benziyor" der
+  assert.match(await page.textContent("#baselineText"), /referans olarak saklayın/);
+  await page.click("#baselineSave");
+  assert.match(await page.textContent("#baselineResult"), /çok benziyor/);
+  assert.equal(await hiddenAttr(page, "#baselineSave"), true);
+  await page.click("#baselineClear");
+  assert.equal(await hiddenAttr(page, "#baselineResult"), true);
+
+  // Arıza kodu: tanınan kod anlamıyla listelenir ve özete girer; tanınmayan kod belirtilir
+  await tab(page, "netlestir");
+  await page.fill("#obdInput", "p0016, U0100");
+  await page.click("#obdApply");
+  assert.match(await page.textContent("#obdList .known"), /P0016.*Eksantrik zamanlaması/s);
+  assert.match(await page.textContent("#obdList .unknown"), /U0100.*tanımıyoruz/s);
+  assert.match(await page.textContent("#reasons"), /P0016 kodu/);
+  await tab(page, "ozet");
+
   // Sekmeler: aynı anda tek bölüm görünür
   assert.equal(await page.isVisible("#faultList"), true);
   assert.equal(await page.isVisible("#quoteCard"), false);
