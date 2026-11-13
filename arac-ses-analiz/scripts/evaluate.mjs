@@ -26,19 +26,30 @@ console.log(`\n${cases.length} vaka · bölge doğru: ${group}/${cases.length}` 
   (labelled ? ` · kesin arızası bilinen ${labelled} vakada ilk sıra: ${top1}, ilk 3: ${top3}` : " · kesin arızası bilinen vaka yok"));
 
 // --- Referans sesler: sosyal medyadan derlenen, etiketi doğrulanmamış örnekler. Doğruluk oranına katılmaz.
+// İki ölçüm: yalnızca sesle, ve kullanıcının o arıza için tipik olarak seçeceği belirtilerle birlikte.
 import { readdirSync, readFileSync } from "node:fs";
 import { FAULT_BY_ID } from "../js/data/faults.js";
 const refDir = new URL("../tests/reference/", import.meta.url);
-for (const file of readdirSync(refDir).filter(f => f.endsWith(".json"))) {
+const typicalConditions = f => Object.entries(f.c).filter(([, w]) => w >= 2).map(([k]) => k);
+const tally = { n: 0, group: 0, labelled: 0, top1: 0, top3: 0, groupC: 0, top1C: 0, top3C: 0 };
+const byFault = {};
+for (const file of readdirSync(refDir).filter(f => f.endsWith(".json")).sort()) {
   const ref = JSON.parse(readFileSync(new URL(file, refDir), "utf8"));
-  console.log(`\nReferans (doğrulanmamış): ${ref.id}`);
-  let g = 0, t3 = 0;
   for (const seg of ref.segments) {
-    const res = diagnose({ features: seg.features });
-    const rank = res.ranked.findIndex(r => r.fault.id === seg.fault) + 1;
-    const okGroup = res.groups[0].id === FAULT_BY_ID[seg.fault].group;
-    g += okGroup; t3 += rank <= 3;
-    console.log(`  ${seg.fault}: bölge ${okGroup ? "doğru" : "yanlış"} · sıra ${rank}`);
+    const group = seg.group || FAULT_BY_ID[seg.fault].group;
+    const audioOnly = diagnose({ features: seg.features });
+    tally.n++; tally.group += audioOnly.groups[0].id === group;
+    if (!seg.fault) continue;                       // yalnızca bölgesi bilinen ses (ör. "amortisör")
+    const withSymptoms = diagnose({ features: seg.features, conditions: typicalConditions(FAULT_BY_ID[seg.fault]) });
+    const rank = r => r.ranked.findIndex(e => e.fault.id === seg.fault) + 1;
+    const a = rank(audioOnly), b = rank(withSymptoms);
+    tally.labelled++; tally.top1 += a === 1; tally.top3 += a <= 3;
+    tally.groupC += withSymptoms.groups[0].id === group; tally.top1C += b === 1; tally.top3C += b <= 3;
+    (byFault[seg.fault] ||= []).push(`${a}→${b}`);
   }
-  console.log(`  yalnızca sesle (belirti ve soru olmadan): bölge ${g}/${ref.segments.length}, ilk 3: ${t3}/${ref.segments.length}`);
 }
+console.log(`\nReferans sesler (doğrulanmamış, ${tally.n} ses)`);
+console.log(`  yalnızca sesle:      bölge ${tally.group}/${tally.n} · ilk sıra ${tally.top1}/${tally.labelled} · ilk 3: ${tally.top3}/${tally.labelled}`);
+console.log(`  ses + belirtilerle:  bölge ${tally.groupC}/${tally.labelled} · ilk sıra ${tally.top1C}/${tally.labelled} · ilk 3: ${tally.top3C}/${tally.labelled}`);
+console.log("  arıza başına sıra (yalnız ses → belirtilerle):");
+for (const [id, ranks] of Object.entries(byFault)) console.log(`    ${id.padEnd(15)} ${ranks.join("  ")}`);

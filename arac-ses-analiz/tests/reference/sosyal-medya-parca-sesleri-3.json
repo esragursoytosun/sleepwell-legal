@@ -1,0 +1,272 @@
+{
+ "id": "sosyal-medya-parca-sesleri-3",
+ "date": "2026-11-13",
+ "source": "Kullanıcının ilettiği sosyal medya videosu: “Car noises to never ignore” derlemesi. Yalnızca ölçülen ses özellikleri saklanır; ses ve görüntü saklanmaz.",
+ "reliability": "Etiketler videoyu hazırlayanın beyanıdır, doğrulanmamıştır. Sesler kısa ve kurgulanmış olabilir. Doğruluk oranına katılmaz.",
+ "segments": [
+  {
+   "label": "Control Arm",
+   "fault": "salincak",
+   "group": "alt_takim",
+   "from": 0.3,
+   "to": 3,
+   "features": {
+    "dur": 2.7,
+    "rms": 0.1646,
+    "peakHz": 118.4326,
+    "tonal": 0,
+    "toneHz": 0,
+    "tonePersistence": 0.3333,
+    "centroid": 291.9347,
+    "imp": 0.1505,
+    "periodicity": 0.6493,
+    "rate": 6.25,
+    "bands": [
+     0.7752,
+     0.2098,
+     0.015
+    ]
+   }
+  },
+  {
+   "label": "Bad Coil Spring",
+   "fault": null,
+   "group": "alt_takim",
+   "from": 3.3,
+   "to": 8,
+   "features": {
+    "dur": 4.7,
+    "rms": 0.0367,
+    "peakHz": 86.1328,
+    "tonal": 0.0575,
+    "toneHz": 0,
+    "tonePersistence": 0.03,
+    "centroid": 332.7111,
+    "imp": 1,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.2554,
+     0.7411,
+     0.0035
+    ]
+   }
+  },
+  {
+   "label": "Power Steering Pump",
+   "fault": "pompa",
+   "group": "yardimci",
+   "from": 8.3,
+   "to": 10,
+   "features": {
+    "dur": 1.7,
+    "rms": 0.1483,
+    "peakHz": 2831.6162,
+    "tonal": 0.1078,
+    "toneHz": 0,
+    "tonePersistence": 0.2,
+    "centroid": 2100.3944,
+    "imp": 0,
+    "periodicity": 0.391,
+    "rate": 16.6667,
+    "bands": [
+     0.0813,
+     0.5576,
+     0.3611
+    ]
+   }
+  },
+  {
+   "label": "Bad Differential",
+   "fault": "sanziman",
+   "group": "aktarma",
+   "from": 10.3,
+   "to": 13,
+   "features": {
+    "dur": 2.7,
+    "rms": 0.1704,
+    "peakHz": 96.8994,
+    "tonal": 0.1712,
+    "toneHz": 0,
+    "tonePersistence": 0.1404,
+    "centroid": 226.5948,
+    "imp": 0.183,
+    "periodicity": 0.5702,
+    "rate": 7.6923,
+    "bands": [
+     0.8733,
+     0.1139,
+     0.0129
+    ]
+   }
+  },
+  {
+   "label": "Bad Wheel Bearing",
+   "fault": "rulman",
+   "group": "aktarma",
+   "from": 14.3,
+   "to": 17,
+   "features": {
+    "dur": 2.7,
+    "rms": 0.1299,
+    "peakHz": 118.4326,
+    "tonal": 0,
+    "toneHz": 0,
+    "tonePersistence": 0.0877,
+    "centroid": 292.9269,
+    "imp": 0.1612,
+    "periodicity": 0.7312,
+    "rate": 16.6667,
+    "bands": [
+     0.5357,
+     0.4537,
+     0.0106
+    ]
+   }
+  },
+  {
+   "label": "Bad Strut Mount",
+   "fault": "amortisor_kafa",
+   "group": "alt_takim",
+   "from": 17.3,
+   "to": 23,
+   "features": {
+    "dur": 5.7,
+    "rms": 0.1367,
+    "peakHz": 96.8994,
+    "tonal": 0.1807,
+    "toneHz": 0,
+    "tonePersistence": 0.2727,
+    "centroid": 132.3855,
+    "imp": 0.8346,
+    "periodicity": 0.6209,
+    "rate": 6.25,
+    "bands": [
+     0.9366,
+     0.0623,
+     0.001
+    ]
+   }
+  },
+  {
+   "label": "Serpentine Belt Tensioner",
+   "fault": "kayis",
+   "group": "yardimci",
+   "from": 23.3,
+   "to": 28,
+   "features": {
+    "dur": 4.7,
+    "rms": 0.0767,
+    "peakHz": 710.5957,
+    "tonal": 0,
+    "toneHz": 0,
+    "tonePersistence": 0.08,
+    "centroid": 1311.9845,
+    "imp": 0.1043,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.184,
+     0.6371,
+     0.1789
+    ]
+   }
+  },
+  {
+   "label": "Stabilizer Links",
+   "fault": "z_rot",
+   "group": "alt_takim",
+   "from": 28.3,
+   "to": 32,
+   "features": {
+    "dur": 3.7,
+    "rms": 0.0788,
+    "peakHz": 1701.123,
+    "tonal": 0.0058,
+    "toneHz": 0,
+    "tonePersistence": 0.0641,
+    "centroid": 1100.4902,
+    "imp": 1,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.573,
+     0.2225,
+     0.2044
+    ]
+   }
+  },
+  {
+   "label": "Tie Rod End",
+   "fault": "rot_basi",
+   "group": "alt_takim",
+   "from": 40.3,
+   "to": 42,
+   "features": {
+    "dur": 1.7,
+    "rms": 0.1252,
+    "peakHz": 129.1992,
+    "tonal": 0,
+    "toneHz": 0,
+    "tonePersistence": 0.0857,
+    "centroid": 406.0665,
+    "imp": 0.3005,
+    "periodicity": 0.2853,
+    "rate": 5,
+    "bands": [
+     0.6737,
+     0.2904,
+     0.0359
+    ]
+   }
+  },
+  {
+   "label": "Connecting Rod",
+   "fault": "biyel",
+   "group": "motor",
+   "from": 42.3,
+   "to": 44,
+   "features": {
+    "dur": 1.7,
+    "rms": 0.1548,
+    "peakHz": 129.1992,
+    "tonal": 0.3398,
+    "toneHz": 0,
+    "tonePersistence": 0.0571,
+    "centroid": 628.1872,
+    "imp": 0.0418,
+    "periodicity": 0.7173,
+    "rate": 12.5,
+    "bands": [
+     0.7052,
+     0.2163,
+     0.0784
+    ]
+   }
+  },
+  {
+   "label": "Bad CV Joint",
+   "fault": "aks",
+   "group": "aktarma",
+   "from": 44.3,
+   "to": 46.4,
+   "features": {
+    "dur": 2.1,
+    "rms": 0.0828,
+    "peakHz": 7751.9531,
+    "tonal": 1,
+    "toneHz": 7751.9531,
+    "tonePersistence": 0.8636,
+    "centroid": 2424.6403,
+    "imp": 0.2526,
+    "periodicity": 0.4636,
+    "rate": 10,
+    "bands": [
+     0.0886,
+     0.4287,
+     0.4828
+    ]
+   }
+  }
+ ]
+}

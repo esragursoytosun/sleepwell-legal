@@ -1,0 +1,152 @@
+{
+ "id": "sosyal-medya-parca-sesleri-5",
+ "date": "2026-11-13",
+ "source": "Kullanıcının ilettiği sosyal medya videosu: “Car Trouble Noises Part 1” derlemesi (gerçek araç görüntüleriyle). Yalnızca ölçülen ses özellikleri saklanır; ses ve görüntü saklanmaz.",
+ "reliability": "Etiketler videoyu hazırlayanın beyanıdır, doğrulanmamıştır. Sesler kısa ve kurgulanmış olabilir. Doğruluk oranına katılmaz.",
+ "segments": [
+  {
+   "label": "Ball Joint",
+   "fault": "rotil",
+   "group": "alt_takim",
+   "from": 2.2,
+   "to": 6,
+   "features": {
+    "dur": 3.8,
+    "rms": 0.2871,
+    "peakHz": 699.8291,
+    "tonal": 0.4674,
+    "toneHz": 0,
+    "tonePersistence": 0.3,
+    "centroid": 536.6724,
+    "imp": 1,
+    "periodicity": 0.8193,
+    "rate": 1.8519,
+    "bands": [
+     0.246,
+     0.7438,
+     0.0102
+    ]
+   }
+  },
+  {
+   "label": "CV Joint",
+   "fault": "aks",
+   "group": "aktarma",
+   "from": 12.2,
+   "to": 18,
+   "features": {
+    "dur": 5.8,
+    "rms": 0.0293,
+    "peakHz": 3499.1455,
+    "tonal": 0.0435,
+    "toneHz": 0,
+    "tonePersistence": 0.122,
+    "centroid": 3214.0253,
+    "imp": 0.6415,
+    "periodicity": 0.5511,
+    "rate": 10,
+    "bands": [
+     0.0572,
+     0.3078,
+     0.635
+    ]
+   }
+  },
+  {
+   "label": "Brake Pads",
+   "fault": "fren_balata",
+   "group": "fren",
+   "from": 21.2,
+   "to": 27,
+   "features": {
+    "dur": 5.8,
+    "rms": 0.0044,
+    "peakHz": 7159.79,
+    "tonal": 0.0482,
+    "toneHz": 0,
+    "tonePersistence": 0.0894,
+    "centroid": 4669.1277,
+    "imp": 0.1551,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.0236,
+     0.1084,
+     0.868
+    ]
+   }
+  },
+  {
+   "label": "Sway Bar",
+   "fault": null,
+   "group": "alt_takim",
+   "from": 33.2,
+   "to": 40,
+   "features": {
+    "dur": 6.8,
+    "rms": 0.172,
+    "peakHz": 322.998,
+    "tonal": 0,
+    "toneHz": 0,
+    "tonePersistence": 0.0276,
+    "centroid": 414.0376,
+    "imp": 0.6912,
+    "periodicity": 0.8885,
+    "rate": 3.8462,
+    "bands": [
+     0.6155,
+     0.3461,
+     0.0384
+    ]
+   }
+  },
+  {
+   "label": "Ball Joint (2)",
+   "fault": "rotil",
+   "group": "alt_takim",
+   "from": 45.2,
+   "to": 50,
+   "features": {
+    "dur": 4.8,
+    "rms": 0.0225,
+    "peakHz": 2433.252,
+    "tonal": 0,
+    "toneHz": 0,
+    "tonePersistence": 0.1078,
+    "centroid": 2703.3652,
+    "imp": 0.033,
+    "periodicity": 0.2638,
+    "rate": 9.0909,
+    "bands": [
+     0.0776,
+     0.5606,
+     0.3618
+    ]
+   }
+  },
+  {
+   "label": "AC Compressor",
+   "fault": "klima",
+   "group": "yardimci",
+   "from": 55.2,
+   "to": 60,
+   "features": {
+    "dur": 4.8,
+    "rms": 0.2346,
+    "peakHz": 193.7988,
+    "tonal": 0.3716,
+    "toneHz": 0,
+    "tonePersistence": 0.1471,
+    "centroid": 1355.6349,
+    "imp": 0.2051,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.5958,
+     0.1849,
+     0.2193
+    ]
+   }
+  }
+ ]
+}

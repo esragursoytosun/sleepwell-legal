@@ -1,0 +1,176 @@
+{
+ "id": "sosyal-medya-parca-sesleri-2",
+ "date": "2026-11-13",
+ "source": "Kullanıcının ilettiği sosyal medya videosu: 9 bölmeli ızgara derlemesi (İngilizce etiketli). Yalnızca ölçülen ses özellikleri saklanır; ses ve görüntü saklanmaz.",
+ "reliability": "Etiketler videoyu hazırlayanın beyanıdır, doğrulanmamıştır. Sesler kısa ve kurgulanmış olabilir. Doğruluk oranına katılmaz.",
+ "segments": [
+  {
+   "label": "Brake Disc",
+   "fault": "fren_disk",
+   "group": "fren",
+   "from": 1.2,
+   "to": 3,
+   "features": {
+    "dur": 1.8,
+    "rms": 0.5078,
+    "peakHz": 1701.123,
+    "tonal": 1,
+    "toneHz": 0,
+    "tonePersistence": 0.3784,
+    "centroid": 1700.3174,
+    "imp": 0.1932,
+    "periodicity": 0.7401,
+    "rate": 9.0909,
+    "bands": [
+     0.004,
+     0.9798,
+     0.0162
+    ]
+   }
+  },
+  {
+   "label": "Shock Absorber",
+   "fault": null,
+   "group": "alt_takim",
+   "from": 3.2,
+   "to": 7,
+   "features": {
+    "dur": 3.8,
+    "rms": 0.3024,
+    "peakHz": 1679.5898,
+    "tonal": 0.1432,
+    "toneHz": 0,
+    "tonePersistence": 0.2375,
+    "centroid": 1137.6106,
+    "imp": 0.5202,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.206,
+     0.769,
+     0.0251
+    ]
+   }
+  },
+  {
+   "label": "Upper Control Arm",
+   "fault": "salincak",
+   "group": "alt_takim",
+   "from": 8.2,
+   "to": 10,
+   "features": {
+    "dur": 1.8,
+    "rms": 0.1433,
+    "peakHz": 9130.0781,
+    "tonal": 0.3375,
+    "toneHz": 0,
+    "tonePersistence": 0.2162,
+    "centroid": 2538.0952,
+    "imp": 1,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.0207,
+     0.6587,
+     0.3206
+    ]
+   }
+  },
+  {
+   "label": "Stabilizer Bar Bushing",
+   "fault": "viraj_lastik",
+   "group": "alt_takim",
+   "from": 10.2,
+   "to": 13,
+   "features": {
+    "dur": 2.8,
+    "rms": 0.2295,
+    "peakHz": 301.4648,
+    "tonal": 0.3169,
+    "toneHz": 0,
+    "tonePersistence": 0.3051,
+    "centroid": 1324.0732,
+    "imp": 0.1998,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.2602,
+     0.5178,
+     0.222
+    ]
+   }
+  },
+  {
+   "label": "CV Joint",
+   "fault": "aks",
+   "group": "aktarma",
+   "from": 13.2,
+   "to": 15,
+   "features": {
+    "dur": 1.8,
+    "rms": 0.1873,
+    "peakHz": 333.7646,
+    "tonal": 0.119,
+    "toneHz": 0,
+    "tonePersistence": 0.2162,
+    "centroid": 450.0964,
+    "imp": 0.5698,
+    "periodicity": 0.6708,
+    "rate": 3.2258,
+    "bands": [
+     0.4371,
+     0.5363,
+     0.0266
+    ]
+   }
+  },
+  {
+   "label": "Steering Tie Rod End",
+   "fault": "rot_basi",
+   "group": "alt_takim",
+   "from": 15.2,
+   "to": 18,
+   "features": {
+    "dur": 2.8,
+    "rms": 0.1286,
+    "peakHz": 506.0303,
+    "tonal": 0,
+    "toneHz": 0,
+    "tonePersistence": 0.1525,
+    "centroid": 426.6273,
+    "imp": 0.5588,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.3718,
+     0.5928,
+     0.0354
+    ]
+   }
+  },
+  {
+   "label": "Steering Gear",
+   "fault": null,
+   "group": "alt_takim",
+   "from": 18.2,
+   "to": 20,
+   "features": {
+    "dur": 1.8,
+    "rms": 0.1457,
+    "peakHz": 86.1328,
+    "tonal": 0.0076,
+    "toneHz": 0,
+    "tonePersistence": 0.1892,
+    "centroid": 211.758,
+    "imp": 0.5222,
+    "periodicity": 0.3946,
+    "rate": 2.7778,
+    "bands": [
+     0.7238,
+     0.2745,
+     0.0017
+    ]
+   }
+  }
+ ]
+}

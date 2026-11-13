@@ -1,0 +1,296 @@
+{
+ "id": "sosyal-medya-parca-sesleri-4",
+ "date": "2026-11-13",
+ "source": "Kullanıcının ilettiği sosyal medya videosu: “Car Trouble Sounds” derlemesi. Yalnızca ölçülen ses özellikleri saklanır; ses ve görüntü saklanmaz.",
+ "reliability": "Etiketler videoyu hazırlayanın beyanıdır, doğrulanmamıştır. Sesler kısa ve kurgulanmış olabilir. Doğruluk oranına katılmaz.",
+ "segments": [
+  {
+   "label": "Drive Shaft/CV Joint",
+   "fault": "aks",
+   "group": "aktarma",
+   "from": 0.2,
+   "to": 2,
+   "features": {
+    "dur": 1.8,
+    "rms": 0.0639,
+    "peakHz": 796.7285,
+    "tonal": 0,
+    "toneHz": 0,
+    "tonePersistence": 0.0541,
+    "centroid": 2182.791,
+    "imp": 0.5641,
+    "periodicity": 0.3486,
+    "rate": 11.1111,
+    "bands": [
+     0.2281,
+     0.3758,
+     0.3961
+    ]
+   }
+  },
+  {
+   "label": "Ball Joint",
+   "fault": "rotil",
+   "group": "alt_takim",
+   "from": 2.3,
+   "to": 5,
+   "features": {
+    "dur": 2.7,
+    "rms": 0.0575,
+    "peakHz": 107.666,
+    "tonal": 0,
+    "toneHz": 0,
+    "tonePersistence": 0.0526,
+    "centroid": 545.0643,
+    "imp": 0.5888,
+    "periodicity": 0.3096,
+    "rate": 2.2727,
+    "bands": [
+     0.6068,
+     0.3368,
+     0.0564
+    ]
+   }
+  },
+  {
+   "label": "Upper, Lower Swing Arm",
+   "fault": "salincak",
+   "group": "alt_takim",
+   "from": 5.3,
+   "to": 9,
+   "features": {
+    "dur": 3.7,
+    "rms": 0.0577,
+    "peakHz": 204.5654,
+    "tonal": 0.0177,
+    "toneHz": 0,
+    "tonePersistence": 0.0641,
+    "centroid": 2167.7618,
+    "imp": 0.276,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.359,
+     0.3277,
+     0.3133
+    ]
+   }
+  },
+  {
+   "label": "Brake Pad",
+   "fault": "fren_balata",
+   "group": "fren",
+   "from": 9.3,
+   "to": 11,
+   "features": {
+    "dur": 1.7,
+    "rms": 0.0722,
+    "peakHz": 6610.6934,
+    "tonal": 1,
+    "toneHz": 0,
+    "tonePersistence": 0.1714,
+    "centroid": 6231.6242,
+    "imp": 0.1435,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.0503,
+     0.0043,
+     0.9455
+    ]
+   }
+  },
+  {
+   "label": "Wheel Bearing",
+   "fault": "rulman",
+   "group": "aktarma",
+   "from": 11.3,
+   "to": 15,
+   "features": {
+    "dur": 3.7,
+    "rms": 0.064,
+    "peakHz": 129.1992,
+    "tonal": 0.0044,
+    "toneHz": 0,
+    "tonePersistence": 0.1538,
+    "centroid": 342.3459,
+    "imp": 0.1407,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.6188,
+     0.36,
+     0.0212
+    ]
+   }
+  },
+  {
+   "label": "Shock Absorber",
+   "fault": null,
+   "group": "alt_takim",
+   "from": 15.3,
+   "to": 17,
+   "features": {
+    "dur": 1.7,
+    "rms": 0.0408,
+    "peakHz": 96.8994,
+    "tonal": 0.0658,
+    "toneHz": 0,
+    "tonePersistence": 0.1429,
+    "centroid": 4191.1911,
+    "imp": 0.0703,
+    "periodicity": 0.5753,
+    "rate": 1.3514,
+    "bands": [
+     0.3092,
+     0.0931,
+     0.5977
+    ]
+   }
+  },
+  {
+   "label": "Rubber Bushing",
+   "fault": null,
+   "group": "alt_takim",
+   "from": 17.3,
+   "to": 19,
+   "features": {
+    "dur": 1.7,
+    "rms": 0.032,
+    "peakHz": 10852.7344,
+    "tonal": 0.1442,
+    "toneHz": 0,
+    "tonePersistence": 0.0857,
+    "centroid": 2781.856,
+    "imp": 0.9214,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.3875,
+     0.2132,
+     0.3993
+    ]
+   }
+  },
+  {
+   "label": "Fan belt/Alternator Belt",
+   "fault": "kayis",
+   "group": "yardimci",
+   "from": 19.3,
+   "to": 21,
+   "features": {
+    "dur": 1.7,
+    "rms": 0.0502,
+    "peakHz": 118.4326,
+    "tonal": 0.362,
+    "toneHz": 0,
+    "tonePersistence": 0.1429,
+    "centroid": 5074.2521,
+    "imp": 0.0361,
+    "periodicity": 0.5876,
+    "rate": 14.2857,
+    "bands": [
+     0.0509,
+     0.0094,
+     0.9397
+    ]
+   }
+  },
+  {
+   "label": "Power Steering Pump",
+   "fault": "pompa",
+   "group": "yardimci",
+   "from": 21.3,
+   "to": 24,
+   "features": {
+    "dur": 2.7,
+    "rms": 0.0227,
+    "peakHz": 689.0625,
+    "tonal": 0.6257,
+    "toneHz": 689.0625,
+    "tonePersistence": 0.6316,
+    "centroid": 3575.0855,
+    "imp": 0.1177,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.0147,
+     0.3122,
+     0.673
+    ]
+   }
+  },
+  {
+   "label": "Bearing Alternator",
+   "fault": "alternator",
+   "group": "yardimci",
+   "from": 29.3,
+   "to": 32,
+   "features": {
+    "dur": 2.7,
+    "rms": 0.0458,
+    "peakHz": 4543.5059,
+    "tonal": 0.0851,
+    "toneHz": 0,
+    "tonePersistence": 0.1404,
+    "centroid": 2502.7865,
+    "imp": 0,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.0622,
+     0.4862,
+     0.4516
+    ]
+   }
+  },
+  {
+   "label": "Rocker Arm & Valve",
+   "fault": "supap",
+   "group": "motor",
+   "from": 32.3,
+   "to": 36,
+   "features": {
+    "dur": 3.7,
+    "rms": 0.0361,
+    "peakHz": 129.1992,
+    "tonal": 0,
+    "toneHz": 0,
+    "tonePersistence": 0.0385,
+    "centroid": 922.4005,
+    "imp": 0.1839,
+    "periodicity": 0,
+    "rate": 0,
+    "bands": [
+     0.5733,
+     0.2877,
+     0.139
+    ]
+   }
+  },
+  {
+   "label": "Piston",
+   "fault": null,
+   "group": "motor",
+   "from": 36.3,
+   "to": 38,
+   "features": {
+    "dur": 1.7,
+    "rms": 0.0337,
+    "peakHz": 129.1992,
+    "tonal": 0.213,
+    "toneHz": 0,
+    "tonePersistence": 0.0857,
+    "centroid": 1066.5002,
+    "imp": 0.0596,
+    "periodicity": 0.6144,
+    "rate": 6.25,
+    "bands": [
+     0.5486,
+     0.3145,
+     0.1369
+    ]
+   }
+  }
+ ]
+}

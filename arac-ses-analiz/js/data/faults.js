@@ -123,7 +123,7 @@ export const FAULTS = [
   { id: "rulman", name: "Teker rulmanı arızası (uğultu)", group: "aktarma", loc: "teker", urg: 3,
     desc: "Hız arttıkça yükselen, “vuuuv-vuuuv” şeklinde dalgalanan alçak bir uğultu. Virajda bir tarafa yüklenince değişir.",
     tip: "Virajda ses artıyor/azalıyorsa yük binen taraftaki rulman şüphelidir. Servis kontrolü gerekir.",
-    p: { f: [70, 450], feat: "peak", tonal: .5, imp: .1, rhythm: [0.8, 4] },
+    p: { f: [70, 450], feat: "centroid", tonal: .25, imp: .15, rhythm: null }, // üç ayrı kaynakta: tonsuz, kalın bir uğultu
     c: { hiz: 2.8, direksiyon: 1.4, rolanti: .2, soguk: .6, fren: .8, klima: .4, vites: .7 } },
   { id: "aks", name: "Aks kafası (homokinetik mafsal) tıkırtısı", group: "aktarma", loc: "aks", urg: 3,
     desc: "Direksiyon tam kırıkken hareket edince gelen ritmik “tık-tık-tık”. Körük yırtılınca mafsal aşınır.",

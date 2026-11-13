@@ -46,6 +46,8 @@ göstericidir, ama etiketleri doğrulanmamıştır ve sesler çoğu zaman kurgul
 
 - Dosya: `tests/reference/<ad>.json`; her ses parçası için arıza kimliği ve ölçülen özellikler.
 - **Ses ve görüntü saklanmaz, uygulamada gösterilmez.** Yalnızca ölçümler tutulur.
-- `npm run evaluate` bu sesleri ayrı bir bölümde raporlar; **doğruluk oranına katılmaz** ve testleri bağlamaz.
+- Arıza listemizde karşılığı olmayan sesler (ör. "amortisör", "helezon yay") yalnızca bölgeleriyle (`group`) kaydedilir.
+- `npm run evaluate` bu sesleri ayrı bir bölümde, iki ölçümle raporlar (yalnızca sesle; tipik belirtilerle birlikte).
+  **Doğruluk oranına katılmaz** ve testleri bağlamaz.
 - Tek bir videoya göre profil değiştirilmez. Aynı arıza için birkaç bağımsız kaynak aynı şeyi gösterdiğinde
   ya da bilinen bir gerçekle örtüştüğünde değiştirilir (ör. fren ötmesinin frekans aralığı).
