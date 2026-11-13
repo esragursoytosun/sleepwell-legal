@@ -20,7 +20,7 @@ export function renderCarDiagram(container) {
 export function scanCar() { car3d?.scan(); }
 
 /** Sonuç sahnesindeki aracın gövde tipini ayarlar. */
-export function setCarBody(type) { car3d?.setBody(type); }
+export function setCarBody(type, dims) { car3d?.setBody(type, dims); }
 
 /** Aracın üstten görünümü; arızanın olası yeri işaretlenir. */
 function renderFlat(container) {

@@ -142,6 +142,15 @@ try {
   assert.match(await page.textContent("#heroBody"), /Fiat Egea · Sedan/);
   await page.selectOption("#model", "Doblo");
   assert.match(await page.textContent("#heroBody"), /Hafif ticari/);
+  assert.match(await page.textContent("#heroBody"), /4,41 m/);   // modelin uzunluğu
+  // Kullanıcının araç fotoğrafı: eklenir, sahnede görünür, kaldırılır
+  const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFElEQVR4nGP8z8Dwn4GBgYGJAQoAHxcCAk+Uzr4AAAAASUVORK5CYII=", "base64");
+  await page.setInputFiles("#carPhoto", { name: "arabam.png", mimeType: "image/png", buffer: png });
+  await page.waitForSelector("#heroPhoto:not([hidden])");
+  assert.match(await page.getAttribute("#heroPhoto", "src"), /^data:image\/jpeg/);
+  assert.equal(await hiddenAttr(page, "#resultPhoto"), false);
+  await page.click("#photoRemove");
+  assert.equal(await hiddenAttr(page, "#heroPhoto"), true);
   await page.selectOption("#model", "Egea");
   await page.fill("#year", String(new Date().getFullYear()));
   await page.locator("#year").blur();

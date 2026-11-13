@@ -56,7 +56,7 @@
         <span class="hud tr"><span class="live"></span>Tarama</span>
         <span class="hud bl" id="heroBody">Aracınızı seçin</span>
         <span class="hud br">Sürükleyerek döndürün</span>
-        <div id="heroCar"></div>
+        <img class="stage-photo" id="heroPhoto" alt="Aracınızın fotoğrafı" hidden>
       </div>
       <div class="card">
         <h3><span data-icon="car"></span>Aracınız</h3>
@@ -68,6 +68,18 @@
           <label class="field">Yakıt <select id="fuel"></select></label>
           <label class="field">Kilometre <input id="km" type="number" inputmode="numeric" min="0" step="1000" placeholder="ör. 145000"></label>
           <label class="field">Şehir <select id="city"></select></label>
+        </div>
+        <div class="photo-row">
+          <img class="photo-thumb" id="photoThumb" alt="Aracınızın fotoğrafı" hidden>
+          <div>
+            <div class="row">
+              <label class="btn small"><span data-icon="camera"></span> <span id="photoLabel">Aracımın fotoğrafını ekle</span>
+                <input id="carPhoto" type="file" accept="image/*" hidden>
+              </label>
+              <button class="btn small ghost" id="photoRemove" hidden>Kaldır</button>
+            </div>
+            <p class="hint" id="photoHint">İsteğe bağlı. Fotoğraf yalnızca bu cihazda kalır.</p>
+          </div>
         </div>
         <div class="nav">
           <span></span>
@@ -166,8 +178,11 @@
         <div class="stage-bars" id="stageBars" aria-hidden="true"></div>
       </div>
       <div class="result-meta">
-        <p class="hint" id="summaryLine"></p>
-        <div class="group-chips" id="groupChips"></div>
+        <img class="meta-photo" id="resultPhoto" alt="Aracınızın fotoğrafı" hidden>
+        <div>
+          <p class="hint" id="summaryLine"></p>
+          <div class="group-chips" id="groupChips"></div>
+        </div>
       </div>
 
       <div class="tabs" id="tabs" role="tablist" aria-label="Sonuç bölümleri">

@@ -16,6 +16,8 @@ import { initRecordView, resetRecordView, redrawViz } from "./ui/record-view.js"
 import { renderCarDiagram, scanCar, setCarBody } from "./ui/car-diagram.js";
 import { initTabs, showTab } from "./ui/tabs.js";
 import { BODY_LABEL, bodyTypeOf } from "./data/vehicles.js";
+import { dimensionsOf } from "./data/dimensions.js";
+import { initPhoto } from "./ui/photo.js";
 import { createCar3D } from "./ui/car3d.js";
 import { initResultsView, renderResults } from "./ui/results-view.js";
 import { copySummary, shareSecondOpinion } from "./ui/share.js";
@@ -95,14 +97,17 @@ function init() {
   initRecordView();
   renderCarDiagram($("carDiagram"));
   initTabs();
+  initPhoto();
   // Açılıştaki ve sonuçtaki araç, seçilen modelin gövde tipine bürünür
   const hero = createCar3D($("heroStage"), { mode: "hero" });
   if (!hero) $("heroStage").classList.add("flat");
   const syncBody = () => {
     const v = state.vehicle, type = v.brand ? bodyTypeOf(v.brand, v.model) : "hatchback";
-    hero?.setBody(type);
-    setCarBody(type);
-    $("heroBody").textContent = v.brand && v.brand !== "Diğer" ? `${v.brand} ${v.model} · ${BODY_LABEL[type]}` : "Aracınızı seçin";
+    const dims = dimensionsOf(v.brand, v.model);
+    hero?.setBody(type, dims);
+    setCarBody(type, dims);
+    const size = dims ? ` · ${dims.length.toFixed(2).replace(".", ",")} m` : "";
+    $("heroBody").textContent = v.brand && v.brand !== "Diğer" ? `${v.brand} ${v.model} · ${BODY_LABEL[type]}${size}` : "Aracınızı seçin";
   };
   for (const id of ["brand", "model"]) $(id).addEventListener("change", syncBody);
   syncBody();

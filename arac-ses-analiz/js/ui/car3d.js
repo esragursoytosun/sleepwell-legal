@@ -144,7 +144,7 @@ const BODIES = {
   }
 };
 
-function bodyShape(type) {
+function bodyShape(type, dims) {
   const spec = BODIES[type] || BODIES.hatchback;
   const s = new THREE.Shape();
   spec.top(s);
@@ -154,7 +154,34 @@ function bodyShape(type) {
   s.lineTo(-AXLE + spec.arch, 0.34);
   s.absarc(-AXLE, 0.34, spec.arch, 0, Math.PI, false);      // arka çamurluk
   s.lineTo(start.x, start.y);
-  return s;
+  const base = s.getPoints(16);
+  const fit = fitToModel(base, spec.arch, dims);
+  return { shape: new THREE.Shape(base.map(p => new THREE.Vector2(...fit(p.x, p.y)))), fit };
+}
+
+/**
+ * Gövde profilini modelin gerçek oranlarına uydurur.
+ * Sahnede dingil mesafesi sabittir; bu yüzden ölçüler dingil mesafesine oranlanır: ön ve arka çıkıntılar
+ * ile tavan yüksekliği modele göre uzar ya da kısalır. Tekerlek yuvaları ve aradaki bölüm değişmez.
+ * @returns {(x: number, y: number) => [number, number]}
+ */
+function fitToModel(basePoints, arch, dims) {
+  if (!dims) return (x, y) => [x, y];
+  let maxX = -9, minX = 9, maxY = 0;
+  for (const p of basePoints) { maxX = Math.max(maxX, p.x); minX = Math.min(minX, p.x); maxY = Math.max(maxY, p.y); }
+  const scale = 2 * AXLE / dims.wheelbase;                          // metre → sahne birimi
+  const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  const baseFront = maxX - AXLE, baseRear = -minX - AXLE;
+  const overhang = Math.max(1.3, dims.length * scale - 2 * AXLE);   // ön + arka çıkıntı
+  const front = clamp(overhang * baseFront / (baseFront + baseRear), 0.72, 1.3);
+  const rear = clamp(overhang - front, 0.55, 1.6);
+  const edge = AXLE + arch + 0.02, pivotY = 0.85;
+  const kf = (AXLE + front - edge) / (maxX - edge), kr = (AXLE + rear - edge) / (-minX - edge);
+  const ky = clamp((dims.height * scale - pivotY) / (maxY - pivotY), 0.72, 1.45);
+  return (x, y) => [
+    x > edge ? edge + (x - edge) * kf : x < -edge ? -edge + (x + edge) * kr : x,
+    y > pivotY ? pivotY + (y - pivotY) * ky : y
+  ];
 }
 
 function bodyGeometry(shape) {
@@ -165,7 +192,7 @@ function bodyGeometry(shape) {
 
 /** Yan silüet çizgileri: iki yanda belirgin, ortada soluk. */
 function profileLines(shape) {
-  const pts = shape.getPoints(18);
+  const pts = shape.getPoints();
   const g = new THREE.Group();
   for (const [z, o] of [[HALF_W, 0.95], [-HALF_W, 0.95], [0, 0.22]]) {
     g.add(new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts.map(p => new THREE.Vector3(p.x, p.y, z))), lineMat(o)));
@@ -173,12 +200,12 @@ function profileLines(shape) {
   return g;
 }
 
-function windowLines(type) {
+function windowLines(type, fit) {
   const spec = BODIES[type] || BODIES.hatchback;
   const g = new THREE.Group();
   for (const side of [1, -1]) {
     const z = side * (HALF_W + 0.005);
-    const mk = p => new THREE.BufferGeometry().setFromPoints(p.map(([x, y]) => new THREE.Vector3(x, y, z)));
+    const mk = p => new THREE.BufferGeometry().setFromPoints(p.map(([x, y]) => new THREE.Vector3(...fit(x, y), z)));
     g.add(new THREE.LineLoop(mk(spec.glass), lineMat(0.6)), new THREE.Line(mk(spec.pillar), lineMat(0.45)));
   }
   return g;
@@ -257,7 +284,7 @@ function eachMaterial(obj, fn) {
 /**
  * @param {HTMLElement} container sahnenin çizileceği kutu (boyutu CSS'ten gelir)
  * @param {{mode?: "hero"|"result"}} [opts] "hero": sürekli döner ve tarama yapar; "result": seçilen konuma döner
- * @returns {null | {focus: (key: string) => void, scan: () => void, setBody: (type: string) => void, dispose: () => void}}
+ * @returns {null | {focus: (key: string) => void, scan: () => void, setBody: (type: string, dims?: {length: number, height: number, wheelbase: number} | null) => void, dispose: () => void}}
  */
 export function createCar3D(container, { mode = "result" } = {}) {
   let renderer;
@@ -291,18 +318,19 @@ export function createCar3D(container, { mode = "result" } = {}) {
   const body = new THREE.Group();
   car.add(body);
   let bodyType = null;
-  /** Gövdeyi verilen tipe göre yeniden kurar (hatchback, sedan, suv, van). */
-  function setBody(type) {
+  /** Gövdeyi verilen tipe ve (varsa) modelin ölçülerine göre yeniden kurar. */
+  function setBody(type, dims = null) {
     if (!BODIES[type]) type = "hatchback";
-    if (type === bodyType) return;
+    const key = type + (dims ? `:${dims.length}:${dims.height}:${dims.wheelbase}` : "");
+    if (key === bodyType) return;
     const first = bodyType === null;
-    bodyType = type;
+    bodyType = key;
     body.traverse(o => { o.geometry?.dispose(); o.material?.dispose(); });
     body.clear();
-    const shape = bodyShape(type), geo = bodyGeometry(shape);
+    const { shape, fit } = bodyShape(type, dims), geo = bodyGeometry(shape);
     body.add(new THREE.Mesh(geo, fillMat(0.07)));
     body.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo, 30), lineMat(0.35)));
-    body.add(profileLines(shape), windowLines(type));
+    body.add(profileLines(shape), windowLines(type, fit));
     if (!first) scan();
   }
   const wheels = [];

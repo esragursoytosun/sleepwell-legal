@@ -57,8 +57,11 @@ barındırmaya (GitHub Pages, Netlify, Cloudflare Pages) olduğu gibi yüklenebi
 ## Tasarım
 
 - **Üç boyutlu araç:** saydam "röntgen" gövde içinde motor, kayış, egzoz, frenler ve ön takım parçaları görünür.
-  Arızanın olası yeri ışıkla işaretlenir, araç o parçaya döner ve sürüklenerek döndürülebilir. Gövde, seçilen modele
-  göre değişir (hatchback, sedan, SUV, hafif ticari). WebGL yoksa iki boyutlu çizim gösterilir.
+  Arızanın olası yeri ışıkla işaretlenir, araç o parçaya döner ve sürüklenerek döndürülebilir. Gövde, seçilen modelin
+  tipine (hatchback, sedan, SUV, hafif ticari) ve yaklaşık gerçek ölçülerine (uzunluk, yükseklik, dingil mesafesi)
+  göre çizilir. Bu bir oran benzerliğidir; markaya özgü tasarım hatları yoktur. WebGL yoksa iki boyutlu çizim gösterilir.
+- **Kullanıcının araç fotoğrafı:** isteğe bağlı eklenir, sahnede ve sonuçta görünür. Küçültülerek yalnızca cihazda
+  saklanır; hiçbir yere gönderilmez.
 - **Derli toplu sonuç ekranı:** araç ve sonuç özeti üstte sabit kalır; ayrıntılar beş sekmeye bölünür
   (Özet, Ne yapmalı, Netleştir, Teklif, Paylaş).
 - **Renk ve yazı:** mürekkep mavisi yüzeyler, kehribar vurgu, camgöbeği ölçüm çizgileri; Barlow ve Barlow Condensed.
@@ -81,6 +84,7 @@ js/
     known-issues.js     Modele özgü sık bildirilen sorunlar
     vehicles.js         Marka ve modeller
     conditions.js       Sürüş durumları
+    dimensions.js       Modellerin yaklaşık dış ölçüleri (3B araç oranları için)
     guidance.js         Arıza başına kontroller, ustaya söylenecekler, kırmızı bayraklar
     parts.js            Teklif/fatura kalemleri
     prices.js           Doğrulanmış fiyat aralıkları (gerçek veri gelene kadar boş)
@@ -102,6 +106,7 @@ js/
   ui/                 Ekran modülleri (form, kayıt, sonuç, çizim, paylaşım)
     car3d.js            Üç boyutlu "röntgen" araç sahnesi (WebGL yoksa iki boyutlu çizime düşülür)
     tabs.js             Sonuç ekranındaki sekmeler
+    photo.js            Kullanıcının araç fotoğrafı (cihazda saklanır)
     icons.js            Çizgi ikonları
     animate.js          Sayaç ve animasyon yardımcıları
     waveform.js         Dalga ve canlı spektrum çizimi

@@ -61,3 +61,18 @@ test("gövde tipi: bilinen modeller doğru, bilinmeyenler hatchback", async () =
   assert.equal(bodyTypeOf("", ""), "hatchback");
   for (const type of ["hatchback", "sedan", "suv", "van"]) assert.ok(BODY_LABEL[type]);
 });
+
+test("her modelin ölçüsü var ve makul aralıkta", async () => {
+  const { dimensionsOf } = await import("../js/data/dimensions.js");
+  for (const [brand, models] of Object.entries(BRANDS)) {
+    if (brand === "Diğer") continue;
+    for (const model of models) {
+      const d = dimensionsOf(brand, model);
+      assert.ok(d, `${brand} ${model}`);
+      assert.ok(d.length > 3.4 && d.length < 5.1, `${brand} ${model} uzunluk`);
+      assert.ok(d.height > 1.35 && d.height < 1.95, `${brand} ${model} yükseklik`);
+      assert.ok(d.wheelbase > 2.3 && d.wheelbase < 3.0 && d.wheelbase < d.length, `${brand} ${model} dingil`);
+    }
+  }
+  assert.equal(dimensionsOf("Diğer", "Diğer"), null);
+});

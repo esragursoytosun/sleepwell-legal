@@ -543,7 +543,8 @@ h1, h2, h3, .brand-name, .rec-time, .pct, .an-title, .urgency b { font-family: v
 .hero-copy { position: absolute; z-index: 3; left: 18px; top: 16px; max-width: min(74%, 440px); pointer-events: none; }
 .hero-copy h2 { font-family: var(--font-display); font-size: clamp(1.75rem, 6.4vw, 2.7rem); font-weight: 700; line-height: .98; text-transform: uppercase; color: var(--stage-text); text-wrap: balance; }
 .hero-copy h2 em { font-style: normal; color: var(--stage-signal); }
-.hero-copy p { color: var(--stage-muted); font-size: .92rem; margin-top: 8px; max-width: 19em; }
+.hero-copy p { display: none; } /* alt cümle aracın üstüne bindiği için sahnede gösterilmez */
+.stage.flat .hero-copy p { display: block; color: var(--stage-muted); font-size: .92rem; margin-top: 8px; }
 .hud.bl { left: 14px; bottom: 12px; color: var(--stage-line); }
 .stage.flat.stage-hero { display: block; padding: 0; height: auto; }
 .stage.flat .hero-copy { position: static; padding: 18px; max-width: none; }
@@ -590,6 +591,20 @@ h1, h2, h3, .brand-name, .rec-time, .pct, .an-title, .urgency b { font-family: v
 .tab-panel > .card:first-child { margin-top: 12px; }
 @media (max-width: 480px) { .tabs { gap: 2px; padding: 5px; } .tab { padding: 9px 8px; font-size: .82rem; } .tab .ic { display: none; } .hero-copy p { display: none; } .hero-copy { max-width: 88%; } }
 .tab-panel > .notice:first-child { margin-top: 12px; }
+
+
+/* ------------------------------------------------------------ kullanıcının araç fotoğrafı */
+.photo-row { display: flex; gap: 14px; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+.photo-row .row { margin-top: 0; }
+.photo-thumb { width: 84px; height: 62px; object-fit: cover; border-radius: 12px; border: 1px solid var(--border); flex: none; animation: pop .35s var(--spring) both; }
+.stage-photo {
+  position: absolute; z-index: 3; right: 14px; bottom: 40px; width: clamp(84px, 18%, 124px); aspect-ratio: 4 / 3; object-fit: cover;
+  border-radius: 12px; border: 2px solid var(--stage-line); box-shadow: 0 10px 24px -8px rgba(0, 0, 0, .7); pointer-events: none; animation: pop .4s var(--spring) both;
+}
+.result-meta { display: flex; gap: 12px; align-items: center; }
+.result-meta > div { min-width: 0; flex: 1; }
+.meta-photo { width: 72px; height: 54px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border); flex: none; }
+@media (max-width: 480px) { .stage-photo { bottom: 38px; right: 12px; } }
 
 /* ------------------------------------------------------------ yönlendirmeli test */
 .gtest { display: grid; grid-template-columns: 1fr auto; gap: 8px 14px; align-items: center; padding: 14px 0; border-top: 1px solid var(--border); }
