@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Veri Seti Ölçer</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="css/app.css">
+<style>
+  .drop { border: 2px dashed var(--car-line); border-radius: 16px; padding: 26px 18px; text-align: center; margin-top: 16px; background: var(--surface-2); }
+  .meter { height: 8px; border-radius: 8px; background: var(--surface-3); overflow: hidden; margin-top: 14px; }
+  .meter i { display: block; height: 100%; width: 0; background: var(--grad); transition: width .2s; }
+  .counts { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: .9rem; }
+  .counts td { padding: 6px 4px; border-top: 1px solid var(--border); }
+  .counts td:last-child { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+  ol.steps { margin: 12px 0 0 20px; display: grid; gap: 6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="app-header">
+    <div class="brand">
+      <span class="logo"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12h1.5M7 8v8M11 4.5v15M15 8v8M19 10.5v3"/></svg></span>
+      <div><div class="brand-name">Veri Seti Ölçer</div><div class="brand-sub">Araç Ses Teşhisi · geliştirme aracı</div></div>
+    </div>
+  </header>
+  <main>
+    <div class="card">
+      <h2>Etiketli ses klasörünü ölçün</h2>
+      <p class="hint">Ses dosyaları bilgisayarınızdan çıkmaz. Tarayıcınız her dosyayı ölçer ve yalnızca ölçümleri içeren küçük bir dosya üretir.</p>
+      <ol class="steps">
+        <li>İndirdiğiniz veri setinin zip'ini açın (sağ tık → Tümünü ayıkla).</li>
+        <li>Aşağıdan açılan klasörü seçin. Tarayıcı “dosyalar yüklensin mi?” diye sorarsa onaylayın; dosyalar yalnızca bu sayfada okunur.</li>
+        <li>Ölçüm bitince sonuç dosyasını kaydedin ve sohbete yükleyin.</li>
+      </ol>
+      <div class="drop">
+        <label class="btn primary">Klasör seç
+          <input id="folder" type="file" webkitdirectory multiple hidden>
+        </label>
+        <p class="hint" id="status">Henüz klasör seçilmedi.</p>
+        <div class="meter"><i id="bar"></i></div>
+      </div>
+      <table class="counts" id="counts"></table>
+      <div class="nav">
+        <span></span>
+        <button class="btn primary" id="save" disabled>Sonuç dosyasını kaydet</button>
+      </div>
+      <div class="notice" id="saveNote" hidden></div>
+    </div>
+  </main>
+</div>
+<script type="module" src="js/tools/measure-page.js"></script>
+</body>
+</html>

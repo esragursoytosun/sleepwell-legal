@@ -644,6 +644,9 @@ input[type=text]:focus { outline: none; border-color: var(--accent); box-shadow:
 .gtest-result.measured .ic { color: var(--ok); }
 @media (max-width: 560px) { .gtest { grid-template-columns: 1fr; } .gtest-actions { justify-content: flex-start; } }
 
+.app-footer { margin-top: 28px; text-align: center; font-size: .8rem; }
+.app-footer a { color: var(--faint); }
+
 /* ------------------------------------------------------------ hareketi azalt */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; animation-delay: 0s !important; }

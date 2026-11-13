@@ -75,3 +75,24 @@ test("konum: sesin güçlendiği an bulunur", () => {
 test("konum: çok kısa kayıtta ölçüm yapılmaz", () => {
   assert.equal(strengthOverTime(sine(1000, 0.2), SR, extractFeatures(sine(1000, 0.2), SR)), null);
 });
+
+test("WAV çözücü: 16 bit tek kanal ve iki kanallı dosyalar doğru okunur", async () => {
+  const { decodeWav } = await import("../scripts/measure-dataset.mjs");
+  const { encodeWav } = await import("../js/audio/wav.js");
+  const x = sine(440, 1, 0.5);
+  const mono = decodeWav(Buffer.from(await encodeWav(x, SR).arrayBuffer()));
+  assert.equal(mono.sr, SR);
+  assert.equal(mono.samples.length, x.length);
+  assert.ok(Math.abs(mono.samples[1000] - x[1000]) < 1e-3);
+  // iki kanal: başlığı elle kur (sol = ton, sağ = sessizlik) → mono ortalaması yarı genlik
+  const n = 1000, buf = Buffer.alloc(44 + n * 4);
+  buf.write("RIFF", 0); buf.writeUInt32LE(36 + n * 4, 4); buf.write("WAVEfmt ", 8); buf.writeUInt32LE(16, 16);
+  buf.writeUInt16LE(1, 20); buf.writeUInt16LE(2, 22); buf.writeUInt32LE(8000, 24); buf.writeUInt32LE(32000, 28);
+  buf.writeUInt16LE(4, 32); buf.writeUInt16LE(16, 34); buf.write("data", 36); buf.writeUInt32LE(n * 4, 40);
+  for (let i = 0; i < n; i++) buf.writeInt16LE(16384, 44 + i * 4);
+  const stereo = decodeWav(buf);
+  assert.equal(stereo.sr, 8000);
+  assert.equal(stereo.samples.length, n);
+  assert.ok(Math.abs(stereo.samples[10] - 0.25) < 1e-3);
+  assert.throws(() => decodeWav(Buffer.from("bu bir wav değil, düz metin")), /WAV değil/);
+});

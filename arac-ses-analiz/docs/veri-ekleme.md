@@ -51,3 +51,15 @@ göstericidir, ama etiketleri doğrulanmamıştır ve sesler çoğu zaman kurgul
   **Doğruluk oranına katılmaz** ve testleri bağlamaz.
 - Tek bir videoya göre profil değiştirilmez. Aynı arıza için birkaç bağımsız kaynak aynı şeyi gösterdiğinde
   ya da bilinen bir gerçekle örtüştüğünde değiştirilir (ör. fren ötmesinin frekans aralığı).
+
+## 5. Büyük veri setlerini ölçmek
+
+Etiketli bir ses veri seti (ör. arıza adlarıyla klasörlenmiş WAV dosyaları) depoya ya da sohbete taşınmaz;
+bilgisayarda ölçülür ve yalnızca ölçümler paylaşılır:
+
+- **Tarayıcıda:** uygulamadaki `olcum.html` sayfası. Klasör seçilir, tarayıcı dosyaları ölçer, sonuç dosyası
+  (`veri-seti-olcumleri.json`) kaydedilir. Kurulum gerekmez; ses dosyaları bilgisayardan çıkmaz.
+- **Komut satırında:** `npm run measure -- <klasör> [çıktı.json]` (yalnızca WAV).
+
+Her kayıt için etiket = dosyanın klasörü, durum = bir üst klasör. Veri setinin lisansı, ölçümlerin nasıl
+kullanılabileceğini belirler; kaynağı ve lisansı ölçüm dosyasıyla birlikte not edin.
