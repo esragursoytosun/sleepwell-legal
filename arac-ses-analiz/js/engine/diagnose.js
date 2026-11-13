@@ -8,6 +8,7 @@ import { FAULTS, GROUPS } from "../data/faults.js";
 import { KNOWN_ISSUES } from "../data/known-issues.js";
 import { QUESTIONS } from "../data/questions.js";
 import { lookupCode } from "../data/obd.js";
+import { idleNormality } from "./normal.js";
 
 const HIGH_KM_WEAR = ["rulman", "aks", "biyel", "zincir", "sanziman",
   "rotil", "rot_basi", "z_rot", "viraj_lastik", "amortisor_kafa", "salincak"];
@@ -112,11 +113,13 @@ export function diagnose({ features, conditions = [], vehicle = {}, answers = {}
     .map(([id, label]) => ({ id, label, prob: ranked.filter(r => r.fault.group === id).reduce((s, r) => s + r.prob, 0) }))
     .sort((a, b) => b.prob - a.prob);
 
-  return { ranked, groups, confidence: confidence({ ranked, groups, quality, features, conditions, answered }) };
+  // Rölantide alınmış kayıtlar, gerçek araçların normal rölanti sesleriyle karşılaştırılır.
+  const normal = idleNormality(features, { conditions, fuel: v.fuel });
+  return { ranked, groups, normal, confidence: confidence({ ranked, groups, quality, features, conditions, answered, normal, hasCodes: rules.length > 0 }) };
 }
 
 /** Sonuca ne kadar güvenilebileceğini ve nedenini belirler. */
-function confidence({ ranked, groups, quality, features, conditions, answered }) {
+function confidence({ ranked, groups, quality, features, conditions, answered, normal, hasCodes }) {
   const reasons = [];
   if (quality !== "ok") reasons.push("Kayıt kalitesi düşük.");
   if (features.dur < 4) reasons.push("Kayıt kısa.");
@@ -127,8 +130,12 @@ function confidence({ ranked, groups, quality, features, conditions, answered })
   if (groups[0].prob < 0.45) reasons.push("Ses birden fazla bölgeye benziyor.");
   else if (ranked[0].prob < 0.35) reasons.push("Aynı bölgedeki birkaç parça benzer ses çıkarıyor.");
 
+  // Kayıt normal rölanti aralığındaysa, kullanıcı ek bilgi (cevap, test, arıza kodu) vermeden sonuca güvenilmez.
+  const looksNormal = normal?.inside && !answered.length && !hasCodes;
+  if (looksNormal) reasons.unshift("Kayıt, normal rölanti seslerinin aralığında; belirgin bir arıza sesi ölçülmedi.");
+
   let level;
-  if (quality === "bad" || groups[0].prob < 0.45) level = "low";
+  if (quality === "bad" || groups[0].prob < 0.45 || looksNormal) level = "low";
   else if (!weak && quality === "ok" && groups[0].prob >= 0.7 && ranked[0].prob >= 0.4 && features.dur >= 4) level = "good";
   else level = "mid";
   return { level, label: { low: "Güven: düşük", mid: "Güven: orta", good: "Güven: iyi" }[level], reasons };

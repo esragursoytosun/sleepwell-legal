@@ -6,6 +6,8 @@
  *  - loc   : araç çiziminde işaretlenecek konum (LOCATIONS anahtarı)
  *  - urg   : aciliyet (1 düşük … 4 acil)
  *  - ice   : true ise yalnızca içten yanmalı motorlu araçlarda görülür
+ *  - byEar : true ise bu arıza, referans seslerde (belirtilerle birlikte) çoğunlukla ilk sırada bulunmuştur;
+ *            diğerlerinde ses tek başına ayırt edici değildir ve bunu arayüz açıkça söyler
  *  - p     : ses profili → f: karakteristik frekans aralığı (Hz), feat: karşılaştırılacak ölçüm
  *            ("peak" baskın ton, "centroid" spektral merkez), tonal / imp: beklenen tonluluk ve
  *            darbelilik (0..1), rhythm: beklenen tekrar hızı aralığı (Hz), null (sürekli ses) ya da
@@ -108,7 +110,7 @@ export const FAULTS = [
     c: { rolanti: 1.9, hizlanma: 1.5, soguk: 1.3, fren: .4, tumsek: .4, direksiyon: .4, hiz: .8 } },
 
   // ------------------------------------------------------------------ fren
-  { id: "fren_balata", name: "Fren balatası aşınması (gıcırtı)", group: "fren", loc: "on_teker", urg: 3,
+  { id: "fren_balata", byEar: true, name: "Fren balatası aşınması (gıcırtı)", group: "fren", loc: "on_teker", urg: 3,
     desc: "Balata aşınma uyarı sacı diske sürtünce çok tiz bir ötme/gıcırtı yapar; genellikle fren yapınca başlar.",
     tip: "Balatalar ölçtürülmeli. Uzun süre ihmal edilirse disk de zarar görür.",
     p: { f: [1200, 11000], feat: "peak", tonal: .8, imp: .1, rhythm: null }, // gerçek fren ötmesi 1–12 kHz arasında olabilir
@@ -120,12 +122,12 @@ export const FAULTS = [
     c: { fren: 3.2, hiz: 1.2, rolanti: .25, soguk: .6, klima: .4, hizlanma: .6 } },
 
   // ------------------------------------------------------------------ aktarma ve tekerlek
-  { id: "rulman", name: "Teker rulmanı arızası (uğultu)", group: "aktarma", loc: "teker", urg: 3,
+  { id: "rulman", byEar: true, name: "Teker rulmanı arızası (uğultu)", group: "aktarma", loc: "teker", urg: 3,
     desc: "Hız arttıkça yükselen, “vuuuv-vuuuv” şeklinde dalgalanan alçak bir uğultu. Virajda bir tarafa yüklenince değişir.",
     tip: "Virajda ses artıyor/azalıyorsa yük binen taraftaki rulman şüphelidir. Servis kontrolü gerekir.",
     p: { f: [70, 450], feat: "centroid", tonal: .25, imp: .15, rhythm: null }, // üç ayrı kaynakta: tonsuz, kalın bir uğultu
     c: { hiz: 2.8, direksiyon: 1.4, rolanti: .2, soguk: .6, fren: .8, klima: .4, vites: .7 } },
-  { id: "aks", name: "Aks kafası (homokinetik mafsal) tıkırtısı", group: "aktarma", loc: "aks", urg: 3,
+  { id: "aks", byEar: true, name: "Aks kafası (homokinetik mafsal) tıkırtısı", group: "aktarma", loc: "aks", urg: 3,
     desc: "Direksiyon tam kırıkken hareket edince gelen ritmik “tık-tık-tık”. Körük yırtılınca mafsal aşınır.",
     tip: "Aks körükleri ve mafsallar kontrol edilmeli. Aks koparsa araç hareket edemez.",
     p: { f: [700, 4000], feat: "centroid", tonal: .15, imp: .85, rhythm: [1.5, 5.5] },
@@ -147,7 +149,7 @@ export const FAULTS = [
     tip: "Rot başı ve rot mili boşluğu kontrol edilmeli; değişimden sonra rot ayarı yapılmalıdır.",
     p: { f: [200, 1500], feat: "centroid", tonal: .1, imp: .85, rhythm: "irregular" },
     c: { tumsek: 2.2, direksiyon: 2.2, fren: .8, rolanti: .2, soguk: .6, klima: .4, hizlanma: .6, vites: .5 } },
-  { id: "z_rot", name: "Z rot (viraj demiri askı rotu) tıkırtısı", group: "alt_takim", loc: "z_rot", urg: 2,
+  { id: "z_rot", byEar: true, name: "Z rot (viraj demiri askı rotu) tıkırtısı", group: "alt_takim", loc: "z_rot", urg: 2,
     desc: "Bozuk yolda düşük hızda gelen ince ve hızlı “tıkır tıkır” ses. Alt takımın en sık değişen parçalarındandır.",
     tip: "Z rotlar elle sallanarak kolayca kontrol edilir; genellikle uygun maliyetli bir değişimdir.",
     p: { f: [400, 3000], feat: "centroid", tonal: .1, imp: .85, rhythm: "irregular" },

@@ -53,3 +53,17 @@ console.log(`  yalnızca sesle:      bölge ${tally.group}/${tally.n} · ilk sı
 console.log(`  ses + belirtilerle:  bölge ${tally.groupC}/${tally.labelled} · ilk sıra ${tally.top1C}/${tally.labelled} · ilk 3: ${tally.top3C}/${tally.labelled}`);
 console.log("  arıza başına sıra (yalnız ses → belirtilerle):");
 for (const [id, ranks] of Object.entries(byFault)) console.log(`    ${id.padEnd(15)} ${ranks.join("  ")}`);
+
+// --- Normal araçlar: gerçek rölanti kayıtlarında uygulama ne diyor? (yanlış alarm ölçümü)
+import { idleNormality } from "../js/engine/normal.js";
+const normal = JSON.parse(readFileSync(new URL("../tests/normal/rolanti.json", import.meta.url), "utf8")).recordings;
+let inside = 0, tone = 0, good = 0;
+for (const r of normal) {
+  inside += idleNormality(r.features, { conditions: ["rolanti"], fuel: r.fuel }).inside;
+  tone += r.features.toneHz > 0;
+  good += diagnose({ features: r.features, conditions: ["rolanti"], vehicle: { fuel: r.fuel } }).confidence.level === "good";
+}
+console.log(`\nNormal araçlar (gerçek rölanti kayıtları, ${normal.length} araç)`);
+console.log(`  "normal rölanti sesine benziyor" denen: ${inside}/${normal.length}`);
+console.log(`  kalıcı ton bulunan (yanlış alarm):      ${tone}/${normal.length}`);
+console.log(`  "iyi" güvenle arıza gösterilen:         ${good}/${normal.length}`);

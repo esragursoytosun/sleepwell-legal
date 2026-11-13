@@ -179,6 +179,7 @@ try {
   assert.match(await page.textContent("#groupName"), /Alt takım/);
   assert.match(await page.textContent("#planWarranty"), /garantisinde/);
   assert.match(await page.textContent("#planMechanics"), /Şehrinizi seçerseniz/);
+  assert.equal(await hiddenAttr(page, "#normalNote"), true);     // sürüş kaydında rölanti karşılaştırması yapılmaz
   assert.equal(await hiddenAttr(page, "#guidedCard"), true);
   assert.equal(await hiddenAttr(page, "#tabDot"), false);
   await tab(page, "netlestir");
@@ -216,6 +217,9 @@ try {
   await page.click("#step-1 [data-next]");
   await page.selectOption("#demo", "alternator");
   await analyze(page);
+  // Rölanti kaydı gerçek araçların normal sesiyle karşılaştırılır: alternatör örneğinde kalıcı ton ayrışır
+  assert.match(await page.textContent("#normalNote"), /normal rölanti seslerinden ayrılıyor/);
+  assert.match(await page.textContent("#normalNote"), /319 gerçek araç/);
   assert.equal(await hiddenAttr(page, "#guidedCard"), false);
   await tab(page, "netlestir");
   assert.equal(await page.locator(".gtest").count(), 3);

@@ -19,6 +19,11 @@ Amaç, sürücünün servise bilgili gitmesidir. Sonuç bir **ön tahmindir**, k
    - **Ölçerek netleştirme:** motor bölmesi seslerinde kullanıcı 5 saniyelik test kayıtları yapar (gaz vererek,
      klimayı değiştirerek, elektrik yükü vererek). Uygulama test kaydını ilk kayıtla karşılaştırır ve ilgili soruyu
      kendisi cevaplar: ton devirle inceliyor mu, değişiklik sesi etkiliyor mu?
+   - **Normal sesle karşılaştırma:** rölantide alınan kayıt, 319 gerçek aracın normal rölanti sesinden çıkarılan
+     aralıkla karşılaştırılır. Aralıktaysa "normal rölanti sesine benziyor" denir ve arıza listesine güven düşürülür;
+     dışındaysa neyin farklı olduğu yazılır.
+   - **Sesle ayırt edilebilirlik:** yalnızca referans ölçümlerde iyi ayrışan arızalar (balata, Z rot, aks, rulman)
+     yalın gösterilir; diğerlerinde "sesle ayırt etmek zor" notu çıkar.
    - **Arıza kodu:** servis ya da OBD cihazının okuduğu kodlar (ör. P0301) girilir; kodun işaret ettiği sistem
      olasılıklara ve gerekçeye yansır. Tanınmayan kodlar açıkça belirtilir.
    - **Önceki hâliyle karşılaştırma:** araç sağlamken alınan kayıt referans olarak saklanır; sonraki kayıtlarda
@@ -86,6 +91,7 @@ js/
     faults.js           Arızalar, gruplar, konumlar, ses profilleri
     questions.js        Takip soruları ve etkileri
     known-issues.js     Modele özgü sık bildirilen sorunlar
+    normal-idle.js      Normal rölanti sesinin aralığı (319 gerçek araçtan)
     vehicles.js         Marka ve modeller
     conditions.js       Sürüş durumları
     dimensions.js       Modellerin yaklaşık dış ölçüleri (3B araç oranları için)
@@ -109,6 +115,7 @@ js/
     quote.js            Teklif kontrolü
     compare.js          Yönlendirmeli test: iki kaydın karşılaştırılması
     baseline.js         Aracın referans (sağlam) kaydıyla karşılaştırma
+    normal.js           Normal rölanti sesiyle karşılaştırma
   ui/                 Ekran modülleri (form, kayıt, sonuç, çizim, paylaşım)
     car3d.js            Üç boyutlu "röntgen" araç sahnesi (WebGL yoksa iki boyutlu çizime düşülür)
     tabs.js             Sonuç ekranındaki sekmeler
@@ -118,6 +125,8 @@ js/
     waveform.js         Dalga ve canlı spektrum çizimi
 tests/                Birim testleri (node:test)
   cases/              Gerçek vakalar (yalnızca ölçülen ses özellikleri; ses/görüntü saklanmaz)
+  reference/          Sosyal medya derlemelerinden doğrulanmamış referans sesler (özellikler)
+  normal/             319 gerçek aracın normal rölanti kaydı (özellikler; CC BY 4.0 kaynaklı)
 scripts/              Geliştirme sunucusu, uçtan uca test, doğruluk ölçümü
 vendor/               three.js 0.160.0 (MIT lisanslı; 3B sahne için, kurulum gerektirmesin diye depoda tutulur)
 docs/
@@ -144,10 +153,26 @@ Ses benzerliği; frekans, tonluluk, darbelilik ve ritmin arızanın profiline uy
 Kayıt boyunca süren sabit bir ton (ıslık, vınlama) ayrıca aranır; bulunursa tonlu arızalar o tona göre
 değerlendirilir. Böylece motorun normal tıkırtısı, gerçek kayıtlarda tonun kaynağını gölgelemez.
 
+## Ölçüm
+
+`npm run evaluate` üç bölüm raporlar. Bugünkü sonuçlar:
+
+| Bölüm | Sonuç |
+|---|---|
+| Gerçek vakalar (sonucu bilinen) | 1 vaka; bölge doğru |
+| Referans sesler (sosyal medya derlemeleri, doğrulanmamış, 44 ses) | Yalnızca sesle: bölge 20/44, doğru parça ilk üçte 10/37. Tipik belirtilerle: bölge 30/37, ilk üçte 22/37 |
+| Normal araçlar (319 gerçek rölanti kaydı) | 283'üne "normal rölanti sesine benziyor" denir; 4'ünde kalıcı ton bulunur; 4'ünde "iyi" güvenle arıza gösterilir |
+
+Normal araç verisi: Ciric, D. ve Milivojčević, M. (2024), *Sounds of Vehicle Internal Combustion Engines*, Zenodo
+kayıt 18777405, CC BY 4.0. Depoda ses dosyaları değil, yalnızca ölçülen özellikler tutulur (`tests/normal/`).
+
 ## Bilinen sınırlar
 
-- Ses profilleri elle yazılmış kurallardır. Gerçek kayıtlarla ölçüm yeni başladı (`npm run evaluate`);
-  bugün 1 gerçek vaka var. Doğruluk oranı, yeterli vaka birikmeden uygulamada gösterilmez.
+- Ses profilleri elle yazılmış kurallardır ve yalnızca sesle parça düzeyinde isabet düşüktür (bkz. Ölçüm).
+  Sonucu bilinen gerçek vaka sayısı 1'dir; doğruluk oranı, yeterli vaka birikmeden uygulamada gösterilmez.
+- Normal rölanti aralığı, aracın dışından (otopark girişinde) alınmış kayıtlardan çıkarılmıştır; kaput açıkken
+  motora yakın tutulan telefonla birebir aynı koşul değildir. Arıza seslerinin bir kısmı da bu aralığa düşer
+  (referans seslerin 44'te 16'sı); bu yüzden "normal" bir hüküm değil, göstergedir.
 - Alt takım parçaları (rotil, rot başı, Z rot vb.) sesle birbirinden güvenilir biçimde ayrılamaz; ayrımı
   takip soruları yapar. Kesin tespit için aracın liftte kontrolü gerekir.
 - Arızanın sol/sağ tarafı tek kayıttan belirlenemez.

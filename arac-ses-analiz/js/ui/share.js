@@ -25,6 +25,9 @@ export function buildSummary(state, result) {
     for (const q of answered) lines.push(`- ${q.text} ${state.answers[q.id] === "yes" ? "Evet" : "Hayır"}`);
   }
   if (state.codes?.length) lines.push("", "Arıza kodları: " + state.codes.join(", "));
+  if (result.normal) lines.push("", result.normal.inside
+    ? "Not: Kayıt, normal rölanti seslerinin aralığında ölçüldü."
+    : "Normal rölantiden farkı: " + result.normal.deviations.join(" "));
   lines.push("", `Uygulamanın tahmini (${result.confidence.label.toLowerCase()}):`);
   lines.push(`Bölge: ${result.groups[0].label} ${percent(result.groups[0].prob)}`);
   result.ranked.slice(0, 3).forEach((r, i) => lines.push(`${i + 1}) ${r.fault.name} ${percent(r.prob)}`));

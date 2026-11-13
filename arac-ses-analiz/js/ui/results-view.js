@@ -41,12 +41,23 @@ function renderHead(result, state, fresh) {
   const conds = [...state.conditions].map(c => CONDITION_LABEL[c]);
   $("summaryLine").textContent = vehicleLine(state.vehicle) + (conds.length ? " · " + conds.join(", ") : "");
 
+  renderNormal(result.normal);
   if (conf.level === "good") { setNotice($("confNote"), ""); return; }
   const reasons = conf.reasons.map(r => `<li>${esc(r)}</li>`).join("");
   const lead = conf.level === "low"
-    ? "Bu sonuç kesin değil. Aşağıdaki soruları cevaplayın, daha iyi bir kayıt alın ya da ikinci görüş isteyin."
+    ? "Aşağıdaki arıza listesi kesin değil. “Netleştir” sekmesindeki soruları cevaplayın, daha iyi bir kayıt alın ya da ikinci görüş isteyin."
     : "Sonuç yol gösterici ama kesin değil. Soruları cevaplamak tahmini netleştirir.";
   setNotice($("confNote"), `${lead}${reasons ? `<ul>${reasons}</ul>` : ""}`, conf.level === "low" ? "bad" : "warn");
+}
+
+/** Rölanti kaydının, gerçek araçların normal rölanti sesleriyle karşılaştırması. */
+function renderNormal(normal) {
+  if (!normal) { setNotice($("normalNote"), ""); return; }
+  if (normal.inside) {
+    setNotice($("normalNote"), `<b>Bu kayıt normal rölanti sesine benziyor.</b> ${normal.recordings} gerçek aracın rölanti kaydıyla karşılaştırdık; belirgin bir arıza sesi ölçülmedi. Bu, arıza olmadığını kanıtlamaz: sesi siz duyuyorsanız aşağıdaki soruları cevaplayın ya da kaydı bir ustaya dinletin.`, "ok");
+  } else {
+    setNotice($("normalNote"), `<b>Kayıt, normal rölanti seslerinden ayrılıyor</b> (${normal.recordings} gerçek araçla karşılaştırıldı):<ul>${normal.deviations.map(d => `<li>${esc(d)}</li>`).join("")}</ul>`, "warn");
+  }
 }
 
 function renderQuestions(result, state) {
@@ -87,13 +98,14 @@ function renderFaults(result, fresh) {
         <span class="f-main">
           <span class="fault-top"><span class="fault-name">${i + 1}. ${esc(f.name)}</span><span class="pct">${percent(old ? old.prob : 0)}</span></span>
           <span class="bar"><i style="width:${startWidth}%" data-w="${(r.prob / maxProb * 100).toFixed(1)}"></i></span>
-          <span class="meta"><span>${esc(LOCATIONS[f.loc].label)}</span><span class="urg">${URGENCY[f.urg]}</span></span>
+          <span class="meta"><span>${esc(LOCATIONS[f.loc].label)}</span><span class="urg">${URGENCY[f.urg]}</span>${f.byEar ? "" : `<span class="ear">Sesle ayırt etmek zor</span>`}</span>
         </span>
         <span class="chev">${icon("chevron")}</span>
       </button>
       <div class="fault-body"><div class="fb-inner"><div class="fb-content">
         <p>${esc(f.desc)}</p>
         <p><b>Ne yapmalı:</b> ${esc(f.tip)}</p>
+        ${f.byEar ? "" : `<p class="ear-note">Bu arıza, benzer parçalardan yalnızca sesle güvenilir biçimde ayrılamıyor. Yüzde yol göstericidir; “Netleştir” sekmesindeki sorular ve ustanın kontrolü belirleyicidir.</p>`}
         ${r.notes.map(n => `<div class="model-note">${icon("info")}<span>${esc(n)}</span></div>`).join("")}
         <div class="row"><button class="btn small" data-play="${f.id}">${icon("speaker")} Örnek sesi dinle</button></div>
       </div></div></div>
