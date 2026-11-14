@@ -117,7 +117,7 @@ js/
     compare.js          Yönlendirmeli test: iki kaydın karşılaştırılması
     baseline.js         Aracın referans (sağlam) kaydıyla karşılaştırma
     normal.js           Normal rölanti sesiyle karşılaştırma
-    learned.js          Öğrenen model: kayış tarafı ve fren için etiketli kayıtlardan öğrenilmiş destek
+    learned.js          Öğrenen model: kayış tarafı, supap ve fren için etiketli kayıtlardan öğrenilmiş destek
   ui/                 Ekran modülleri (form, kayıt, sonuç, çizim, paylaşım)
     car3d.js            Üç boyutlu "röntgen" araç sahnesi (WebGL yoksa iki boyutlu çizime düşülür)
     tabs.js             Sonuç ekranındaki sekmeler
@@ -156,10 +156,11 @@ Ses benzerliği; frekans, tonluluk, darbelilik ve ritmin arızanın profiline uy
 Kayıt boyunca süren sabit bir ton (ıslık, vınlama) ayrıca aranır; bulunursa tonlu arızalar o tona göre
 değerlendirilir. Böylece motorun normal tıkırtısı, gerçek kayıtlarda tonun kaynağını gölgelemez.
 
-Rölanti ve fren kayıtlarında ayrıca **öğrenen model** çalışır: etiketli gerçek kayıtlardan öğrenilmiş iki küçük
-model, kayıt "kayış tarafı" ya da "aşınmış fren" seslerine yeterince benziyorsa ilgili arızaların ağırlığını
-sınırlı ölçüde (en çok 2,5 kat) artırır ve gerekçesini "Neden bu sonuç?" kartına yazar. Sınamada 318 normal
-aracın 10'unda yanlış alarm verdi. Ayrıntı, sınırlar ve **eğitim verisinin lisans durumu**: `docs/ogrenen-model.md`.
+Rölanti ve fren kayıtlarında ayrıca **öğrenen model** çalışır: etiketli gerçek kayıtlardan öğrenilmiş küçük
+modeller, kayıt "kayış tarafı", "supap tıkırtısı" ya da "aşınmış fren" seslerine yeterince benziyorsa ilgili
+arızaların ağırlığını sınırlı ölçüde (en çok 2,5 kat) artırır ve gerekçesini "Neden bu sonuç?" kartına yazar.
+Sınamada kayış modeli 664 normal kaydın 8'inde yanlış alarm verdi; hiç görmediği bağımsız telefon kayıtlarında
+59 kayış arızasının 51'ini yakaladı. Ayrıntı, sınırlar ve **eğitim verisinin lisans durumu**: `docs/ogrenen-model.md`.
 
 ## Ölçüm
 

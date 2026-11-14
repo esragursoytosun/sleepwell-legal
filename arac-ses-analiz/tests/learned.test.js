@@ -20,7 +20,7 @@ test("model katsayıları özellik vektörüyle aynı boyutta", () => {
 
 test("gerçek vaka (T-Roc, kayış tarafı): model rölantide kayış tarafını destekler", () => {
   const op = learnedOpinion(troc, { conditions: ["rolanti"], fuel: "benzin" });
-  assert.ok(op && op.kind === "yardimci" && op.p >= 0.7);
+  assert.ok(op && op.kind === "kayis" && op.p >= 0.7);
   assert.ok(op.boost > 1 && op.boost <= LEARNED_MAX_BOOST);
   const base = diagnose({ features: trocCase.features, conditions: trocCase.conditions, vehicle: trocCase.vehicle });
   const withModel = diagnose({ features: trocCase.features, conditions: trocCase.conditions, vehicle: trocCase.vehicle, windows: troc });
@@ -50,4 +50,9 @@ test("pencereleme: 1,5 sn'lik parçalar, en çok 12", () => {
   assert.equal(windowFeatures(x, sr).length, 2);
   assert.equal(windowFeatures(new Float32Array(sr * 40), sr).length, 12);
   assert.equal(windowFeatures(new Float32Array(sr), sr).length, 0);
+});
+
+test("rölanti modeli beş sınıflı; ölçülen yanlış alarm oranı %5'in altında", () => {
+  assert.equal(LEARNED.idle.W.length, 5);
+  for (const m of Object.values(LEARNED.measured)) assert.ok(m.falseAlarms / m.normal < 0.05);
 });

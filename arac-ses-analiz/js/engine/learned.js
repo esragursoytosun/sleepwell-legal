@@ -8,8 +8,8 @@ import { LEARNED } from "../data/learned-models.js";
 import { extractFeatures } from "../audio/features.js";
 import { idleComparable } from "./normal.js";
 
-/** Bu olasılığın altında model görüş bildirmez (yanlış alarmı düşük tutmak için). */
-export const LEARNED_THRESHOLD = 0.7;
+/** Bu benzerliğin altında model görüş bildirmez (yanlış alarmı düşük tutmak için). */
+export const LEARNED_THRESHOLD = { belt: 0.7, valve: 0.6, brake: 0.7 };
 /** Modelin bir arızanın ağırlığını en çok kaç kat artırabileceği. */
 export const LEARNED_MAX_BOOST = 2.5;
 const MAX_WINDOWS = 12;
@@ -36,24 +36,28 @@ function probabilities(model, F) {
 
 const meanClass = (model, windows, k) => windows.reduce((a, F) => a + probabilities(model, F)[k], 0) / windows.length;
 
+const sample = m => `(Sınama: ${m.normal} normal kayıtta ${m.falseAlarms} yanlış alarm; ${m.faulty} arızalı kayıttan ${m.caught} tanesi yakalandı.)`;
+const IDLE_BELT = 1, IDLE_VALVE = 4;
+
 /**
  * @param {import("../audio/features.js").Features[]} windows 1,5 sn'lik pencerelerin özellikleri
- * @returns {null | {kind: "yardimci"|"fren", p: number, boost: number, faults: string[], text: string}}
+ * @returns {null | {kind: "kayis"|"supap"|"fren", p: number, boost: number, faults: string[], text: string}}
  *   null: model bu kayıt için görüş bildirmiyor (durum uygun değil ya da benzerlik eşiğin altında).
  */
 export function learnedOpinion(windows, { conditions = [], fuel = "benzin" } = {}) {
   if (!windows?.length) return null;
-  let kind, p, faults, text;
+  const M = LEARNED.measured;
+  let options;
   if (conditions.includes("fren")) {
-    kind = "fren"; p = meanClass(LEARNED.brake, windows, 1); faults = ["fren_balata", "fren_disk"];
-    const m = LEARNED.measured.brake;
-    text = `Öğrenen model: kayıt, etiketli aşınmış fren seslerine %${Math.round(p * 100)} benziyor. (Sınama: ${m.faultClips} aşınmış fren kaydından ${m.caught} tanesi yakalandı; ${m.normalClips} normal fren kaydında ${m.falseAlarms} yanlış alarm.)`;
+    options = [{ kind: "fren", p: meanClass(LEARNED.brake, windows, 1), threshold: LEARNED_THRESHOLD.brake, faults: ["fren_balata", "fren_disk"], what: "aşınmış fren", m: M.brake }];
   } else if (idleComparable(conditions, fuel)) {
-    kind = "yardimci"; p = meanClass(LEARNED.idle, windows, 1); faults = ["kayis", "pompa", "alternator"];
-    const m = LEARNED.measured.idle;
-    text = `Öğrenen model: kayıt, etiketli kayış/pompa tarafı seslerine %${Math.round(p * 100)} benziyor. (Sınama: ${m.normalCars} normal araçta ${m.falseAlarms} yanlış alarm; arızalı kayıtların yaklaşık %${Math.round(m.caught / m.faultClips * 10) * 10}'ı yakalandı.)`;
+    options = [
+      { kind: "kayis", p: meanClass(LEARNED.idle, windows, IDLE_BELT), threshold: LEARNED_THRESHOLD.belt, faults: ["kayis", "pompa", "alternator"], what: "kayış/pompa tarafı", m: M.belt },
+      { kind: "supap", p: meanClass(LEARNED.idle, windows, IDLE_VALVE), threshold: LEARNED_THRESHOLD.valve, faults: ["supap"], what: "supap tıkırtısı", m: M.valve }
+    ];
   } else return null;
-  if (p < LEARNED_THRESHOLD) return null;
-  const boost = 1 + (LEARNED_MAX_BOOST - 1) * (p - LEARNED_THRESHOLD) / (1 - LEARNED_THRESHOLD);
-  return { kind, p, boost, faults, text };
+  const o = options.filter(x => x.p >= x.threshold).sort((a, b) => b.p - a.p)[0];
+  if (!o) return null;
+  const boost = 1 + (LEARNED_MAX_BOOST - 1) * (o.p - o.threshold) / (1 - o.threshold);
+  return { kind: o.kind, p: o.p, boost, faults: o.faults, text: `Öğrenen model: kayıt, etiketli ${o.what} seslerine %${Math.round(o.p * 100)} benziyor. ${sample(o.m)}` };
 }

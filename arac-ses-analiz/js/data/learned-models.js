@@ -6,19 +6,22 @@
  * Eğitim verisi:
  *  - "Car Diagnostics Dataset" (Kaggle; lisansı "Unknown" olarak belirtilmiş): 1,5 sn parçalar.
  *  - Gerçek araçların normal rölanti kayıtları (Zenodo 18777405, CC BY 4.0): kayıt başına en çok 3 pencere.
+ *  - Telefonla kaydedilmiş motor sesleri (Hugging Face, RashmiKarunarathne/MyDataSet; lisans belirtilmemiş).
  * Uygulamada ses dosyası yoktur; yalnızca aşağıdaki katsayılar bulunur.
  */
 export const LEARNED = {
   trainedAt: "2026-11-14",
   windowSeconds: 1.5,
-  /** Rölanti: sınıflar [normal, kayış tarafı (kayış + direksiyon pompası), yağ azlığı]. Yalnızca "kayış tarafı" kullanılır. */
+  /** Rölanti: sınıflar [normal, kayış tarafı, yağ azlığı, tekleme, supap]. Yalnızca "kayış tarafı" ve "supap" kullanılır. */
   idle: {
-    mu: [10.6327, 0.1162, 0.1176, 0.4501, 0.3215, 0.3879, 0.2445, 0.3676, 8.0239, 0.1536],
-    sd: [1.1531, 0.196, 0.1839, 0.2815, 0.2666, 0.2528, 0.1585, 0.2432, 2.1241, 0.1479],
+    mu: [10.8831, 0.0861, 0.1295, 0.5077, 0.281, 0.2688, 0.3324, 0.3987, 8.4477, 0.1465],
+    sd: [1.0002, 0.1675, 0.1946, 0.2942, 0.23, 0.2436, 0.2099, 0.2469, 2.0097, 0.1236],
     W: [
-      [0.6377, -0.3078, -0.3029, -0.2232, 0.3739, 0.3785, -0.126, -0.3113, -0.0973, -0.1551, 0.4247],
-      [-0.7826, -0.0004, -0.1643, -0.176, -0.2013, -0.4458, -0.4264, 0.7412, 0.2114, 0.3598, -0.062],
-      [0.1449, 0.3081, 0.4671, 0.3993, -0.1726, 0.0674, 0.5524, -0.4299, -0.1142, -0.2046, -0.3627]
+      [0.084, -0.1855, -0.6106, -0.5608, 0.5112, 0.4298, -0.2472, -0.2138, 0.0019, 0.2208, 0.7168],
+      [-0.8506, 0.3482, -0.1576, -0.3193, -0.1, -0.1654, -1.0907, 1.0904, 0.3817, 0.5285, -0.0035],
+      [-0.34, 0.5064, 0.6524, -0.1228, 0.3753, 0.0904, 0.2488, -0.3007, -0.1313, 0.2234, 0.2496],
+      [0.914, -0.1247, -0.3605, 0.2002, -0.2868, 0.1701, 0.2187, -0.3537, -0.2925, -0.0006, 0.4575],
+      [0.1926, -0.5444, 0.4762, 0.8028, -0.4997, -0.525, 0.8704, -0.2221, 0.0402, -0.972, -1.4204]
     ]
   },
   /** Fren: sınıflar [normal fren, aşınmış fren]. */
@@ -30,9 +33,10 @@ export const LEARNED = {
       [0.208, 0.337, -0.029, -0.2054, 0.2103, 0.101, -0.1291, 0.0424, 0.8325, 0.4948, 0.2878]
     ]
   },
-  /** Eğitimde görülmeyen kayıtlarla ölçülen sonuçlar (bloklu çapraz doğrulama, eşik 0.7). */
+  /** Eğitimde görülmeyen kayıtlarla ölçülen sonuçlar (bloklu çapraz doğrulama, kayıt düzeyinde). */
   measured: {
-    idle: { normalCars: 318, falseAlarms: 10, faultClips: 245, caught: 95 },
-    brake: { normalClips: 77, falseAlarms: 2, faultClips: 76, caught: 60 }
+    belt: { normal: 664, falseAlarms: 8, faulty: 304, caught: 133 },
+    valve: { normal: 664, falseAlarms: 0, faulty: 68, caught: 30 },
+    brake: { normal: 77, falseAlarms: 2, faulty: 76, caught: 60 }
   }
 };
