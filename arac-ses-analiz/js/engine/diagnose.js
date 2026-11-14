@@ -9,6 +9,7 @@ import { KNOWN_ISSUES } from "../data/known-issues.js";
 import { QUESTIONS } from "../data/questions.js";
 import { lookupCode } from "../data/obd.js";
 import { idleNormality } from "./normal.js";
+import { learnedOpinion } from "./learned.js";
 
 const HIGH_KM_WEAR = ["rulman", "aks", "biyel", "zincir", "sanziman",
   "rotil", "rot_basi", "z_rot", "viraj_lastik", "amortisor_kafa", "salincak"];
@@ -91,11 +92,13 @@ export function answerFactor(question, answer, fault) {
  * @param {Record<string, "yes"|"no"|"unknown">} [input.answers]
  * @param {"ok"|"warn"|"bad"} [input.quality]
  * @param {string[]} [input.codes] OBD arıza kodları (ör. ["P0301"])
+ * @param {import("../audio/features.js").Features[]} [input.windows] Kaydın 1,5 sn'lik pencereleri (öğrenen model için)
  */
-export function diagnose({ features, conditions = [], vehicle = {}, answers = {}, quality = "ok", codes = [] }) {
+export function diagnose({ features, conditions = [], vehicle = {}, answers = {}, quality = "ok", codes = [], windows = null }) {
   const v = { brand: "", model: "", fuel: "benzin", year: 0, km: 0, ...vehicle };
   const answered = QUESTIONS.filter(q => answers[q.id] === "yes" || answers[q.id] === "no");
   const rules = codes.map(lookupCode).filter(Boolean);
+  const learned = learnedOpinion(windows, { conditions, fuel: v.fuel });
 
   const ranked = FAULTS.map(fault => {
     const audio = audioScore(features, fault.p);
@@ -103,6 +106,7 @@ export function diagnose({ features, conditions = [], vehicle = {}, answers = {}
     let weight = Math.exp(7 * audio) * conditionFactor(fault, conditions) * prior.x;
     for (const q of answered) weight *= answerFactor(q, answers[q.id], fault);
     for (const rule of rules) weight *= rule.effects[fault.id] ?? 1;
+    if (learned?.faults.includes(fault.id)) weight *= learned.boost;
     return { fault, audio, weight, notes: prior.notes, prob: 0 };
   });
   const total = ranked.reduce((s, r) => s + r.weight, 0) || 1;
@@ -115,7 +119,7 @@ export function diagnose({ features, conditions = [], vehicle = {}, answers = {}
 
   // Rölantide alınmış kayıtlar, gerçek araçların normal rölanti sesleriyle karşılaştırılır.
   const normal = idleNormality(features, { conditions, fuel: v.fuel });
-  return { ranked, groups, normal, confidence: confidence({ ranked, groups, quality, features, conditions, answered, normal, hasCodes: rules.length > 0 }) };
+  return { ranked, groups, normal, learned, confidence: confidence({ ranked, groups, quality, features, conditions, answered, normal, hasCodes: rules.length > 0 }) };
 }
 
 /** Sonuca ne kadar güvenilebileceğini ve nedenini belirler. */

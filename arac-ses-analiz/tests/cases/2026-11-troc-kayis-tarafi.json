@@ -40,5 +40,19 @@
       0.2116,
       0.5716
     ]
-  }
+  },
+  "windows": [
+    {"dur":1.5,"rms":0.0948,"peakHz":2099.4873,"tonal":0.1779,"toneHz":0,"tonePersistence":0.4839,"centroid":1223.5641,"imp":0.0465,"periodicity":0.3124,"rate":14.2857,"bands":[0.6038,0.1789,0.2173]},
+    {"dur":1.5,"rms":0.1268,"peakHz":2099.4873,"tonal":1,"toneHz":2099.4873,"tonePersistence":0.9355,"centroid":1733.5609,"imp":0.0858,"periodicity":0.5247,"rate":6.25,"bands":[0.3124,0.1973,0.4902]},
+    {"dur":1.5,"rms":0.1126,"peakHz":2099.4873,"tonal":1,"toneHz":2099.4873,"tonePersistence":0.9032,"centroid":1471.2594,"imp":0.0958,"periodicity":0.6047,"rate":6.25,"bands":[0.3841,0.1675,0.4483]},
+    {"dur":1.5,"rms":0.1091,"peakHz":2099.4873,"tonal":1,"toneHz":2099.4873,"tonePersistence":0.9032,"centroid":1889.0708,"imp":0.3298,"periodicity":0.7447,"rate":12.5,"bands":[0.1784,0.1307,0.6909]},
+    {"dur":1.5,"rms":0.1212,"peakHz":2099.4873,"tonal":1,"toneHz":2099.4873,"tonePersistence":0.871,"centroid":2205.2548,"imp":0.3457,"periodicity":0.5926,"rate":6.25,"bands":[0.0623,0.1561,0.7816]},
+    {"dur":1.5,"rms":0.0867,"peakHz":2099.4873,"tonal":0.7993,"toneHz":2099.4873,"tonePersistence":0.7097,"centroid":2351.9615,"imp":0.3156,"periodicity":0.4694,"rate":3.125,"bands":[0.0375,0.1639,0.7985]},
+    {"dur":1.5,"rms":0.0724,"peakHz":2099.4873,"tonal":0.871,"toneHz":2099.4873,"tonePersistence":0.7419,"centroid":2711.8785,"imp":0.13,"periodicity":0.6439,"rate":6.25,"bands":[0.0559,0.3385,0.6056]},
+    {"dur":1.5,"rms":0.0644,"peakHz":2099.4873,"tonal":0.132,"toneHz":0,"tonePersistence":0.5484,"centroid":2976.9775,"imp":0.0843,"periodicity":0.6699,"rate":6.25,"bands":[0.0814,0.4186,0.5]},
+    {"dur":1.5,"rms":0.0689,"peakHz":2099.4873,"tonal":0.7993,"toneHz":2099.4873,"tonePersistence":0.7097,"centroid":2733.6766,"imp":0.1901,"periodicity":0.6525,"rate":6.25,"bands":[0.0477,0.3426,0.6097]},
+    {"dur":1.5,"rms":0.0533,"peakHz":2099.4873,"tonal":0,"toneHz":0,"tonePersistence":0.4516,"centroid":2887.975,"imp":0.0984,"periodicity":0.3139,"rate":6.25,"bands":[0.0768,0.4078,0.5155]},
+    {"dur":1.5,"rms":0.0505,"peakHz":2099.4873,"tonal":0.5125,"toneHz":2099.4873,"tonePersistence":0.5806,"centroid":2852.2016,"imp":0.0775,"periodicity":0.631,"rate":12.5,"bands":[0.1411,0.333,0.5259]},
+    {"dur":1.5,"rms":0.0343,"peakHz":1378.125,"tonal":0,"toneHz":0,"tonePersistence":0.1935,"centroid":1522.6782,"imp":0.0022,"periodicity":0.2618,"rate":20,"bands":[0.3917,0.3887,0.2196]}
+  ]
 }

@@ -26,6 +26,7 @@ import { copySummary, shareSecondOpinion } from "./ui/share.js";
 import { strengthOverTime } from "./audio/locate.js";
 import { askText, renderPlan } from "./ui/plan-view.js";
 import { renderEvidence } from "./ui/evidence-view.js";
+import { windowFeatures } from "./engine/learned.js";
 import { initQuoteView, renderQuote, resetQuote } from "./ui/quote-view.js";
 import { initFeedbackView, resetFeedback } from "./ui/feedback-view.js";
 import { MECHANICS } from "./data/mechanics.js";
@@ -41,7 +42,8 @@ function runDiagnosis({ fresh = false } = {}) {
     vehicle: state.vehicle,
     answers: state.answers,
     quality: state.recording.quality.level,
-    codes: state.codes
+    codes: state.codes,
+    windows: state.windows
   });
   renderResults(result, state, { fresh });
   renderGuided(result, state);
@@ -70,6 +72,7 @@ async function analyze() {
     if (i === 0) {
       state.features = extractFeatures(samples, sr, CONFIG.analysisSeconds);
       state.locate = strengthOverTime(samples, sr, state.features);
+      state.windows = windowFeatures(samples.subarray(0, Math.min(samples.length, Math.round(CONFIG.analysisSeconds * sr))), sr);
     }
     steps[i].className = "done";
   }

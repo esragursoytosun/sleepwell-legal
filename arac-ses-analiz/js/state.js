@@ -7,6 +7,8 @@ export const state = {
   /** @type {null | {samples: Float32Array, sr: number, blob: Blob, url: string, label: string, isVideo: boolean, quality: {level: string, issues: object[]}}} */
   recording: null,
   features: null,
+  /** Kaydın 1,5 sn'lik pencerelerinin özellikleri (engine/learned.js) */
+  windows: null,
   /** Sesin zaman içindeki gücü (audio/locate.js) */
   locate: null,
   answers: {},

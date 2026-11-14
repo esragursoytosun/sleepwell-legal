@@ -5,7 +5,7 @@ import { loadCases } from "./cases.js";
 
 for (const c of loadCases()) {
   test(`gerçek vaka ${c.id}: beklenen bölge ve arızalar`, () => {
-    const res = diagnose({ features: c.features, conditions: c.conditions, vehicle: c.vehicle, answers: c.answers });
+    const res = diagnose({ features: c.features, conditions: c.conditions, vehicle: c.vehicle, answers: c.answers, windows: c.windows });
     assert.equal(res.groups[0].id, c.expect.group, `bölge: ${res.groups[0].id}`);
     if (c.expect.anyOfTop3) {
       const top3 = res.ranked.slice(0, 3).map(r => r.fault.id);

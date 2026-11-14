@@ -98,6 +98,7 @@ js/
     guidance.js         Arıza başına kontroller, ustaya söylenecekler, kırmızı bayraklar
     parts.js            Teklif/fatura kalemleri
     obd.js              OBD arıza kodu aileleri ve işaret ettikleri arızalar
+    learned-models.js   Öğrenen modelin katsayıları (scripts/train-learned.mjs üretir)
     prices.js           Doğrulanmış fiyat aralıkları (gerçek veri gelene kadar boş)
     mechanics.js        Doğrulanmış ustalar (kabul sürecinden geçenler; şimdilik boş)
   audio/              Ses işleme
@@ -116,6 +117,7 @@ js/
     compare.js          Yönlendirmeli test: iki kaydın karşılaştırılması
     baseline.js         Aracın referans (sağlam) kaydıyla karşılaştırma
     normal.js           Normal rölanti sesiyle karşılaştırma
+    learned.js          Öğrenen model: kayış tarafı ve fren için etiketli kayıtlardan öğrenilmiş destek
   ui/                 Ekran modülleri (form, kayıt, sonuç, çizim, paylaşım)
     car3d.js            Üç boyutlu "röntgen" araç sahnesi (WebGL yoksa iki boyutlu çizime düşülür)
     tabs.js             Sonuç ekranındaki sekmeler
@@ -132,6 +134,7 @@ vendor/               three.js 0.160.0 (MIT lisanslı; 3B sahne için, kurulum g
 docs/
   usta-agi.md         Güvenilir usta ağına kabul, çalışma kuralları, puanlama, denetim
   veri-ekleme.md      Gerçek vaka, fiyat ve usta ekleme rehberi
+  ogrenen-model.md    Öğrenen model: ölçülen başarı, sınırlar, veri kaynakları ve lisans durumu
 ```
 
 `data/`, `audio/features.js`, `audio/quality.js`, `audio/synth.js` ve `engine/` tarayıcıya bağlı değildir;
@@ -152,6 +155,11 @@ Her arıza için: `ses benzerliği × sürüş durumları × araç bilgisi × so
 Ses benzerliği; frekans, tonluluk, darbelilik ve ritmin arızanın profiline uyumundan gelir.
 Kayıt boyunca süren sabit bir ton (ıslık, vınlama) ayrıca aranır; bulunursa tonlu arızalar o tona göre
 değerlendirilir. Böylece motorun normal tıkırtısı, gerçek kayıtlarda tonun kaynağını gölgelemez.
+
+Rölanti ve fren kayıtlarında ayrıca **öğrenen model** çalışır: etiketli gerçek kayıtlardan öğrenilmiş iki küçük
+model, kayıt "kayış tarafı" ya da "aşınmış fren" seslerine yeterince benziyorsa ilgili arızaların ağırlığını
+sınırlı ölçüde (en çok 2,5 kat) artırır ve gerekçesini "Neden bu sonuç?" kartına yazar. Sınamada 318 normal
+aracın 10'unda yanlış alarm verdi. Ayrıntı, sınırlar ve **eğitim verisinin lisans durumu**: `docs/ogrenen-model.md`.
 
 ## Ölçüm
 

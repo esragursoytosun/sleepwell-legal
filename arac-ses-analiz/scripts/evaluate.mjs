@@ -9,7 +9,7 @@ import { loadCases } from "../tests/cases.js";
 const cases = loadCases();
 let group = 0, top1 = 0, top3 = 0, labelled = 0;
 for (const c of cases) {
-  const res = diagnose({ features: c.features, conditions: c.conditions, vehicle: c.vehicle, answers: c.answers });
+  const res = diagnose({ features: c.features, conditions: c.conditions, vehicle: c.vehicle, answers: c.answers, windows: c.windows });
   const ids = res.ranked.map(r => r.fault.id);
   const g = res.groups[0].id === c.expect.group;
   group += g;
