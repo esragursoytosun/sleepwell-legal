@@ -1,0 +1,42 @@
+{
+  "id": "2026-11-dizel-egr",
+  "date": "2026-11-15",
+  "source": "Kullanıcının ilettiği video (16 sn, dizel motor rölantide, kaput açık). Yalnızca ölçülen ses özellikleri saklanır; ses ve görüntü saklanmaz.",
+  "vehicle": {
+    "brand": "Ford",
+    "model": "",
+    "fuel": "dizel",
+    "year": 0,
+    "km": 0
+  },
+  "conditions": [
+    "rolanti"
+  ],
+  "answers": {},
+  "observed": "2,75–11,5. saniyeler arasında saniyede yaklaşık 7,7 kez tekrarlayan düzenli, kuru tıkırtı. Videonun sonundaki platform jeneriği düzenli bölüm seçimiyle dışarıda bırakıldı.",
+  "outcome": "Kullanıcının bildirdiği sonuç: EGR valfi çalışmıyor, egzoz gazını emme manifolduna geri veriyor. Servis belgesi görülmedi.",
+  "note": "Uygulamadaki EGR ses profili bu vakadan çıkarıldı; bu yüzden vaka “kesin arızası bilinen” sayımına katılmaz (expect.fault yerine anyOfTop3).",
+  "expect": {
+    "group": "motor",
+    "anyOfTop3": [
+      "egr"
+    ]
+  },
+  "features": {
+    "dur": 8.75,
+    "rms": 0.052,
+    "peakHz": 409.1309,
+    "tonal": 0,
+    "toneHz": 0,
+    "tonePersistence": 0.0642,
+    "centroid": 1434.6419,
+    "imp": 0.8366,
+    "periodicity": 0.7461,
+    "rate": 7.6923,
+    "bands": [
+      0.3674,
+      0.3498,
+      0.2828
+    ]
+  }
+}

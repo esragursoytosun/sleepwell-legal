@@ -63,11 +63,11 @@ export const QUESTIONS = [
     no: { kayis: .7, alternator: 1.2 } },
   { id: "ariza_lambasi",
     text: "Motor arıza lambası yanıyor mu ya da motor sarsıntılı mı çalışıyor?",
-    yes: { tekleme: 2.4, turbo: 1.3 },
+    yes: { tekleme: 2.4, egr: 1.8, turbo: 1.3 },
     no: { tekleme: .6 } },
   { id: "guc_kaybi",
     text: "Hızlanırken çekiş düşüklüğü ya da egzozdan duman var mı?",
-    yes: { turbo: 2.2, egzoz: 1.3, tekleme: 1.3 },
+    yes: { turbo: 2.2, egr: 1.9, egzoz: 1.3, tekleme: 1.3 },
     no: { turbo: .7 } }
 ];
 

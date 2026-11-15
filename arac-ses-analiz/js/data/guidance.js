@@ -119,6 +119,21 @@ export const GUIDANCE = {
     flags: ["Conta ya da kelepçe kaçağı için komple egzoz sistemi değişimi önerilirse gerekçesini sorun."],
     parts: ["egzoz_conta", "egzoz_parca"]
   },
+  egr: {
+    checks: [
+      "Motor arıza lambası yanıyor mu, egzozdan siyah duman çıkıyor mu bakın.",
+      "Arıza kodunu okutun; EGR ile ilgili kodlar P0400–P0409 arasındadır."
+    ],
+    ask: [
+      "EGR valfi sökülüp kurum durumu gösterilsin; temizlikle düzelir mi?",
+      "Valf mi arızalı, yoksa valfi süren hortum/soket mi? Hangisi olduğu test edilsin."
+    ],
+    flags: [
+      "Temizlik denenmeden doğrudan valf değişimi önerilirse gerekçesini sorun.",
+      "“EGR iptali” önerilirse kabul etmeyin: muayenede sorun çıkarır ve yasal değildir."
+    ],
+    parts: ["egr_valfi", "egr_temizlik"]
+  },
   turbo: {
     checks: ["Turbo hortumlarında ve bağlantılarında yağlanma ya da gevşeklik var mı?"],
     ask: [

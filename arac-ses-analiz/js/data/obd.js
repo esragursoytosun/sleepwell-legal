@@ -14,6 +14,7 @@ export const OBD_RULES = [
   { from: "P0325", to: "P0334", label: "Vuruntu sensörü", effects: { biyel: 1.6 } },
   { from: "P0340", to: "P0349", label: "Eksantrik konum sensörü", effects: { zincir: 1.8 } },
   { from: "P0350", to: "P0362", label: "Ateşleme bobini devresi", effects: { tekleme: 3.5 } },
+  { from: "P0400", to: "P0409", label: "EGR (egzoz gazı geri dönüşü)", effects: { egr: 5 } },
   { from: "P0420", to: "P0434", label: "Katalitik konvertör verimi", effects: { egzoz: 1.6 } },
   { from: "P0500", to: "P0503", label: "Araç hız sensörü", effects: { rulman: 1.4 } },
   { from: "P0520", to: "P0524", label: "Motor yağ basıncı", effects: { biyel: 2.5, supap: 2, zincir: 1.5 } },

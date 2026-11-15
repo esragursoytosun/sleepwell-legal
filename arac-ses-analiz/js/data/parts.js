@@ -19,6 +19,8 @@ export const PARTS = {
   triger_seti: { label: "Triger zinciri / kayış seti", costly: true },
   egzoz_conta: { label: "Egzoz manifold contası" },
   egzoz_parca: { label: "Egzoz borusu / susturucu" },
+  egr_valfi: { label: "EGR valfi" },
+  egr_temizlik: { label: "EGR valfi ve emme manifoldu temizliği" },
   turbo: { label: "Turbo", costly: true },
   turbo_hortum: { label: "Turbo / intercooler hortumu" },
   buji: { label: "Buji", routine: true },

@@ -59,6 +59,7 @@ export function vehiclePrior(fault, v) {
   if (v.fuel === "elektrik" && fault.ice) x *= 0.03;
   if (v.fuel === "dizel" && fault.id === "turbo") x *= 1.3;
   if (v.fuel === "dizel" && fault.id === "tekleme") x *= 0.7;
+  if (fault.id === "egr") x *= v.fuel === "dizel" ? 1.4 : 0.6; // EGR arızası en çok dizel motorlarda görülür
   if (v.fuel === "lpg" && fault.id === "supap") {
     x *= 1.4;
     notes.push("LPG kullanımında supap ve supap yuvası aşınması daha sık görülür; supap ayarı periyodik yapılmalıdır.");

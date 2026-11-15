@@ -148,6 +148,12 @@ export const SYNTH = {
     impulses(x, sr, periodic(26, d, .05, r), t => Math.exp(-t / .011) * bp(r() * 2 - 1) * 4);
     return normalize(x);
   },
+  egr(sr, d) {
+    const x = new Float32Array(sr * d), r = rng(41), bp = bandpass(1400, 1.2, sr);
+    engineBed(x, sr, .05);
+    impulses(x, sr, periodic(7.7, d, .04, r), t => Math.exp(-t / .009) * bp(r() * 2 - 1) * 4);
+    return normalize(x);
+  },
   turbo(sr, d) {
     const x = new Float32Array(sr * d), r = rng(29), bp = bandpass(6000, 1.5, sr);
     engineBed(x, sr, .08, 1800);

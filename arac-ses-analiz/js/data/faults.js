@@ -103,6 +103,12 @@ export const FAULTS = [
     tip: "Turbo hortumları ve intercooler kaçağı kontrol edilmeli; turbo milinde boşluk varsa yağ yakma başlayabilir.",
     p: { f: [3000, 11000], feat: "peak", tonal: .75, imp: .1, rhythm: null },
     c: { hizlanma: 2.8, hiz: 1.2, rolanti: .5, fren: .3, soguk: .7, direksiyon: .4, tumsek: .4 } },
+  { id: "egr", name: "EGR valfi arızası (egzoz gazı geri dönüş valfi)", group: "motor", loc: "motor", urg: 2, ice: true,
+    desc: "Valf açık kalırsa egzoz gazı sürekli emme manifolduna döner: rölantide düzenli, kuru bir tıkırtı/puflama, dengesiz çalışma, çekiş düşüklüğü ve siyah duman görülebilir.",
+    tip: "Arıza kodu okutulmalı (P0400–P0409). Valf çoğu zaman kurumla tıkanır; değişimden önce temizlik denenebilir.",
+    // Ses profili tek bir vakadan (tests/cases/2026-11-dizel-egr.json) çıkarıldı; yeni vakalarla doğrulanmalı.
+    p: { f: [600, 2500], feat: "centroid", tonal: .1, imp: .75, rhythm: [4, 14] },
+    c: { rolanti: 1.5, hizlanma: 1.3, soguk: 1.0, fren: .4, tumsek: .4, direksiyon: .4, hiz: .7 } },
   { id: "tekleme", name: "Ateşleme teklemesi (buji / bobin)", group: "motor", loc: "motor", urg: 2, ice: true,
     desc: "Motor sesi düzensiz; rölantide sarsıntı ve “pıt-pıt” şeklinde atlayan ritim. Gaz verince takılma.",
     tip: "Bujiler, ateşleme bobinleri ve enjektörler kontrol edilmeli; arıza lambası yanıyorsa kod okutulmalı.",
