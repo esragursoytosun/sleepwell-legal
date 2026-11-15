@@ -27,6 +27,8 @@ import { strengthOverTime } from "./audio/locate.js";
 import { askText, renderPlan } from "./ui/plan-view.js";
 import { renderEvidence } from "./ui/evidence-view.js";
 import { windowFeatures } from "./engine/learned.js";
+import { idleComparable } from "./engine/normal.js";
+import { steadySection, sliceSection } from "./audio/section.js";
 import { initQuoteView, renderQuote, resetQuote } from "./ui/quote-view.js";
 import { initFeedbackView, resetFeedback } from "./ui/feedback-view.js";
 import { MECHANICS } from "./data/mechanics.js";
@@ -70,9 +72,13 @@ async function analyze() {
     steps[i].className = "active";
     await wait(i === 0 ? 120 : 380);
     if (i === 0) {
-      state.features = extractFeatures(samples, sr, CONFIG.analysisSeconds);
+      // Araç dururken alınan kayıtlarda yalnızca düzenli bölüm ölçülür (konuşma, kapı sesi, jenerik dışarıda kalır).
+      const idle = idleComparable([...state.conditions], state.vehicle.fuel);
+      state.section = idle ? steadySection(samples, sr) : { from: 0, to: samples.length / sr, trimmed: false };
+      const part = sliceSection(samples, sr, state.section);
+      state.features = extractFeatures(part, sr, CONFIG.analysisSeconds);
       state.locate = strengthOverTime(samples, sr, state.features);
-      state.windows = windowFeatures(samples.subarray(0, Math.min(samples.length, Math.round(CONFIG.analysisSeconds * sr))), sr);
+      state.windows = windowFeatures(part.subarray(0, Math.min(part.length, Math.round(CONFIG.analysisSeconds * sr))), sr);
     }
     steps[i].className = "done";
   }

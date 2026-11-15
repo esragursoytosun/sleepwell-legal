@@ -105,6 +105,7 @@ js/
     features.js         Özellik çıkarımı (ton, darbe, ritim, spektrum)
     quality.js          Kayıt kalitesi denetimi
     locate.js           Sesin zaman içindeki gücü (videodan konum)
+    section.js          Kaydın düzenli bölümünü seçme (konuşma, gaz verme, jenerik dışarıda kalır)
     synth.js            Yapay örnek arıza sesleri
     recorder.js         Mikrofon kaydı ve dosya çözme (tarayıcı)
     context.js          Ses çalma (tarayıcı)
@@ -169,7 +170,7 @@ Sınamada kayış modeli 664 normal kaydın 8'inde yanlış alarm verdi; hiç g�
 | Bölüm | Sonuç |
 |---|---|
 | Gerçek vakalar (sonucu bilinen) | 1 vaka; bölge doğru |
-| Referans sesler (sosyal medya derlemeleri, doğrulanmamış, 44 ses) | Yalnızca sesle: bölge 20/44, doğru parça ilk üçte 10/37. Tipik belirtilerle: bölge 30/37, ilk üçte 22/37 |
+| Referans sesler (sosyal medya derlemeleri, doğrulanmamış, 45 ses) | Yalnızca sesle: bölge 21/45, doğru parça ilk üçte 10/37. Tipik belirtilerle: bölge 30/37, ilk üçte 22/37 |
 | Normal araçlar (319 gerçek rölanti kaydı) | 283'üne "normal rölanti sesine benziyor" denir; 4'ünde kalıcı ton bulunur; 4'ünde "iyi" güvenle arıza gösterilir |
 
 Normal araç verisi: Ciric, D. ve Milivojčević, M. (2024), *Sounds of Vehicle Internal Combustion Engines*, Zenodo

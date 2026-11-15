@@ -52,6 +52,7 @@ export async function renderEvidence(result, state) {
   for (const t of GUIDED_TESTS) if (state.measured[t.id]?.answer !== "unknown" && state.measured[t.id]) measured[t.question] = state.measured[t.id].text;
   const reasons = explainTop(result.ranked[0], { features: state.features, conditions: [...state.conditions], answers: state.answers, measured, codes: state.codes });
   if (result.learned?.faults.includes(result.ranked[0].fault.id)) reasons.push(result.learned.text);
+  if (state.section?.trimmed) reasons.push(`Kaydın ${Math.round(state.section.from)}.–${Math.round(state.section.to)}. saniyeleri arasındaki düzenli bölüm ölçüldü; başındaki ya da sonundaki farklı sesler (konuşma, gaz verme, müzik) dışarıda bırakıldı.`);
   $("reasons").innerHTML = reasons.map(r => `<li>${icon("check")}<span>${esc(r)}</span></li>`).join("");
 
   const loc = state.locate, rec = state.recording;

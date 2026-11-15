@@ -9,6 +9,8 @@ export const state = {
   features: null,
   /** Kaydın 1,5 sn'lik pencerelerinin özellikleri (engine/learned.js) */
   windows: null,
+  /** Analiz edilen bölüm (audio/section.js): {from, to, trimmed} */
+  section: null,
   /** Sesin zaman içindeki gücü (audio/locate.js) */
   locate: null,
   answers: {},
