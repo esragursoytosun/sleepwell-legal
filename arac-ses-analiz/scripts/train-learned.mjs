@@ -8,6 +8,9 @@
  *  - 2. klasör: "Sounds of Vehicle Internal Combustion Engines" (Zenodo 18777405). Kayıt başına en çok 3 pencere.
  *  - 3. klasör: telefonla kaydedilmiş motor sesleri (Hugging Face, RashmiKarunarathne/MyDataSet).
  *    Etiket = dosya adının başı (healthy, belt_issue, misfire, tappet_issue). Kayıt başına en çok 4 pencere.
+ *  - Ayrıca depodaki vakalar: tests/cases ve tests/reference altında `windows` alanı olan kayıtlar
+ *    (kayış tarafı, supap ya da tekleme etiketli) kendiliğinden eğitime katılır. Yeni bir arıza sesi
+ *    "öğretmek" için kaydın pencerelerini bu dosyalara eklemek ve bu betiği yeniden çalıştırmak yeterlidir.
  * Sınama: bloklu 5 katlı çapraz doğrulama. Kaggle parçaları dosya sırasına göre ardışık bloklara ayrılır
  * (aynı kaynaktan kesilmiş komşu parçalar eğitim ve sınamaya birlikte düşmesin); normal araç kayıtları kayıt
  * bazında ayrılır. Ses dosyaları hiçbir yere kopyalanmaz; yalnızca katsayılar yazılır. Ek paket gerekmez.
@@ -57,6 +60,17 @@ for (const p of wavs(phoneDir)) {
   const { samples, sr } = decodeWav(readFileSync(p));
   for (const x of windowsOf(samples, sr, 4)) rows.push({ src: "phone", label: m[1], group: `phone#${basename(p)}`, order: +m[2], x });
 }
+
+// Depodaki vakalar ve referans sesler: yalnızca ölçülen pencereler saklanır, ses saklanmaz.
+const CASE_LABEL = { kayis: "belt_issue", pompa: "belt_issue", alternator: "belt_issue", supap: "tappet_issue", tekleme: "misfire" };
+function addStored(id, fault, windows) {
+  if (!windows?.length || !CASE_LABEL[fault]) return;
+  for (const F of windows) rows.push({ src: "vaka", label: CASE_LABEL[fault], group: `vaka#${id}`, order: 0, x: featureVector(F) });
+}
+const stored = dir => readdirSync(new URL(dir, import.meta.url)).filter(f => f.endsWith(".json")).map(f => JSON.parse(readFileSync(new URL(dir + f, import.meta.url), "utf8")));
+for (const c of stored("../tests/cases/")) addStored(c.id, c.expect.fault || c.expect.anyOfTop3?.[0], c.windows);
+for (const r of stored("../tests/reference/")) r.segments.forEach((s, i) => addStored(`${r.id}/${i}`, s.fault, s.windows));
+console.log("Depodaki vakalardan eğitime katılan pencere:", rows.filter(r => r.src === "vaka").length);
 
 function softmax(W, z) {
   const s = W.map(w => w.reduce((a, v, j) => a + v * (j < z.length ? z[j] : 1), 0));
@@ -140,6 +154,7 @@ writeFileSync(new URL("../js/data/learned-models.js", import.meta.url), `/**
  *  - "Car Diagnostics Dataset" (Kaggle; lisansı "Unknown" olarak belirtilmiş): 1,5 sn parçalar.
  *  - Gerçek araçların normal rölanti kayıtları (Zenodo 18777405, CC BY 4.0): kayıt başına en çok 3 pencere.
  *  - Telefonla kaydedilmiş motor sesleri (Hugging Face, RashmiKarunarathne/MyDataSet; lisans belirtilmemiş).
+ *  - Depodaki vakalar ve referans sesler (tests/cases, tests/reference; yalnızca ölçülen pencereler).
  * Uygulamada ses dosyası yoktur; yalnızca aşağıdaki katsayılar bulunur.
  */
 export const LEARNED = {

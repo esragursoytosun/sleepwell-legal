@@ -48,6 +48,13 @@ gerçek vakalardır (T-Roc: kayış tarafı, doğru).
   ayırma, marş/akü/ateşleme modelleri (%65 civarı), MFCC tabanlı modeller (kaynaklar arası daha kötü genelledi).
 - Gerçek vakalar (`tests/cases`) biriktikçe model bu vakalarla yeniden sınanmalı ve eğitilmelidir.
 
+## Yeni bir sesi öğretmek
+
+Depodaki vakalar (`tests/cases`) ve referans sesler (`tests/reference`) `windows` alanı taşıyorsa —
+kaydın 1,5 sn'lik pencerelerinin ölçümleri — `npm run train` onları kendiliğinden eğitime katar. Tek bir
+video yüzlerce örnek arasında küçük bir ağırlık taşır; modelin bir sesi güvenle tanıması için aynı türden
+çok sayıda kayıt gerekir.
+
 ## Veri kaynakları ve lisans durumu
 
 | Kaynak | Ne için | Lisans |

@@ -56,8 +56,8 @@ export const LOCATIONS = {
 
 export const FAULTS = [
   // ------------------------------------------------------------------ yardımcı aksamlar
-  { id: "kayis", name: "V-kayış / gergi bilyası gıcırtısı", group: "yardimci", loc: "motor_on", urg: 2, ice: true,
-    desc: "Kayış kaydığında veya gergi zayıfladığında tiz, sürekli bir gıcırtı çıkar; soğukta ve yük binince (klima, direksiyon) artar.",
+  { id: "kayis", name: "Kayış / gergi bilyası sesi (alternatör, klima, direksiyon pompası kayışı)", group: "yardimci", loc: "motor_on", urg: 2, ice: true,
+    desc: "Kayış kaydığında veya gergi zayıfladığında tiz bir gıcırtı ya da hızlı tekrarlayan cıvıltı/hışırtı çıkar; soğukta ve yük binince (klima, direksiyon) artar. Motorda birden fazla kayış olabilir: alternatör, klima ve direksiyon pompası kayışları aynı sesi verir.",
     tip: "Kayışta çatlak/parlama ve gergi bilyası kontrol edilmeli. Kayış koparsa şarj ve hidrolik destek kesilir.",
     p: { f: [1500, 5000], feat: "peak", tonal: .55, imp: .15, rhythm: null },
     c: { soguk: 1.7, rolanti: 1.3, klima: 1.6, direksiyon: 1.4, hizlanma: 1.2, fren: .45, tumsek: .5, hiz: .6 } },
