@@ -169,7 +169,7 @@ Sınamada kayış modeli 664 normal kaydın 8'inde yanlış alarm verdi; hiç g�
 
 | Bölüm | Sonuç |
 |---|---|
-| Gerçek vakalar (sonucu bilinen) | 2 vaka; ikisinde de bölge doğru |
+| Gerçek vakalar (sonucu bilinen) | 3 vaka; üçünde de bölge doğru. Kesin parçası bilinen 1 vakada doğru parça ilk sırada |
 | Referans sesler (sosyal medya derlemeleri, doğrulanmamış, 45 ses) | Yalnızca sesle: bölge 21/45, doğru parça ilk üçte 10/37. Tipik belirtilerle: bölge 30/37, ilk üçte 22/37 |
 | Normal araçlar (319 gerçek rölanti kaydı) | 283'üne "normal rölanti sesine benziyor" denir; 4'ünde kalıcı ton bulunur; 4'ünde "iyi" güvenle arıza gösterilir |
 
@@ -179,7 +179,7 @@ kayıt 18777405, CC BY 4.0. Depoda ses dosyaları değil, yalnızca ölçülen �
 ## Bilinen sınırlar
 
 - Ses profilleri elle yazılmış kurallardır ve yalnızca sesle parça düzeyinde isabet düşüktür (bkz. Ölçüm).
-  Sonucu bilinen gerçek vaka sayısı 2'dir; doğruluk oranı, yeterli vaka birikmeden uygulamada gösterilmez.
+  Sonucu bilinen gerçek vaka sayısı 3'tür; doğruluk oranı, yeterli vaka birikmeden uygulamada gösterilmez.
 - Normal rölanti aralığı, aracın dışından (otopark girişinde) alınmış kayıtlardan çıkarılmıştır; kaput açıkken
   motora yakın tutulan telefonla birebir aynı koşul değildir. Arıza seslerinin bir kısmı da bu aralığa düşer
   (referans seslerin 44'te 16'sı); bu yüzden "normal" bir hüküm değil, göstergedir.

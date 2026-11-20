@@ -1,0 +1,57 @@
+{
+  "id": "2026-11-linea-direksiyon-pompasi-kayisi",
+  "date": "2026-11-20",
+  "source": "Kullanıcının ilettiği sosyal medya videosu: bir tamircinin paylaştığı, 1.3 Multijet dizel motorda direksiyon pompası kayışı sesi (kaput açık, rölanti, 36 sn). Yalnızca ölçülen ses özellikleri saklanır; ses ve görüntü saklanmaz.",
+  "vehicle": {
+    "brand": "Fiat",
+    "model": "Linea",
+    "fuel": "dizel",
+    "year": 0,
+    "km": 0
+  },
+  "conditions": [
+    "rolanti"
+  ],
+  "answers": {},
+  "observed": "Tiz, hızlı tekrarlayan hafif cıvıltı/hışırtı; belirgin sabit ton yok. Sondaki platform jeneriği düzenli bölüm seçimiyle dışarıda bırakıldı.",
+  "outcome": "Kullanıcının bildirdiği sonuç: direksiyon pompası kayışı arızası; onarımdan sonra ses giderildi. Servis belgesi görülmedi.",
+  "expect": {
+    "group": "yardimci",
+    "fault": "kayis",
+    "anyOfTop3": [
+      "kayis",
+      "pompa"
+    ]
+  },
+  "features": {
+    "dur": 20,
+    "rms": 0.0994,
+    "peakHz": 1507.3242,
+    "tonal": 0.0371,
+    "toneHz": 0,
+    "tonePersistence": 0.2727,
+    "centroid": 3480.9144,
+    "imp": 0.1144,
+    "periodicity": 0.739,
+    "rate": 14.2857,
+    "bands": [
+      0.061,
+      0.3941,
+      0.5449
+    ]
+  },
+  "windows": [
+    {"dur": 1.5, "rms": 0.0734, "peakHz": 204.5654, "tonal": 0, "toneHz": 0, "tonePersistence": 0.0645, "centroid": 3166.0042, "imp": 0.4358, "periodicity": 0.3841, "rate": 1.8519, "bands": [0.0485, 0.3784, 0.5731]},
+    {"dur": 1.5, "rms": 0.0614, "peakHz": 1690.3564, "tonal": 0, "toneHz": 0, "tonePersistence": 0.0968, "centroid": 2493.6786, "imp": 0.1332, "periodicity": 0.4028, "rate": 14.2857, "bands": [0.1367, 0.4485, 0.4149]},
+    {"dur": 1.5, "rms": 0.0719, "peakHz": 64.5996, "tonal": 0, "toneHz": 0, "tonePersistence": 0.0968, "centroid": 3230.7326, "imp": 0.0529, "periodicity": 0.5996, "rate": 14.2857, "bands": [0.1293, 0.3453, 0.5254]},
+    {"dur": 1.5, "rms": 0.0859, "peakHz": 64.5996, "tonal": 0.0832, "toneHz": 0, "tonePersistence": 0.129, "centroid": 3565.9531, "imp": 0.0367, "periodicity": 0.6178, "rate": 14.2857, "bands": [0.0908, 0.3686, 0.5407]},
+    {"dur": 1.5, "rms": 0.0983, "peakHz": 1496.5576, "tonal": 0.0792, "toneHz": 0, "tonePersistence": 0.3548, "centroid": 3655.4402, "imp": 0.0712, "periodicity": 0.6578, "rate": 14.2857, "bands": [0.0611, 0.4028, 0.536]},
+    {"dur": 1.5, "rms": 0.1106, "peakHz": 1507.3242, "tonal": 0.1992, "toneHz": 0, "tonePersistence": 0.3548, "centroid": 3149.1475, "imp": 0.0867, "periodicity": 0.6512, "rate": 2.5, "bands": [0.0454, 0.5127, 0.4419]},
+    {"dur": 1.5, "rms": 0.1085, "peakHz": 1507.3242, "tonal": 0.197, "toneHz": 0, "tonePersistence": 0.4839, "centroid": 3392.3133, "imp": 0.0745, "periodicity": 0.6166, "rate": 7.1429, "bands": [0.0487, 0.4391, 0.5122]},
+    {"dur": 1.5, "rms": 0.1065, "peakHz": 1507.3242, "tonal": 0.1556, "toneHz": 0, "tonePersistence": 0.4839, "centroid": 3437.6847, "imp": 0.0479, "periodicity": 0.6372, "rate": 7.1429, "bands": [0.0545, 0.4435, 0.502]},
+    {"dur": 1.5, "rms": 0.11, "peakHz": 1507.3242, "tonal": 0.0647, "toneHz": 0, "tonePersistence": 0.3548, "centroid": 3655.2267, "imp": 0.1161, "periodicity": 0.7464, "rate": 2.5, "bands": [0.0539, 0.3493, 0.5968]},
+    {"dur": 1.5, "rms": 0.1159, "peakHz": 2099.4873, "tonal": 0.001, "toneHz": 0, "tonePersistence": 0.1935, "centroid": 3764.0508, "imp": 0.0854, "periodicity": 0.6615, "rate": 1.8519, "bands": [0.0552, 0.3372, 0.6077]},
+    {"dur": 1.5, "rms": 0.1123, "peakHz": 1507.3242, "tonal": 0, "toneHz": 0, "tonePersistence": 0.3871, "centroid": 3610.6177, "imp": 0.0769, "periodicity": 0.6638, "rate": 2.5, "bands": [0.0529, 0.3926, 0.5545]},
+    {"dur": 1.5, "rms": 0.1069, "peakHz": 1507.3242, "tonal": 0, "toneHz": 0, "tonePersistence": 0.3226, "centroid": 3602.8836, "imp": 0.1008, "periodicity": 0.7909, "rate": 2.5, "bands": [0.0562, 0.3557, 0.5881]}
+  ]
+}

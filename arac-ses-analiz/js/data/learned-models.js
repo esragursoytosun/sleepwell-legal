@@ -36,7 +36,7 @@ export const LEARNED = {
   },
   /** Eğitimde görülmeyen kayıtlarla ölçülen sonuçlar (bloklu çapraz doğrulama, kayıt düzeyinde). */
   measured: {
-    belt: { normal: 664, falseAlarms: 8, faulty: 306, caught: 136 },
+    belt: { normal: 664, falseAlarms: 8, faulty: 306, caught: 137 },
     valve: { normal: 664, falseAlarms: 0, faulty: 68, caught: 30 },
     brake: { normal: 77, falseAlarms: 2, faulty: 76, caught: 60 }
   }
